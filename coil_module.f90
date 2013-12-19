@@ -16,4 +16,6 @@ module coil_module
       real, dimension(aux_count) :: aux_current
    end type coils
 
+   type(coils) :: coil_set
+
 end module coil_module

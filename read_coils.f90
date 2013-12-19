@@ -1,9 +1,7 @@
-subroutine read_coils(coil_set)
+subroutine read_coils()
   
   use coil_module
   implicit none
-
-  type(coils) :: coil_set
 
   integer :: skip,i
   real :: current
@@ -17,7 +15,7 @@ subroutine read_coils(coil_set)
   current = -150108.
   skip = 14
 
-  call read_coil_files(taper, coil_set, current, skip)
+  call read_coil_files(taper, current, skip)
 
 !  do i=1,48
 !     print *,coil_set%aux_current(i)
@@ -26,7 +24,7 @@ subroutine read_coils(coil_set)
 end subroutine read_coils
 
 
-subroutine read_coil_files(taper, coil_set, current, skip)
+subroutine read_coil_files(taper, current, skip)
 
 
   use coil_module
@@ -38,7 +36,6 @@ subroutine read_coil_files(taper, coil_set, current, skip)
   integer :: skip, piece, filenum, total_points
   integer :: nmain, naux !number of main and aux coils
   real :: taper(*), current,x,y,z
-  type(coils) coil_set
 
   open(31,file='c1.dat',status='old',form='formatted')
   open(32,file='c2.dat',status='old',form='formatted')

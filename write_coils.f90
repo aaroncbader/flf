@@ -2,10 +2,9 @@ program write_coils
   use coil_module
   implicit none
 
-  type(coils) :: coil_set
   integer :: i,j
 
-  call read_coils(coil_set)
+  call read_coils()
   
   open(40,file='coils.out',status='unknown')
   
