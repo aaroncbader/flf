@@ -24,15 +24,15 @@ real, dimension(:), allocatable :: xcoil, ycoil, zcoil
 real, dimension(:), allocatable :: xcoilshift, ycoilshift, zcoilshift
 integer :: arggood
 real :: ax, ay, az, bx, by, bz, cx, cy, cz
-real :: cxax, cxay, cxaz, magc, current
+real :: cxax, cxay, cxaz, magc, current, magb
+real :: w, adotc, adotb, cross_sq
 integer :: coilnumber, numcoilpts, isaux
 real, dimension(3) :: p, b, bseg
-real, dimension(1) :: blocal, bmag
 real :: mu0, pi
 
 !p=(/0.1,0.1,0.1/)
-blocal=0
-bmag=0
+
+b=0
 if (isaux == 1) then  
    coilnumber = aux_count
 else
@@ -47,6 +47,7 @@ pi=3.14159265359
 
 !loop for each coil
 do i=1,coilnumber
+!do i=1,1
 
       
       if (isaux == 1) then
@@ -59,7 +60,6 @@ do i=1,coilnumber
 
       ! make sure we actually have a coil
       if (numcoilpts.le.1) then
-
          cycle
       endif
       
@@ -95,11 +95,11 @@ do i=1,coilnumber
       xcoilshift=cshift(xcoil,1)
       ycoilshift=cshift(ycoil,1)
       zcoilshift=cshift(zcoil,1)
-      b = 0
- 
+     
             
       !loop over all points for each coil
       do j=1,numcoilpts-1
+!      do j=1,10
         bseg = 0 
        
         ! subtract point of interest r vector from coil points           
@@ -134,17 +134,29 @@ do i=1,coilnumber
         cxax=cy*az-cz*ay
         cxay=cz*ax-cx*az
         cxaz=cx*ay-cy*ax
+        
 
         ! pick up by aaron
-        magc = ((cx*cx) + (cy*cy) + (cz*cz))**1.5
-        bseg(1) = cxax
-        bseg(2) = cxay
-        bseg(3) = cxaz
-        bseg = bseg*mu0*current/4/pi/magc
+        !magc = ((cx*cx) + (cy*cy) + (cz*cz))**1.5
+       
+        !bseg(1) = cxax
+        !bseg(2) = cxay
+        !bseg(3) = cxaz
+        !bseg = bseg*mu0*current/(4*pi*magc)
+        !b = b + bseg
+        cross_sq = (cxax*cxax + cxay*cxay + cxaz*cxaz)
+        
+        adotc = ax*cx + ay*cy + az*cz
+        adotb = ax*bx + ay*by + az*bz
+        magc = sqrt(cx*cx + cy*cy + cz*cz)
+        magb = sqrt(bx*bx + by*by + bz*bz)
+        w = adotc/magc - adotb/magb
+        bseg(1) = cxax * w/cross_sq * current * mu0/4/pi
+        bseg(2) = cxay * w/cross_sq * current * mu0/4/pi
+        bseg(3) = cxaz * w/cross_sq * current * mu0/4/pi
 
-        do k=1,3
-           b(k) = b(k) + bseg(k)
-        enddo
+        b = b + bseg
+        
      enddo
 
      deallocate(xcoil)

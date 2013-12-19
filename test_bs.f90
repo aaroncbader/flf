@@ -4,16 +4,19 @@ program test_bs
   real, dimension(3) :: b
   integer :: i
 
-  call make_simple_coil()
 
-!  call read_coils()
+
+  call read_coils()
 
 ! set current
-!  do i = 1,main_count
-!     coil_set%main_current(i) = -150105./14
-!  enddo
+  do i = 1,main_count
+     coil_set%main_current(i) = -150105./14
+  enddo
 
-  call compute_bs((/1.0,0.,0./), 0, b)
+! This is for testing purposes!  It works, I think
+!  call make_simple_coil()
+
+  call compute_bs((/1.445,0.0,0./), 0, b)
   print *,b
 
 end program test_bs
@@ -30,13 +33,14 @@ subroutine make_simple_coil()
 
   mu0 = 1.25663706E-6
   pi = 3.14159
-  coil_points = 201
+  coil_points = 51
   radius = 0.5
-  center = 1
+  center = 1.0
 
   do i=0,coil_points-1
      theta = 2*pi*i/(coil_points-1)
-     coil_set%main(1,i+1,1) = center + radius*cos(theta)
+     coil_set%main(1,i+1,1) = 0.0
+     coil_set%main(1,i+1,2) = center + radius*cos(theta)
      coil_set%main(1,i+1,3) = radius*sin(theta)
 !     print *,theta, cos(theta), coil_set%main(1,i,1)
   enddo
