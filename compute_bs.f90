@@ -137,13 +137,18 @@ do i=1,coilnumber
         
 
         ! pick up by aaron
-        !magc = ((cx*cx) + (cy*cy) + (cz*cz))**1.5
+        ! This is a simple form where you compute dl cross R1 / R1^3
+        ! The other form should be slightly more accurate, but this is
+        ! faster.
+
+        ! magc = ((cx*cx) + (cy*cy) + (cz*cz))**1.5
        
-        !bseg(1) = cxax
-        !bseg(2) = cxay
-        !bseg(3) = cxaz
-        !bseg = bseg*mu0*current/(4*pi*magc)
-        !b = b + bseg
+        ! bseg(1) = cxax
+        ! bseg(2) = cxay
+        ! bseg(3) = cxaz
+        ! bseg = bseg*mu0*current/(4*pi*magc)
+        ! b = b + bseg
+
         cross_sq = (cxax*cxax + cxay*cxay + cxaz*cxaz)
         
         adotc = ax*cx + ay*cy + az*cz

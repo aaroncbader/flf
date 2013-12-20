@@ -126,8 +126,11 @@ end subroutine read_coil_files
 ! It would also require significantly more calculation
 subroutine move_coils(coils, coil_counts, coil_number, piece_count)
 
-  parameter(mult_factor = 8)
+  implicit none
 
+  integer, parameter :: mult_factor = 8
+
+  integer :: i,j,revj
   integer :: piece_count, coil_number, coil_index
   real :: coils(coil_number * mult_factor, piece_count, 3)
   integer :: coil_counts(coil_number * mult_factor)
@@ -139,13 +142,13 @@ subroutine move_coils(coils, coil_counts, coil_number, piece_count)
         coil_counts(coil_index) = coil_counts(i)
      enddo
 
-
      do j=1,coil_counts(i)!loop over the individual coils
+        revj = coil_counts(i) - j + 1
         !period A', swap x->y, y->x, z->-z
         coil_index = i+coil_number !indices 7-12
-        coils(coil_index,j,1) = coils(i,j,2)
-        coils(coil_index,j,2) = coils(i,j,1)
-        coils(coil_index,j,3) = -coils(i,j,3)
+        coils(coil_index,j,1) = coils(i,revj,2)
+        coils(coil_index,j,2) = coils(i,revj,1)
+        coils(coil_index,j,3) = -coils(i,revj,3)
 
         !period B,  x->y, y->-x, z->z
         coil_index = i+(coil_number*2) !indices 13-18
@@ -155,9 +158,9 @@ subroutine move_coils(coils, coil_counts, coil_number, piece_count)
 
         !period B', x->-x, y->y, z->-z
         coil_index = i+(coil_number*3) !indices 19-24
-        coils(coil_index,j,1) = -coils(i,j,1)
-        coils(coil_index,j,2) = coils(i,j,2)
-        coils(coil_index,j,3) = -coils(i,j,3)
+        coils(coil_index,j,1) = -coils(i,revj,1)
+        coils(coil_index,j,2) = coils(i,revj,2)
+        coils(coil_index,j,3) = -coils(i,revj,3)
 
         !period C, x->-x, y->-y, z->z
         coil_index = i+(coil_number*4) !indices 25-30
@@ -167,9 +170,9 @@ subroutine move_coils(coils, coil_counts, coil_number, piece_count)
 
         !period C', x->-y, y->-x, z->-z
         coil_index = i+(coil_number*5) !indices 31-36
-        coils(coil_index,j,1) = -coils(i,j,2)
-        coils(coil_index,j,2) = -coils(i,j,1)
-        coils(coil_index,j,3) = -coils(i,j,3)
+        coils(coil_index,j,1) = -coils(i,revj,2)
+        coils(coil_index,j,2) = -coils(i,revj,1)
+        coils(coil_index,j,3) = -coils(i,revj,3)
 
         !period D, x->-y, y->x, z->z
         coil_index = i+(coil_number*6) !indices 37-43
@@ -179,9 +182,9 @@ subroutine move_coils(coils, coil_counts, coil_number, piece_count)
 
         !period D, x->x, y->-y, z->-z
         coil_index = i+(coil_number*7) !indices 44-48
-        coils(coil_index,j,1) = coils(i,j,1)
-        coils(coil_index,j,2) = -coils(i,j,2)
-        coils(coil_index,j,3) = -coils(i,j,3)
+        coils(coil_index,j,1) = coils(i,revj,1)
+        coils(coil_index,j,2) = -coils(i,revj,2)
+        coils(coil_index,j,3) = -coils(i,revj,3)
 
      enddo
   enddo
