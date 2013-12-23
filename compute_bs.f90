@@ -1,3 +1,15 @@
+! convert rzphi to xyz
+subroutine pol2cart(pol, cart)
+
+  real,dimension(3) :: pol, cart
+
+  cart(1) = pol(1)*cos(pol(3))
+  cart(2) = pol(1)*sin(pol(3))
+  cart(3) = pol(2)
+
+end subroutine pol2cart
+  
+
 subroutine compute_bs(p, isaux, b)
       
       ! call this routine once for every point that is being followed
