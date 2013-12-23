@@ -1,6 +1,7 @@
 ! convert rzphi to xyz
 subroutine pol2cart(pol, cart)
 
+  implicit none
   real,dimension(3) :: pol, cart
 
   cart(1) = pol(1)*cos(pol(3))
@@ -8,6 +9,23 @@ subroutine pol2cart(pol, cart)
   cart(3) = pol(2)
 
 end subroutine pol2cart
+
+! compute full field
+subroutine compute_full_bs(p, b)
+
+  implicit none
+
+  real,dimension(3) :: p,b
+  
+  ! Initialize b field
+  b = 0
+
+  ! main fields
+  call compute_bs(p, 0, b)
+  ! aux fields
+  call compute_bs(p, 1, b)
+
+end subroutine compute_full_bs
   
 
 subroutine compute_bs(p, isaux, b)
