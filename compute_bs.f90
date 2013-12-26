@@ -17,15 +17,17 @@ subroutine compute_full_bs(p, b)
 
   implicit none
 
-  real,dimension(3) :: p,b
+  real,dimension(3) :: p,b,btemp
   
   ! Initialize b field
-  b = 0
+  b = b * 0
 
   ! main fields
-  call compute_bs(p, 0, b)
+  call compute_bs(p, 0, btemp)
+  b = b + btemp
   ! aux fields
-  call compute_bs(p, 1, b)
+  call compute_bs(p, 1, btemp)
+  b = b + btemp
 
 end subroutine compute_full_bs
   
@@ -243,6 +245,7 @@ subroutine field_deriv(neq, t, y, dydx)
   br = bxyz(1)*cos(t) + bxyz(2)*sin(t)
   bphi = -bxyz(1)*sin(t) + bxyz(2)*cos(t)
   ! compute dydx
+  !write (*,'(6(F10.7,2X))'),pxyz(:),bxyz(:)
   dydx(1) = y(1) * br/bphi
   dydx(2) = y(1) * bxyz(3)/bphi
   return

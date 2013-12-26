@@ -8,10 +8,11 @@ program test_follow_field
   p(2) = 0.
   p(3) = 0.
   dphi = 0.2
-
+  print *,'start point rzphi'
   print *,p(1:3)
 
   call follow_field(p,dphi)
+  print *,'end point rzphi'
   print *,p(1:3)
 end program test_follow_field
 
@@ -46,6 +47,10 @@ subroutine follow_field(p, dphi)
   ! put current in main coils
   do i = 1,main_count
      coil_set%main_current(i) = -150105./14
+  enddo
+
+  do i = 1,aux_count
+     coil_set%aux_current(i) = 0
   enddo
 
   y(1) = p(1)
