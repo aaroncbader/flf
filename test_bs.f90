@@ -16,7 +16,7 @@ program test_bs
 ! This is for testing purposes!  It works, I think
 !  call make_simple_coil()
 
-  call compute_bs((/1.445,0.0,0./), 0, b)
+  call compute_bs((/0.777817,0.777817,.3/), 0, b)
   print *,b
 
 end program test_bs

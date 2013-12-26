@@ -1,4 +1,4 @@
-! convert rzphi to xyz
+! convert rzphi points to xyz
 subroutine pol2cart(pol, cart)
 
   implicit none
@@ -9,6 +9,8 @@ subroutine pol2cart(pol, cart)
   cart(3) = pol(2)
 
 end subroutine pol2cart
+
+
 
 ! compute full field
 subroutine compute_full_bs(p, b)
@@ -209,3 +211,41 @@ end do
 
 
 end subroutine compute_bs
+
+! This is a function to be called from dlsode to compute the field derivatives
+! It takes values of r,z,phi, converts to x,y,z, calculates the field,
+! converts back to r,z,phi, and calculates the derivatives dr/dphi and dz/dphi
+
+! neq is the number of variables (in this case 2)
+! t is the independent variable (in our case, phi)
+! y is the dependent variables (r and z)
+! dydx are the derivatives (dr/dphi and dz/dphi)
+
+subroutine field_deriv(neq, t, y, dydx)
+  
+  implicit none
+
+  integer :: neq
+  real, dimension(neq) :: y, dydx
+  real, dimension(3) :: bxyz, pxyz, przphi
+  real :: br, bphi, t
+
+
+  przphi(1) = y(1)
+  przphi(2) = y(2)
+  przphi(3) = t
+
+  ! convert to cartesian
+  call pol2cart(przphi, pxyz)
+  ! compute field
+  call compute_full_bs(pxyz, bxyz)
+  ! compute br and bphi
+  br = bxyz(1)*cos(t) + bxyz(2)*sin(t)
+  bphi = -bxyz(1)*sin(t) + bxyz(2)*cos(t)
+  ! compute dydx
+  dydx(1) = y(1) * br/bphi
+  dydx(2) = y(1) * bxyz(3)/bphi
+  return
+end subroutine field_deriv
+  
+  
