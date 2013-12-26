@@ -50,7 +50,7 @@ subroutine follow_field(p, dphi)
   enddo
 
   do i = 1,aux_count
-     coil_set%aux_current(i) = 0
+     coil_set%aux_current(i) = -150105*0.1
   enddo
 
   y(1) = p(1)
