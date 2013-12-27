@@ -1,5 +1,6 @@
 !test program
-program test_follow_field
+!program test_follow_field
+subroutine test_follow_field
   implicit none
   real,dimension(3) :: p
   real :: dphi
@@ -14,7 +15,8 @@ program test_follow_field
   call follow_field(p,dphi)
   print *,'end point rzphi'
   print *,p(1:3)
-end program test_follow_field
+!end program test_follow_field
+end subroutine test_follow_field
 
 
 ! p is the point in rzphi
