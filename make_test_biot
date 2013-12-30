@@ -1,5 +1,0 @@
-
-gfortran -fdefault-real-8 -fdefault-double-8 -O2 -c coil_module.f90
-gfortran -fdefault-real-8 -fdefault-double-8 -O2 -c read_coils.f90
-gfortran -fdefault-real-8 -fdefault-double-8 -O2 -c compute_bs.f90
-gfortran -fdefault-real-8 -fdefault-double-8 -O2 test_bs.f90 coil_module.o read_coils.o compute_bs.o -o test_bs 

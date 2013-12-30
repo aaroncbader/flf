@@ -7,13 +7,44 @@ FF = follow_field.o
 CP = $(FC) $(OP) -c
 
 MO = 	coil_module.o	read_coils.o	compute_bs.o\
-	dlsode.o	inside_vessel.o
+	dlsode.o	inside_vessel.o\
+	points_module.o	get_points.o
 
-all: $(MO)
+WC =	 coil_module.o	read_coils.o
+
+TBS = 	coil_module.o 	read_coils.o 	compute_bs.o
+
+TV = 	inside_vessel.o
+
+TP = 	points_module.o	get_points.o
+
+PROGRAMS = follow_field write_coils test_vessel test_bs test_points
+
+#This is the default
+follow_field: $(MO)
 	$(FC) follow_field.f90 $(MO) -o follow_field
 
-#follow_field.o:	follow_field.f90
-#	$(CP)	follow_field.f90
+all_tests:
+	make test_write
+	make test_bs
+	make test_vessel
+	make test_points
+
+test_write: $(WC)
+	$(FC) write_coils.f90 $(WC) -o write_coils
+
+test_bs: $(TBS)
+	$(FC) test_bs.f90 $(TBS) -o test_bs
+
+test_vessel: $(TV)
+	$(FC) test_vessel.f90 $(TV) -o test_vessel
+
+test_points: $(TP)
+	$(FC) test_points.f90 $(TP) -o test_points
+
+
+
+
 coil_module.o:	coil_module.f90
 	$(CP)	coil_module.f90
 read_coils.o:	read_coils.f90
@@ -24,6 +55,11 @@ dlsode.o:	dlsode.f
 	$(CP)	dlsode.f
 inside_vessel.o:	inside_vessel.f90
 	$(CP)	inside_vessel.f90
+points_module.o:	points_module.f90
+	$(CP)	points_module.f90
+get_points.o:	get_points.f90
+	$(CP)	get_points.f90
 
 clean:
 	rm -f *.o
+	rm $(PROGRAMS)
