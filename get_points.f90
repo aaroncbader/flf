@@ -1,11 +1,11 @@
 ! read file and assign points
 
-subroutine get_points(filename)
+subroutine get_points()
   use points_module
   implicit none
   integer :: i
 
-  character, dimension(:) :: filename
+  !character, dimension(:) :: filename
   open (unit=3,file='points.in',action='read')
   read (3,*) points_number, points_dphi, n_iter
   

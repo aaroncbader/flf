@@ -8,7 +8,7 @@ CP = $(FC) $(OP) -c
 
 MO = 	coil_module.o	read_coils.o	compute_bs.o\
 	dlsode.o	inside_vessel.o\
-	points_module.o	get_points.o
+	points_module.o	get_points.o 	follow_field.o
 
 WC =	 coil_module.o	read_coils.o
 
@@ -18,11 +18,12 @@ TV = 	inside_vessel.o
 
 TP = 	points_module.o	get_points.o
 
-PROGRAMS = follow_field write_coils test_vessel test_bs test_points
+PROGRAMS = follow_to_wall write_coils test_vessel test_bs test_points
 
 #This is the default
-follow_field: $(MO)
-	$(FC) $(OP) follow_field.f90 $(MO) -o follow_field
+follow_to_wall: $(MO)
+	$(FC) $(OP) follow_to_wall.f90 $(MO) -o follow_to_wall
+
 
 all_tests:
 	make test_write
@@ -44,7 +45,8 @@ test_points: $(TP)
 
 
 
-
+follow_field.o:	follow_field.f90
+	$(CP)	follow_field.f90
 coil_module.o:	coil_module.f90
 	$(CP)	coil_module.f90
 read_coils.o:	read_coils.f90

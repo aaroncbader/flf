@@ -28,11 +28,10 @@ subroutine load_vessel(vessel_file, vessel, vessel_size)
   ! the first two value should give the number of toroidal and poloidal
   ! points respectively.
   read(filenum,*) dummy
-  print *,dummy
+  !print *,dummy
 
   do i=1,vessel_size(1)
      do j=1,vessel_size(2)
-!        print *,i,j
         read(filenum,*) vessel(i,j,1:3)
      enddo
   enddo
