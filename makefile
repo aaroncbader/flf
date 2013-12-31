@@ -22,7 +22,7 @@ PROGRAMS = follow_field write_coils test_vessel test_bs test_points
 
 #This is the default
 follow_field: $(MO)
-	$(FC) follow_field.f90 $(MO) -o follow_field
+	$(FC) $(OP) follow_field.f90 $(MO) -o follow_field
 
 all_tests:
 	make test_write
@@ -31,16 +31,16 @@ all_tests:
 	make test_points
 
 test_write: $(WC)
-	$(FC) write_coils.f90 $(WC) -o write_coils
+	$(FC) $(OP) write_coils.f90 $(WC) -o write_coils
 
 test_bs: $(TBS)
-	$(FC) test_bs.f90 $(TBS) -o test_bs
+	$(FC) $(OP) test_bs.f90 $(TBS) -o test_bs
 
 test_vessel: $(TV)
-	$(FC) test_vessel.f90 $(TV) -o test_vessel
+	$(FC) $(OP) test_vessel.f90 $(TV) -o test_vessel
 
 test_points: $(TP)
-	$(FC) test_points.f90 $(TP) -o test_points
+	$(FC) $(OP) test_points.f90 $(TP) -o test_points
 
 
 
