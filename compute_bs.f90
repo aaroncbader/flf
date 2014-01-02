@@ -20,7 +20,7 @@ subroutine compute_full_bs(p, b)
   real,dimension(3) :: p,b,btemp
   
   ! Initialize b field
-  b = b * 0
+  b =  0
 
   ! main fields
   call compute_bs(p, 0, btemp)
@@ -231,7 +231,6 @@ subroutine field_deriv(neq, t, y, dydx)
   real, dimension(neq) :: y, dydx
   real, dimension(3) :: bxyz, pxyz, przphi
   real :: br, bphi, t
-
 
   przphi(1) = y(1)
   przphi(2) = y(2)

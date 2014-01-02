@@ -1,6 +1,6 @@
 FC = gfortran
 
-OP = -fdefault-real-8 -fdefault-double-8 -O2 -fbacktrace
+OP = -fdefault-real-8 -fdefault-double-8 -fbacktrace -fbounds-check  -O2
 
 FF = follow_field.o
 
