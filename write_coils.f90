@@ -28,5 +28,7 @@ program write_coils
      enddo
   enddo
 
+  call deallocate_coils()
+
 end program write_coils
   

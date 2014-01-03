@@ -82,6 +82,7 @@ program follow_to_wall
   enddo
 
   call dealloc_points()
+  call deallocate_coils()
 
 
 end program follow_to_wall

@@ -20,6 +20,8 @@ program test_bs
   call compute_bs((/0.777817,0.777817,.3/), 0, b)
   print *,b
 
+  call deallocate_coils()
+
 end program test_bs
 
 
