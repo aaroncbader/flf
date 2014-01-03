@@ -1,9 +1,112 @@
+subroutine allocate_main(num_coils, skip_value)
+
+  use coil_module
+  implicit none
+  integer, parameter :: mult_factor=8
+
+  integer :: i
+  integer :: num_coils, filenum, temp_size, skip_value
+  character*15 :: filename, format_string
+
+  ! set values for the coil module
+  main_count = num_coils * mult_factor
+  skip = skip_value
+  main_size = 0
+
+  ! This block is used twice, we can probably extract it out
+  ! generalize the coil loading for multiple coils
+  do i=1,num_coils
+     filenum = 30 + i
+
+     ! if more than 10 coils we need two characters for the string
+     if (i < 10) then
+        format_string = '(A1,I1,A4)'
+     else
+        format_string = '(A1,I2,A4)'
+     endif
+     write (filename, format_string),'c',i,'.dat'
+     open(filenum, file=filename, status='old', form='formatted')
+
+     read(filenum,*) temp_size
+     !set the temp_size if necessary
+     if (temp_size / skip > main_size) then
+        main_size = temp_size / skip
+     endif
+
+     close(filenum)
+
+  enddo
+
+  !Add an extra null points to be safe 
+  !(we have the total value saved elsewhere anyway)
+  main_size = main_size + 1
+
+  !Allocate the array to be the size of the largest one
+  allocate(coil_main(main_count, main_size, 3))
+  allocate(main_current(main_count))
+  allocate(main_points(main_count))
+
+end subroutine allocate_main
+
+subroutine allocate_aux(filename)
+  use coil_module
+  implicit none
+
+  integer, parameter :: mult_factor=8
+  integer :: i,j,k
+
+  integer :: num_coils, temp_size, dummy, filenum
+  real :: x,y,z !dummy variables
+  character(*) :: filename
+
+  filenum = 41
+
+  open(filenum, file=filename, status='old', form='formatted')
+  read(filenum,*) num_coils
+  
+  aux_count = num_coils * mult_factor
+  aux_size = 0
+  do i=1,num_coils
+     read(filenum,*) temp_size
+     do j=1,temp_size
+        read(filenum,*) x,y,z
+     enddo
+     ! save the largest value in aux_size
+     if (temp_size > aux_size) then
+        aux_size = temp_size
+     end if
+  end do
+
+  ! Give a point of slop (for wraparound if desired)
+  aux_size = aux_size+1
+
+  ! do the allocations
+  allocate(coil_aux(aux_count, aux_size, 3))
+  allocate(aux_current(aux_count))
+  allocate(aux_points(aux_count))
+
+  close(filenum)
+end subroutine allocate_aux
+
+subroutine deallocate_coils()
+  use coil_module
+  deallocate(coil_main)
+  deallocate(coil_aux)
+  deallocate(main_current)
+  deallocate(aux_current)
+  deallocate(main_points)
+  deallocate(aux_points)
+end subroutine deallocate_coils
+  
+  
+
+
 subroutine read_coils()
   
   use coil_module
   implicit none
 
-  integer :: skip,i
+  integer :: i
   real :: current
   real, dimension(taper_size) :: taper
 
@@ -13,18 +116,15 @@ subroutine read_coils()
   enddo
 
   current = -150108.
-  skip = 14
 
-  call read_coil_files(taper, current, skip)
+  call read_coil_files(taper, current)
 
-!  do i=1,48
-!     print *,coil_set%aux_current(i)
-!  enddo
+
 
 end subroutine read_coils
 
 
-subroutine read_coil_files(taper, current, skip)
+subroutine read_coil_files(taper, current)
 
 
   use coil_module
@@ -33,14 +133,17 @@ subroutine read_coil_files(taper, current, skip)
   integer, parameter :: mult_factor=8
 
   integer :: i,j,k
-  integer :: skip, piece, filenum, total_points
+  integer :: piece, filenum, total_points
   integer :: nmain, naux !number of main and aux coils
   real :: taper(*), current,x,y,z
   character*15 :: filename, format_string
 
+  nmain = main_count/mult_factor
+  naux = aux_count/mult_factor
+
 
   ! generalize the coil loading for multiple coils
-  do i=1,6
+  do i=1,nmain
      filenum = 30 + i
 
      ! if more than 10 coils we need two characters for the string
@@ -53,8 +156,7 @@ subroutine read_coil_files(taper, current, skip)
      open(filenum, file=filename, status='old', form='formatted')
   enddo
 
-  nmain = 6
-  naux = 6
+  
 
   ! iterate over coil files
   do i=1,nmain
@@ -74,9 +176,9 @@ subroutine read_coil_files(taper, current, skip)
         piece = piece + 1
 
         read(filenum,*) x,y,z
-        coil_set%main(i,piece,1) = x
-        coil_set%main(i,piece,2) = y
-        coil_set%main(i,piece,3) = z
+        coil_main(i,piece,1) = x
+        coil_main(i,piece,2) = y
+        coil_main(i,piece,3) = z
 
         ! Get out if we we're at the end
         if (j + skip .gt. total_points) then 
@@ -90,38 +192,39 @@ subroutine read_coil_files(taper, current, skip)
         enddo !end of dumping loop
      enddo ! end of individual file loop
      ! Load number of segments
-     coil_set%main_points(i) = piece
+     main_points(i) = piece
 
      close(filenum)
   enddo !end of all files
 
   ! All aux coils are in one file, no need to skip
-  open(37,file='aux_c.dat',status='old',form='formatted')
+  open(67,file='aux_c.dat',status='old',form='formatted')
+  read(67,*) naux
   do i=1,naux
-     read(37,*) coil_set%aux_points(i)
-     do j=1,coil_set%aux_points(i)
-        read(37,*) x,y,z
-        coil_set%aux(i,j,1) = x
-        coil_set%aux(i,j,2) = y
-        coil_set%aux(i,j,3) = z
+     read(67,*) aux_points(i)
+     do j=1,aux_points(i)
+        read(67,*) x,y,z
+        coil_aux(i,j,1) = x
+        coil_aux(i,j,2) = y
+        coil_aux(i,j,3) = z
      enddo
   enddo
-  close(37)
+  close(67)
 
-  call move_coils(coil_set%main, coil_set%main_points, &
+  call move_coils(coil_main, main_points, &
        nmain, main_size)
-  call move_coils(coil_set%aux, coil_set%aux_points, naux, &
+  call move_coils(coil_aux, aux_points, naux, &
        aux_size)
   !Input the currents into the main coils
   do i=1,nmain * mult_factor
      ! i'm not sure why /14, but it's in konstantin's version
-     coil_set%main_current = current/14 
+     main_current = current/14 
   enddo
 
   !Currents for auxiliary coils
   do i=1,nmain
      do j=0,mult_factor-1
-        coil_set%aux_current(i + (j*nmain)) = current*taper(i)
+        aux_current(i + (j*nmain)) = current*taper(i)
      enddo
   enddo
 

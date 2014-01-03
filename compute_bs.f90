@@ -85,11 +85,11 @@ do i=1,coilnumber
 
       
       if (isaux == 1) then
-         numcoilpts = coil_set%aux_points(i)
-         current = coil_set%aux_current(i)
+         numcoilpts = aux_points(i)
+         current = aux_current(i)
       else
-         numcoilpts = coil_set%main_points(i)
-         current = coil_set%main_current(i)
+         numcoilpts = main_points(i)
+         current = main_current(i)
       endif
 
       ! make sure we actually have a coil
@@ -114,13 +114,13 @@ do i=1,coilnumber
 
       ! assign values to x, y, z arrays from the coil_module
       if (isaux == 1) then
-        xcoil=coil_set%aux(i,1:numcoilpts,1)
-        ycoil=coil_set%aux(i,1:numcoilpts,2)
-        zcoil=coil_set%aux(i,1:numcoilpts,3)
+        xcoil=coil_aux(i,1:numcoilpts,1)
+        ycoil=coil_aux(i,1:numcoilpts,2)
+        zcoil=coil_aux(i,1:numcoilpts,3)
       else
-        xcoil=coil_set%main(i,1:numcoilpts,1)
-        ycoil=coil_set%main(i,1:numcoilpts,2)
-        zcoil=coil_set%main(i,1:numcoilpts,3)
+        xcoil=coil_main(i,1:numcoilpts,1)
+        ycoil=coil_main(i,1:numcoilpts,2)
+        zcoil=coil_main(i,1:numcoilpts,3)
       endif
 
       ! circularly shift coil point before the loop

@@ -13,15 +13,17 @@ program follow_to_wall
   real :: dphi
 
   ! first load the coils
+  call allocate_main(6,14)
+  call allocate_aux('aux_c.dat')
   call read_coils()
 
   ! put current in main coils
   do i = 1,main_count
-     coil_set%main_current(i) = -150105./14
+     main_current(i) = -150105./14
   enddo
 
   do i = 1,aux_count
-     coil_set%aux_current(i) = -150105*0.00000
+     aux_current(i) = -150105*0.00000
   enddo
 
   ! load the vessel
