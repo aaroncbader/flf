@@ -36,13 +36,22 @@ subroutine read_coil_files(taper, current, skip)
   integer :: skip, piece, filenum, total_points
   integer :: nmain, naux !number of main and aux coils
   real :: taper(*), current,x,y,z
+  character*15 :: filename, format_string
 
-  open(31,file='c1.dat',status='old',form='formatted')
-  open(32,file='c2.dat',status='old',form='formatted')
-  open(33,file='c3.dat',status='old',form='formatted')
-  open(34,file='c4.dat',status='old',form='formatted')
-  open(35,file='c5.dat',status='old',form='formatted')
-  open(36,file='c6.dat',status='old',form='formatted')
+
+  ! generalize the coil loading for multiple coils
+  do i=1,6
+     filenum = 30 + i
+
+     ! if more than 10 coils we need two characters for the string
+     if (i < 10) then
+        format_string = '(A1,I1,A4)'
+     else
+        format_string = '(A1,I2,A4)'
+     endif
+     write (filename, format_string),'c',i,'.dat'
+     open(filenum, file=filename, status='old', form='formatted')
+  enddo
 
   nmain = 6
   naux = 6
