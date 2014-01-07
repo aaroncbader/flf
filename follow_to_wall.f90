@@ -4,11 +4,10 @@ program follow_to_wall
   
   use coil_module
   use points_module
+  use vessel_module
 
-  real,allocatable,dimension(:,:,:) :: vessel
-  integer,dimension(2) :: vessel_size
+
   real,dimension(3) :: p
-  character*144 :: vessel_file
   integer :: i,j,isin, inside_vessel
   real :: dphi
 
@@ -28,9 +27,8 @@ program follow_to_wall
 
   ! load the vessel
   vessel_file = 'vessel.txt'
-  call get_vessel_dimensions(vessel_file, vessel_size)
-  allocate(vessel(vessel_size(1), vessel_size(2), 3))
-  call load_vessel(vessel_file, vessel, vessel_size)
+  call allocate_vessel()
+  call load_vessel()
 
   ! get the points
   call get_points()
@@ -65,6 +63,8 @@ program follow_to_wall
         ! to fail.  I need to track this down, but it's
         ! hard to debug without a print statement!
         print *,points_move(j,:)
+        ! set the current point
+        current_point = j
         call follow_field(points_move(j,:), points_dphi)
         
      
