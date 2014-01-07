@@ -6,9 +6,10 @@ FF = follow_field.o
 
 CP = $(FC) $(OP) -c
 
-MO = 	coil_module.o	read_coils.o	compute_bs.o\
+MO = 	coil_module.o	read_coils.o	points_module.o	get_points.o\
+	compute_bs.o\
 	dlsode.o	vessel_module.o inside_vessel.o\
-	points_module.o	get_points.o 	follow_field.o
+	follow_field.o
 
 WC =	 coil_module.o	read_coils.o
 

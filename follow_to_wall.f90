@@ -51,18 +51,18 @@ program follow_to_wall
       
         ! check if the last move left us inside the vessel
         p = points_move(j,:)
-        isin = inside_vessel(p(1),p(2),p(3),vessel,vessel_size)
-        if (isin == 0) then
+        !isin = inside_vessel(p(1),p(2),p(3),vessel,vessel_size)
+        !if (isin == 0) then
            ! Set point to hit
-           points_hit(j) = 1
-           cycle        
-        endif
+        !   points_hit(j) = 1
+        !   cycle        
+        !endif
         
         ! for some reason i can't understand removing this
         ! print statement causes the field line follower
         ! to fail.  I need to track this down, but it's
         ! hard to debug without a print statement!
-        print *,points_move(j,:)
+        ! print *,points_move(j,:)
         ! set the current point
         current_point = j
         call follow_field(points_move(j,:), points_dphi)
@@ -76,7 +76,7 @@ program follow_to_wall
   do j=1,points_number
      write (1,*) 'point number',j
      write (1,'(A,3(F9.6,2X))') 'start: ',points_start(j,:)
-     write (1,'(A,3(F9.6,2X))') 'end:   ',points_move(j,:)
+     write (1,'(A,3(F9.6,2X))') 'end:   ',points_end(j,:)
      write (1,*) 'hit wall:',points_hit(j)
      write (1,*) '------------------'
   enddo

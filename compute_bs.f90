@@ -225,9 +225,10 @@ end subroutine compute_bs
 
 subroutine field_deriv(neq, t, y, dydx)
   
+  use points_module
   implicit none
 
-  integer :: neq
+  integer :: neq, inside_vessel
   real, dimension(neq) :: y, dydx
   real, dimension(3) :: bxyz, pxyz, przphi
   real :: br, bphi, t
@@ -235,6 +236,28 @@ subroutine field_deriv(neq, t, y, dydx)
   przphi(1) = y(1)
   przphi(2) = y(2)
   przphi(3) = t
+
+  !print *,current_point,y,t
+
+  ! we already hit, so no point in calculating (this is a sanity check)
+  if (points_hit(current_point).eq.1) then
+     dydx = 0
+     return
+  end if
+
+  ! check if we've hit the wall
+  if (inside_vessel(y(1), y(2), t) == 0) then
+     points_hit(current_point) = 1
+     points_end(current_point,1:2) = y
+     points_end(current_point,3) = t
+     print *,'-------------------------------'
+     print *,'current point:',current_point
+     print *,points_end(current_point,:)
+     print *,'-------------------------------'
+     dydx = 0
+     return
+  end if
+     
 
   ! convert to cartesian
   call pol2cart(przphi, pxyz)
