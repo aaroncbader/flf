@@ -1,24 +1,29 @@
+<<<<<<< HEAD
 subroutine get_vessel_dimensions(vessel_file, vessel_size)
 ! hello world
+=======
+subroutine allocate_vessel()
+
+  use vessel_module
+>>>>>>> 4c034bc377e794e2333430c2f2592354198d80ea
   implicit none
-  character*144 :: vessel_file
-  integer,dimension(2) :: vessel_size
   integer :: filenum = 21
 
   open(filenum, file=vessel_file, status='old', form = 'formatted')
   read(filenum,*) vessel_size(1:2)
+
+  allocate(vessel(vessel_size(1),vessel_size(2),3))
   close(filenum)
 
-end subroutine get_vessel_dimensions
+end subroutine allocate_vessel
 
-subroutine load_vessel(vessel_file, vessel, vessel_size)
+subroutine load_vessel()
+
+  use vessel_module
   implicit none
 
-  integer, dimension(2) :: vessel_size
-  character*144 :: vessel_file
   character*72 :: dummy
-  integer :: vessel_tor, vessel_pol, i,j
-  real,dimension(vessel_size(1),vessel_size(2),3) :: vessel
+  integer :: i,j
   real :: x,y,z
   integer :: filenum = 21
 
@@ -41,13 +46,12 @@ end subroutine load_vessel
 
 
 ! note, point is in r,z,phi
-integer function inside_vessel(rin, zin, phiin, vessel, vessel_size)
+integer function inside_vessel(rin, zin, phiin)
 
+  use vessel_module
   implicit none
   
-  integer, dimension(2) :: vessel_size
   integer :: tor_size, pol_size, phi8th, index, i
-  real, dimension(vessel_size(1), vessel_size(2), 3) :: vessel
   real, dimension(vessel_size(1)) :: phi_vessel
   real, dimension(vessel_size(2), 3) :: cut
   real, dimension(vessel_size(2)) :: rvessel, zvessel, raver, zaver
