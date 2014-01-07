@@ -5,19 +5,22 @@ program test_bs
   integer :: i
 
 
-
+  call allocate_main(6,14)
+  call allocate_aux('aux_c.dat')
   call read_coils()
 
 ! set current
   do i = 1,main_count
-     coil_set%main_current(i) = -150105./14
+     main_current(i) = -150105./14
   enddo
 
 ! This is for testing purposes!  It works, I think
 !  call make_simple_coil()
 
-  call compute_bs((/1.445,0.0,0./), 0, b)
+  call compute_bs((/0.777817,0.777817,.3/), 0, b)
   print *,b
+
+  call deallocate_coils()
 
 end program test_bs
 
@@ -39,19 +42,19 @@ subroutine make_simple_coil()
 
   do i=0,coil_points-1
      theta = 2*pi*i/(coil_points-1)
-     coil_set%main(1,i+1,1) = 0.0
-     coil_set%main(1,i+1,2) = center + radius*cos(theta)
-     coil_set%main(1,i+1,3) = radius*sin(theta)
-!     print *,theta, cos(theta), coil_set%main(1,i,1)
+     coil_main(1,i+1,1) = 0.0
+     coil_main(1,i+1,2) = center + radius*cos(theta)
+     coil_main(1,i+1,3) = radius*sin(theta)
+!     print *,theta, cos(theta), main(1,i,1)
   enddo
 
-  coil_set%main_points(1) = coil_points
-  coil_set%main_current(1) = 1.0/mu0
+  main_points(1) = coil_points
+  main_current(1) = 1.0/mu0
 
 
   do i=2,main_count
-     coil_set%main_points(i) = 0
-     coil_set%main_current(i) = 0.0
+     main_points(i) = 0
+     main_current(i) = 0.0
 
   enddo
 

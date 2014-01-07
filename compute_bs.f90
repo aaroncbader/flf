@@ -1,3 +1,37 @@
+! convert rzphi points to xyz
+subroutine pol2cart(pol, cart)
+
+  implicit none
+  real,dimension(3) :: pol, cart
+
+  cart(1) = pol(1)*cos(pol(3))
+  cart(2) = pol(1)*sin(pol(3))
+  cart(3) = pol(2)
+
+end subroutine pol2cart
+
+
+
+! compute full field
+subroutine compute_full_bs(p, b)
+
+  implicit none
+
+  real,dimension(3) :: p,b,btemp
+  
+  ! Initialize b field
+  b =  0
+
+  ! main fields
+  call compute_bs(p, 0, btemp)
+  b = b + btemp
+  ! aux fields
+  call compute_bs(p, 1, btemp)
+  b = b + btemp
+
+end subroutine compute_full_bs
+  
+
 subroutine compute_bs(p, isaux, b)
       
       ! call this routine once for every point that is being followed
@@ -51,11 +85,11 @@ do i=1,coilnumber
 
       
       if (isaux == 1) then
-         numcoilpts = coil_set%aux_points(i)
-         current = coil_set%aux_current(i)
+         numcoilpts = aux_points(i)
+         current = aux_current(i)
       else
-         numcoilpts = coil_set%main_points(i)
-         current = coil_set%main_current(i)
+         numcoilpts = main_points(i)
+         current = main_current(i)
       endif
 
       ! make sure we actually have a coil
@@ -80,13 +114,13 @@ do i=1,coilnumber
 
       ! assign values to x, y, z arrays from the coil_module
       if (isaux == 1) then
-        xcoil=coil_set%aux(i,1:numcoilpts,1)
-        ycoil=coil_set%aux(i,1:numcoilpts,2)
-        zcoil=coil_set%aux(i,1:numcoilpts,3)
+        xcoil=coil_aux(i,1:numcoilpts,1)
+        ycoil=coil_aux(i,1:numcoilpts,2)
+        zcoil=coil_aux(i,1:numcoilpts,3)
       else
-        xcoil=coil_set%main(i,1:numcoilpts,1)
-        ycoil=coil_set%main(i,1:numcoilpts,2)
-        zcoil=coil_set%main(i,1:numcoilpts,3)
+        xcoil=coil_main(i,1:numcoilpts,1)
+        ycoil=coil_main(i,1:numcoilpts,2)
+        zcoil=coil_main(i,1:numcoilpts,3)
       endif
 
       ! circularly shift coil point before the loop
@@ -179,3 +213,41 @@ end do
 
 
 end subroutine compute_bs
+
+! This is a function to be called from dlsode to compute the field derivatives
+! It takes values of r,z,phi, converts to x,y,z, calculates the field,
+! converts back to r,z,phi, and calculates the derivatives dr/dphi and dz/dphi
+
+! neq is the number of variables (in this case 2)
+! t is the independent variable (in our case, phi)
+! y is the dependent variables (r and z)
+! dydx are the derivatives (dr/dphi and dz/dphi)
+
+subroutine field_deriv(neq, t, y, dydx)
+  
+  implicit none
+
+  integer :: neq
+  real, dimension(neq) :: y, dydx
+  real, dimension(3) :: bxyz, pxyz, przphi
+  real :: br, bphi, t
+
+  przphi(1) = y(1)
+  przphi(2) = y(2)
+  przphi(3) = t
+
+  ! convert to cartesian
+  call pol2cart(przphi, pxyz)
+  ! compute field
+  call compute_full_bs(pxyz, bxyz)
+  ! compute br and bphi
+  br = bxyz(1)*cos(t) + bxyz(2)*sin(t)
+  bphi = -bxyz(1)*sin(t) + bxyz(2)*cos(t)
+  ! compute dydx
+  !write (*,'(6(F10.7,2X))'),pxyz(:),bxyz(:)
+  dydx(1) = y(1) * br/bphi
+  dydx(2) = y(1) * bxyz(3)/bphi
+  return
+end subroutine field_deriv
+  
+  

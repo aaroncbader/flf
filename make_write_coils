@@ -1,3 +1,0 @@
-gfortran -c coil_module.f90
-gfortran -c read_coils.f90
-gfortran write_coils.f90 coil_module.o read_coils.o -o write_coils 
