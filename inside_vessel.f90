@@ -51,14 +51,12 @@ integer function inside_vessel(rin, zin, phiin)
   use vessel_module
   implicit none
   
-  integer :: tor_size, pol_size, phi8th, index, i
+  integer :: tor_size, pol_size, phi8th, index, i, in_polygon
   real, dimension(vessel_size(1)) :: phi_vessel
   real, dimension(vessel_size(2), 3) :: cut
-  real, dimension(vessel_size(2)) :: rvessel, zvessel, raver, zaver
-  real, dimension(vessel_size(2)) :: top1, top2, bottom
+  real, dimension(vessel_size(2)) :: rvessel, zvessel
   real :: rin, zin, phiin, phi_step_size
-  real :: ratio, summation
-  real :: pi, r, z, phi
+  real :: ratio, pi, r, z, phi
 
   pi = 3.141592
   tor_size = vessel_size(1)
@@ -108,23 +106,49 @@ integer function inside_vessel(rin, zin, phiin)
   rvessel = sqrt(cut(:,1)**2 + cut(:,2)**2)
   zvessel = cut(:,3)
 
-  ! This is where I stop being able to follow stuff
-  raver = 0.5*(rvessel + cshift(rvessel,1)) - r
-  zaver = 0.5*(zvessel + cshift(zvessel,1)) - z
+  inside_vessel = in_polygon(r, z, rvessel, zvessel, vessel_size(2))
 
-  top1 = raver * (cshift(zvessel,1) - zvessel)
-  top2 = zaver * (cshift(rvessel,1) - rvessel)
+  return
 
-  bottom = raver**2 + zaver**2
+end function inside_vessel
+
+
+! Calculates Cauchy integral and determines whether a 
+! point is inside the polygon or outside.  If inside
+! it returns 1, if outside, 0.
+
+! Xpoint and Ypoint are the X and Y coordinates of the point.
+! Xpoly and Ypoly are two arrays with the X and Y coordinates
+! for the polygons. 
+! poly_size is the number of points in the polygon
+
+integer function in_polygon(Xpoint, Ypoint, Xpoly, Ypoly, poly_size)
+
+  implicit none
+  
+  integer :: poly_size
+  real :: Xpoint, Ypoint
+  real,dimension(poly_size) :: Xpoly, Ypoly, xaver, yaver, top1, top2, bottom
+  real :: summation
+
+
+  xaver = 0.5*(Xpoly + cshift(Xpoly,1)) - Xpoint
+  yaver = 0.5*(Ypoly + cshift(Ypoly,1)) - Ypoint
+
+  top1 = xaver * (cshift(Ypoly,1) - Ypoly)
+  top2 = yaver * (cshift(Xpoly,1) - Xpoly)
+
+  bottom = xaver**2 + yaver**2
   
   summation = sum((top1 - top2)/bottom)
 
   !print *,summation
   if ((summation > 5.7).and.(summation < 6.8)) then
-     inside_vessel = 1
+     in_polygon = 1
   else
-     inside_vessel = 0
+     in_polygon = 0
   endif
+
   return
 
-end function inside_vessel
+end function in_polygon
