@@ -11,13 +11,17 @@ MO = 	coil_module.o	read_coils.o	points_module.o	get_points.o\
 	dlsode.o	vessel_module.o inside_vessel.o\
 	follow_field.o
 
-WC =	 coil_module.o	read_coils.o
+WC =	coil_module.o	read_coils.o
 
-TBS = 	coil_module.o 	read_coils.o 	compute_bs.o
+TBS = 	points_module.o vessel_module.o inside_vessel.o coil_module.o\
+	read_coils.o\
+	compute_bs.o
 
 TV = 	vessel_module.o inside_vessel.o
 
 TP = 	points_module.o	get_points.o
+
+TD =    div_module.o inside_div.o
 
 PROGRAMS = follow_to_wall write_coils test_vessel test_bs test_points
 
@@ -31,6 +35,7 @@ all_tests:
 	make test_bs
 	make test_vessel
 	make test_points
+	make test_divread
 
 test_write: $(WC)
 	$(FC) $(OP) write_coils.f90 $(WC) -o write_coils
@@ -44,8 +49,16 @@ test_vessel: $(TV)
 test_points: $(TP)
 	$(FC) $(OP) test_points.f90 $(TP) -o test_points
 
+test_divread: $(TD)
+	$(FC) $(OP) test_divread.f90 $(TD) -o test_divread
 
 
+div_module.o:	div_module.f90
+	$(CP)	div_module.f90
+inside_div.o: 	inside_div.f90
+	$(CP)   inside_div.f90
+points_module.o:	points_module.f90
+	$(CP)	points_module.f90
 follow_field.o:	follow_field.f90
 	$(CP)	follow_field.f90
 coil_module.o:	coil_module.f90
@@ -60,8 +73,6 @@ vessel_module.o:	vessel_module.f90
 	$(CP)	vessel_module.f90
 inside_vessel.o:	inside_vessel.f90
 	$(CP)	inside_vessel.f90
-points_module.o:	points_module.f90
-	$(CP)	points_module.f90
 get_points.o:	get_points.f90
 	$(CP)	get_points.f90
 

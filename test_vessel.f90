@@ -11,9 +11,8 @@ program test_vessel
  
   !Block of code to get the vessel information
   vessel_file = 'vessel.txt'
-  call get_vessel_dimensions(vessel_file, vessel_size)
-  allocate(vessel(vessel_size(1), vessel_size(2), 3))
-  call load_vessel(vessel_file, vessel, vessel_size)
+  call allocate_vessel()
+  call load_vessel()
 
   !open(40,file='vessel.out',status='unknown')
   !write(40,*) vessel_size(1:2)
