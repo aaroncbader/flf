@@ -46,35 +46,18 @@ integer function inside_vessel(rin, zin, phiin)
   use vessel_module
   implicit none
   
-  integer :: tor_size, pol_size, phi8th, index, i, in_polygon
+  integer :: tor_size, pol_size, index, i, in_polygon
   real, dimension(vessel_size(1)) :: phi_vessel
   real, dimension(vessel_size(2), 3) :: cut
   real, dimension(vessel_size(2)) :: rvessel, zvessel
   real :: rin, zin, phiin, phi_step_size
   real :: ratio, pi, r, z, phi
 
-  pi = 3.141592
+  pi = 3.1415927
   tor_size = vessel_size(1)
   pol_size = vessel_size(2)
 
-  r = rin
-  z = zin
-  phi = phiin
-
-  ! Make phi between 0 and 2 pi
-  phi = mod(phi, 2. * pi)
-  ! Note which octant we're in
-  phi8th = int(phi/(pi/4.))
-  ! Move to correct octant
-  phi = mod(phi, pi / 4.)
-
-  ! Invoke stell symmetry
-  if (mod(phi8th, 2).ne.0) then
-     phi = pi/4 - phi
-     z = -1.0 * z
-  endif
-
-
+  call move_to_first_quad(rin, zin, phiin, r, z, phi)
 
   ! This is the step size in the toroidal direction
   phi_step_size = pi/(tor_size - 1)/4

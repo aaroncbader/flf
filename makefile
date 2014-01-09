@@ -6,22 +6,23 @@ FF = follow_field.o
 
 CP = $(FC) $(OP) -c
 
-MO = 	coil_module.o	read_coils.o	points_module.o	get_points.o\
-	compute_bs.o\
+MO = 	utility.o 	coil_module.o	read_coils.o	points_module.o\
+	get_points.o 	compute_bs.o\
 	dlsode.o	vessel_module.o inside_vessel.o\
 	follow_field.o
 
 WC =	coil_module.o	read_coils.o
 
-TBS = 	points_module.o vessel_module.o inside_vessel.o coil_module.o\
+TBS = 	utility.o 	points_module.o vessel_module.o\
+	inside_vessel.o coil_module.o\
 	read_coils.o\
 	compute_bs.o
 
-TV = 	vessel_module.o inside_vessel.o
+TV = 	utility.o 	vessel_module.o inside_vessel.o
 
 TP = 	points_module.o	get_points.o
 
-TD =    div_module.o inside_div.o
+TD =    utility.o 	div_module.o inside_div.o
 
 PROGRAMS = follow_to_wall write_coils test_vessel test_bs test_points
 
@@ -53,6 +54,8 @@ test_divread: $(TD)
 	$(FC) $(OP) test_divread.f90 $(TD) -o test_divread
 
 
+utility.o:	utility.f90
+	$(CP)	utility.f90
 div_module.o:	div_module.f90
 	$(CP)	div_module.f90
 inside_div.o: 	inside_div.f90
