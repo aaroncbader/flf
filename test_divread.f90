@@ -5,7 +5,7 @@ program test_divread
 
   implicit none
   
-  integer :: num_files, i,j,k
+  integer :: num_files, i,j,k, inside_div, dummy
   character*144, dimension(:), allocatable :: filenames
   character*144 :: axis_file
 
@@ -25,9 +25,9 @@ program test_divread
 
   i = 1
   do j = 1,div_tor_num(i)
-     print *, div_tor_vals(i,j)
+     !print *, div_tor_vals(i,j)
      do k = 1,div_seg_num(i)
-        print *, divertor(i,j,k,:)
+        !print *, divertor(i,j,k,:)
      end do
   end do
 
@@ -36,8 +36,10 @@ program test_divread
   call load_axis(axis_file)
 
   do i=1,axis_points
-     print *,mag_axis(i,:)
+     !print *,mag_axis(i,:)
   end do
+
+  dummy = inside_div(1., 1., 0.0085)
   
 
   call deallocate_div_and_axis()

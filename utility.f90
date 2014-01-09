@@ -30,47 +30,73 @@ subroutine move_to_first_quad(r,z,phi,newr,newz,newphi)
 
 end subroutine move_to_first_quad
 
-! Given a function f(x) = y, find the value f(x0) by interpolation
-! x must be in increasing order, but need not be evenly spaced
 
-! numpoints is the size of the array
-real function linear_interpolate(x0, y, x, numpoints) 
+! Get the index for interpolation.  If x0 is below all values of x, then
+! the index is the first one.  If it's above, then it's the second from last.
+! Otherwise the value is the largest value of x such that x0 > x
 
-  implicit none
-  integer :: i,numpoints
-  real, dimension(numpoints) :: y, x
-  real :: x1, x2, y1, y2, x0
+integer function interp_index(x0, x, numpoints)
 
-  ! Handle out of bounds on the low end  
+  integer :: numpoints, i
+  real :: x0
+  real, dimension(numpoints) :: x
+
   if (x0 .le. x(1)) then
-     x1 = x(1)
-     x2 = x(2)
-     y1 = y(1)
-     y2 = y(2)
-     print *,'test1'
+     interp_index = 1
+     return
   else if (x0 .ge. x(numpoints)) then
-     x1 = x(numpoints - 1)
-     x2 = x(numpoints)
-     y1 = y(numpoints -1)
-     y2 = y(numpoints)
-     print *,'test2'
+     interp_index = numpoints - 1
+     return
   else
      do i = 2,numpoints
         if (x0 .le. x(i)) then
-           x1 = x(i-1)
-           x2 = x(i)
-           y1 = y(i-1)
-           y2 = y(i)
-           print *,x1,x2,y1,y2
-           exit
-        end if
-        if (i .eq. numpoints) then
-           !something bad happened here, this should not be possible
-           print *,'Error in linear interpolation'
+           interp_index = i-1
+           return
         end if
      end do
   end if
+  print *,'Something went wrong in finding the interpolation index'
+  interp_index = -1
+  return
+
+end function interp_index
+
+
+
+! this function interpolates given the slope between x and y at the 
+! values of ind and ind+1.  It does not check that the value is actually
+! between the two indices, so be careful.
+real function linear_interpolate(x0, y, x, ind)
+
+  implicit none
+  integer :: ind
+  real, dimension(*) :: y, x
+  real :: x0, x1, y1, x2, y2
+
+  x1 = x(ind)
+  y1 = y(ind)
+  x2 = x(ind+1)
+  y2 = y(ind+1)
 
   linear_interpolate = (y2 - y1) * (x0 - x1)/(x2 - x1) + y1
 
 end function linear_interpolate
+
+
+
+! Given a function f(x) = y, find the value f(x0) by interpolation
+! x must be in increasing order, but need not be evenly spaced
+
+! numpoints is the size of the array
+real function linear_interpolate_full(x0, y, x, numpoints) 
+
+  implicit none
+  integer :: numpoints,interp_index, ind
+  real, dimension(numpoints) :: y, x
+  real :: x0, linear_interpolate
+
+  ind = interp_index(x0, x, numpoints)
+
+  linear_interpolate_full = linear_interpolate(x0, y, x, ind)
+
+end function linear_interpolate_full

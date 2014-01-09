@@ -144,6 +144,39 @@ end subroutine load_axis
 
 ! If the divertors are solid boxes, the calculation should be similar to the
 ! inside vessel calculation, and that one should be used.
-subroutine inside_div
+integer function inside_div(rin, zin, phiin)
+  use div_module
+  implicit none
 
-end subroutine inside_div
+  real :: rin,zin,phiin,r,z,phi
+  real :: rmag, zmag, linear_interpolate
+  real :: rseg1, rseg2, zseg1, zseg2
+  integer :: intersection, i, j, axis_index, div_index, interp_index
+
+  !Move the quadrant appropriately
+  call move_to_first_quad(rin, zin, phiin, r, z, phi)
+
+
+  ! In order to reduce redundancy in calculation we separate the steps
+  ! of getting the index, from the interpolation calculation
+  div_index = interp_index(phi, mag_axis(:,3), axis_points)
+  
+  rmag = linear_interpolate(phi, mag_axis(:,1), mag_axis(:,3), div_index)
+  zmag = linear_interpolate(phi, mag_axis(:,2), mag_axis(:,3), div_index)
+
+  print *,rmag,zmag
+
+  do i = 1,div_number
+     ! check that there is a plate in the correct bounds
+     if ((phi .lt. div_tor_vals(i,1)) .or. & 
+          phi .gt. div_tor_vals(i,div_seg_num(i))) then
+        cycle
+     end if
+     ! get index
+
+     do j = 1,div_seg_num(i) - 1
+     end do
+  end do
+
+
+end function inside_div
