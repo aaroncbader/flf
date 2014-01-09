@@ -7,6 +7,7 @@ program test_divread
   
   integer :: num_files, i,j,k
   character*144, dimension(:), allocatable :: filenames
+  character*144 :: axis_file
 
   num_files = 1
   allocate(filenames(num_files))
@@ -29,8 +30,16 @@ program test_divread
         print *, divertor(i,j,k,:)
      end do
   end do
+
+  axis_file = 'mag_axis.dat'
+
+  call load_axis(axis_file)
+
+  do i=1,axis_points
+     print *,mag_axis(i,:)
+  end do
   
 
-  call deallocate_div()
+  call deallocate_div_and_axis()
 
 end program test_divread

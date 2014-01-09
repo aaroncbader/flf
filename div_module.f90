@@ -2,7 +2,7 @@ module div_module
 
   implicit none
   
-  integer :: div_number
+  integer :: div_number, axis_points
 
   integer, allocatable, dimension(:) :: div_tor_num, div_seg_num
   ! index for divertor is
@@ -12,5 +12,6 @@ module div_module
   ! index for div_tor_vals is
   !div_tor_vals(divertor number, toroidal seg index)
   real, allocatable, dimension(:,:) :: div_tor_vals
+  real, allocatable, dimension(:,:) :: mag_axis
 
 end module

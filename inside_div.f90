@@ -100,14 +100,50 @@ subroutine load_div(filenames)
 
 end subroutine load_div
 
-subroutine deallocate_div()
+subroutine deallocate_div_and_axis()
   use div_module
   deallocate(div_tor_num)
   deallocate(div_seg_num)
   deallocate(divertor)
   deallocate(div_tor_vals)
-end subroutine deallocate_div
+  deallocate(mag_axis)
+end subroutine deallocate_div_and_axis
 
+subroutine load_axis(filename)
+  use div_module
+  
+  character*144 :: filename
+  integer :: filenum, i
+  real :: pi
+
+  filenum = 21
+  pi = 3.14159
+
+  open(filenum, file=trim(filename), status='old', form='formatted')
+  read(filenum, *) axis_points
+  allocate(mag_axis(axis_points,3))
+  
+  do i = 1,axis_points
+     read(filenum, *) mag_axis(i,1:2)
+     ! We calculate te phi value since it's not explicit
+     mag_axis(i,3) = (i-1)* (pi/4)/axis_points
+  end do
+
+  close(filenum)  
+
+end subroutine load_axis
+
+
+! This subroutine will calculate if a point is behind a divertor wall.
+
+! The way it works is it first calculates the intermediate divertor segment
+! for the desired phi value.  Then it draws a line between the magnetic axis
+! and the desired point.  It checks for intersections between the mag axis
+! line and each line segment of the divertor.  If the lines intersect, the
+! point is behind the wall, if they don't intersect, it is not behind the wall.
+
+! If the divertors are solid boxes, the calculation should be similar to the
+! inside vessel calculation, and that one should be used.
 subroutine inside_div
 
 end subroutine inside_div
