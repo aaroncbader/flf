@@ -91,8 +91,9 @@ subroutine load_div(filenames)
         div_tor_vals(i,j) = t
         do k=1,div_seg_num(i)
            read(filenum,*) r,z
-           divertor(i,j,k,1) = r
-           divertor(i,j,k,2) = z
+           ! XXX HACK EMC3 measures in cm, everything else is m
+           divertor(i,j,k,1) = r/100
+           divertor(i,j,k,2) = z/100
         end do
      end do
      close(filenum)
@@ -150,8 +151,10 @@ integer function inside_div(rin, zin, phiin)
 
   real :: rin,zin,phiin,r,z,phi
   real :: rmag, zmag, linear_interpolate
-  real :: rseg1, rseg2, zseg1, zseg2
+  real :: rseg1, rseg2, zseg1, zseg2, dum1, dum2
   integer :: intersection, i, j, axis_index, div_index, interp_index
+  integer :: does_intersect, slice_size
+  real, dimension(:), allocatable :: tor_slice, div_slice
 
   !Move the quadrant appropriately
   call move_to_first_quad(rin, zin, phiin, r, z, phi)
@@ -159,24 +162,62 @@ integer function inside_div(rin, zin, phiin)
 
   ! In order to reduce redundancy in calculation we separate the steps
   ! of getting the index, from the interpolation calculation
-  div_index = interp_index(phi, mag_axis(:,3), axis_points)
+  axis_index = interp_index(phi, mag_axis(:,3), axis_points)
   
-  rmag = linear_interpolate(phi, mag_axis(:,1), mag_axis(:,3), div_index)
-  zmag = linear_interpolate(phi, mag_axis(:,2), mag_axis(:,3), div_index)
+  rmag = linear_interpolate(phi, mag_axis(:,1), mag_axis(:,3), axis_index)
+  zmag = linear_interpolate(phi, mag_axis(:,2), mag_axis(:,3), axis_index)
 
-  print *,rmag,zmag
 
   do i = 1,div_number
      ! check that there is a plate in the correct bounds
-     if ((phi .lt. div_tor_vals(i,1)) .or. & 
-          phi .gt. div_tor_vals(i,div_seg_num(i))) then
+     if ((phi .le. div_tor_vals(i,1)) .or. & 
+          phi .ge. div_tor_vals(i,div_tor_num(i))) then
         cycle
      end if
-     ! get index
+     ! get index, this is where we really save time with many segmented
+     ! divertors.
+  
+     !Passing subarrays only appears to work when it's the first
+     ! index, so this guy doesn't work, we need a slice.
+     slice_size = div_tor_num(i)
+     allocate(tor_slice(slice_size))
+     tor_slice = div_tor_vals(i,:)
+     div_index = interp_index(phi, tor_slice, div_tor_num(i))
 
      do j = 1,div_seg_num(i) - 1
+        allocate(div_slice(slice_size))
+        ! Get interpolated divertor
+        div_slice = divertor(i,:,j,1)
+        rseg1 = linear_interpolate(phi, div_slice, tor_slice, div_index)
+
+        div_slice = divertor(i,:,j+1,1)
+        rseg2 = linear_interpolate(phi, div_slice, tor_slice, div_index)
+
+        div_slice = divertor(i,:,j,2)
+        zseg1 = linear_interpolate(phi, div_slice, tor_slice, div_index)
+
+        div_slice = divertor(i,:,j+1,2)
+        zseg2 = linear_interpolate(phi, div_slice, tor_slice, div_index)
+        
+        deallocate(div_slice)
+
+        does_intersect = intersection(rseg1, zseg1, rseg2, zseg2, &
+             rmag, zmag, r, z, dum1, dum2)
+        !print *,does_intersect, dum1, dum2
+        
+        if (does_intersect .eq. 1) then
+           inside_div = 1
+           return
+        endif
+
      end do
+     deallocate(tor_slice)
+
   end do
+
+  ! we checked all the values and none were behind the wall
+  inside_div = 0
+  return
 
 
 end function inside_div

@@ -5,9 +5,10 @@ program test_divread
 
   implicit none
   
-  integer :: num_files, i,j,k, inside_div, dummy
+  integer :: num_files, i,j,k, inside_div, dummy, isin
   character*144, dimension(:), allocatable :: filenames
   character*144 :: axis_file
+  real :: dum1, dum2
 
   num_files = 1
   allocate(filenames(num_files))
@@ -18,7 +19,7 @@ program test_divread
   call alloc_div(filenames, num_files)
 
   do i = 1,num_files
-     print *,div_tor_num(i), div_seg_num(i)
+     !print *,div_tor_num(i), div_seg_num(i)
   end do
 
   call load_div(filenames)
@@ -39,8 +40,11 @@ program test_divread
      !print *,mag_axis(i,:)
   end do
 
-  dummy = inside_div(1., 1., 0.0085)
+  !dummy = inside_div(1., 1., 0.0085)
   
+  !does_intersect = intersection(0.,0.,1.1,1.,0.5,0.,1.,1.,dum1,dum2)
+  !print *,dum1, dum2, does_intersect
+  isin = inside_div(3.2,0,0.001)
 
   call deallocate_div_and_axis()
 

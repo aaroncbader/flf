@@ -100,3 +100,60 @@ real function linear_interpolate_full(x0, y, x, numpoints)
   linear_interpolate_full = linear_interpolate(x0, y, x, ind)
 
 end function linear_interpolate_full
+
+
+! find intersection between a line from (x1, y1) to (x2, y2) and a line from
+! (x3, y3) to (x4, y4).  The intersection value is saved in xint and yint.
+! The function returns 1 if there is an intersection and 0 if there isn't. In
+! these cases the values in xint and yint should *NOT* be trusted.  I could set
+! it to NaN but that seems bad I guess.
+
+integer function intersection(x1, y1, x2, y2, x3, y3, x4, y4, xint, yint)
+
+  real :: x1, x2, x3, x4, y1, y2, y3, y4
+  real :: xint, yint, m1, m3, b1, b3
+
+  ! Before doing any calculations we check if any of the intersections are
+  ! even possible.
+  if (((x1.lt.x3).and.(x1.lt.x4).and.(x2.lt.x3).and.(x2.lt.x4)) .or. &
+      ((x1.gt.x3).and.(x1.gt.x4).and.(x2.gt.x3).and.(x2.gt.x4)) .or. &
+      ((y1.lt.y3).and.(y1.lt.y4).and.(y2.lt.y3).and.(y2.lt.y4)) .or. &
+      ((y1.gt.y3).and.(y1.gt.y4).and.(y2.gt.y3).and.(y2.gt.y4))) then
+     ! If any of these 4 conditions are satisfied it means all the points in
+     ! one segment are less than or greater than all the points in the other
+     ! segment for at least one of the coordinates.  No intersections are
+     ! possible.
+     xint = 0
+     yint = 0
+     intersection = 0
+     return
+  end if
+  ! Slopes and y intercepts for the two segments
+  m1 = (y2 - y1)/(x2 - x1)
+  m3 = (y4 - y3)/(x4 - x3)
+  b1 = y1 - m1 * x1
+  b3 = y3 - m3 * x3
+
+  ! Solve double equations y = m1*x + b1 and y = m2*x + b2 
+  xint = (b3 - b1)/(m1 - m3)
+  yint = m1 * xint + b1
+
+
+  ! In order to be a valid intersection, the value xint must be in between the
+  ! two values.  This mess checks that xint lies between x1 and x2 *and*
+  ! between x3 and x4.  It does the same for y as well.  If all are satisfied,
+  ! it's a valid intersection point.
+  if (((xint.ge.x1).and.(xint.le.x2).or.(xint.ge.x2).and.(xint.le.x1)).and.&
+      ((xint.ge.x3).and.(xint.le.x4).or.(xint.ge.x4).and.(xint.le.x3)).and.&
+      ((yint.ge.y1).and.(yint.le.y2).or.(yint.ge.y2).and.(yint.le.y1)).and.&
+      ((yint.ge.y3).and.(yint.le.y4).or.(yint.ge.y4).and.(yint.le.y3))) then
+     intersection = 1
+     return
+  else
+     xint = 0
+     yint = 0
+     intersection = 0
+     return
+  end if
+
+end function intersection
