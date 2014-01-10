@@ -76,8 +76,10 @@ subroutine load_div(filenames)
   character*72 :: dummy
 
   integer :: i,j,k,filenum,d1,d2,d3
-  real :: t,r,z, d4, d5
+  real :: t,r,z, d4, d5,pi
   
+
+  pi = 3.1415927
   filenum = 21
 
   do i = 1,div_number
@@ -88,7 +90,7 @@ subroutine load_div(filenames)
      do j=1,div_tor_num(i)
         !read in the tor value
         read(filenum,*) t
-        div_tor_vals(i,j) = t
+        div_tor_vals(i,j) = t*pi/180.
         do k=1,div_seg_num(i)
            read(filenum,*) r,z
            ! XXX HACK EMC3 measures in cm, everything else is m
