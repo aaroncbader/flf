@@ -228,7 +228,7 @@ subroutine field_deriv(neq, t, y, dydx)
   use points_module
   implicit none
 
-  integer :: neq, inside_vessel
+  integer :: neq, inside_vessel, inside_div
   real, dimension(neq) :: y, dydx
   real, dimension(3) :: bxyz, pxyz, przphi
   real :: br, bphi, t
@@ -247,6 +247,7 @@ subroutine field_deriv(neq, t, y, dydx)
 
   ! check if we've hit the wall
   if (inside_vessel(y(1), y(2), t) == 0) then
+  !if (inside_div(y(1), y(2), t) == 1) then
      points_hit(current_point) = 1
      points_end(current_point,1:2) = y
      points_end(current_point,3) = t
@@ -267,7 +268,8 @@ subroutine field_deriv(neq, t, y, dydx)
   br = bxyz(1)*cos(t) + bxyz(2)*sin(t)
   bphi = -bxyz(1)*sin(t) + bxyz(2)*cos(t)
   ! compute dydx
-  !write (*,'(6(F10.7,2X))'),pxyz(:),bxyz(:)
+  ! write (*,'(6(F10.7,2X))'),pxyz(:),bxyz(:)
+  ! write (*,'(3(F10.7,2X))'),y(:),t
   dydx(1) = y(1) * br/bphi
   dydx(2) = y(1) * bxyz(3)/bphi
   return

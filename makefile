@@ -6,15 +6,15 @@ FF = follow_field.o
 
 CP = $(FC) $(OP) -c
 
-MO = 	utility.o 	coil_module.o	read_coils.o	points_module.o\
-	get_points.o 	compute_bs.o\
-	dlsode.o	vessel_module.o inside_vessel.o\
+MO = 	utility.o 	coil_module.o	div_module.o 	read_coils.o\
+	points_module.o	get_points.o 	compute_bs.o\
+	dlsode.o	vessel_module.o inside_vessel.o inside_div.o\
 	follow_field.o
 
 WC =	coil_module.o	read_coils.o
 
-TBS = 	utility.o 	points_module.o vessel_module.o\
-	inside_vessel.o coil_module.o\
+TBS = 	coil_module.o 	points_module.o div_module.o 	vessel_module.o\
+	utility.o 	inside_vessel.o inside_div.o\
 	read_coils.o\
 	compute_bs.o
 

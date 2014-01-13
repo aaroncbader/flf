@@ -165,7 +165,7 @@ integer function inside_div(rin, zin, phiin)
   ! In order to reduce redundancy in calculation we separate the steps
   ! of getting the index, from the interpolation calculation
   axis_index = interp_index(phi, mag_axis(:,3), axis_points)
-  
+
   rmag = linear_interpolate(phi, mag_axis(:,1), mag_axis(:,3), axis_index)
   zmag = linear_interpolate(phi, mag_axis(:,2), mag_axis(:,3), axis_index)
 

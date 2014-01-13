@@ -9,26 +9,48 @@ program follow_to_wall
 
   real,dimension(3) :: p
   integer :: i,j,isin, inside_vessel
-  real :: dphi
+  real :: dphi, totcur
+  character*144, dimension(:), allocatable :: filenames
+  character*144 :: axis_file
 
   ! first load the coils
   call allocate_main(6,14)
   call allocate_aux('aux_c.dat')
-  call read_coils()
 
-  ! put current in main coils
-  do i = 1,main_count
-     main_current(i) = -150105./14
-  enddo
+  totcur = -150105.
 
-  do i = 1,aux_count
-     aux_current(i) = -150105*0.00000
-  enddo
+ 
+  !do i = 1,aux_count
+     !aux_current(i) = -150105*0.00000
+  !enddo
+  do i = 1,6
+     taper(i) = 0.01*i
+  end do
+  do i = 7,10
+     taper(i) = 0.00
+  end do
+  do i=11,14
+     taper(i) = 0.00
+  end do
+  taper(15) = 0.000
+  taper(16) = 0.000
+
+ 
+  call read_coil_files(totcur)
 
   ! load the vessel
   vessel_file = 'vessel.txt'
   call allocate_vessel()
   call load_vessel()
+
+
+  allocate(filenames(1))
+  filenames(1) = 'DIV_island4x25'
+  axis_file = 'mag_axis.dat'
+  
+  !call alloc_div(filenames, 1)
+  !call load_div(filenames)
+  !call load_axis(axis_file)
 
   ! get the points
   call get_points()
@@ -65,7 +87,10 @@ program follow_to_wall
         ! print *,points_move(j,:)
         ! set the current point
         current_point = j
+
+        write (*,'(3(F10.7,2X))'),points_move(j,:)
         call follow_field(points_move(j,:), points_dphi)
+        
         
      
         ! write the new point

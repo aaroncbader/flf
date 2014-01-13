@@ -14,10 +14,18 @@ program test_bs
      main_current(i) = -150105./14
   enddo
 
+  do i = 1,6
+     aux_current(i) = 0.1 * (-150105)
+  end do
+
+  do i = 7,aux_count
+     aux_current(i) = 0.
+  end do
+
 ! This is for testing purposes!  It works, I think
 !  call make_simple_coil()
 
-  call compute_bs((/0.777817,0.777817,.3/), 0, b)
+  call compute_full_bs((/0.777817,0.777817,.3/), b)
   print *,b
 
   call deallocate_coils()

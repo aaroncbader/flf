@@ -13,7 +13,7 @@ program test_divread
   num_files = 1
   allocate(filenames(num_files))
 
-  filenames(1) = 'DIV_island4x25_2'
+  filenames(1) = 'DIV_island4x25'
   
 
   call alloc_div(filenames, num_files)
@@ -44,7 +44,8 @@ program test_divread
   
   !does_intersect = intersection(0.,0.,1.1,1.,0.5,0.,1.,1.,dum1,dum2)
   !print *,dum1, dum2, does_intersect
-  isin = inside_div(3.2,0,0.001)
+  !isin = inside_div(1.143,0.284,0.3927)
+  isin = inside_div(1.2413, -0.0301, 3.9297)
 
   call deallocate_div_and_axis()
 
