@@ -24,7 +24,7 @@ TP = 	points_module.o	get_points.o
 
 TD =    utility.o 	div_module.o inside_div.o
 
-TL =    vessel_module.o inside_vessel.o boxport_limiter_check.o
+TL =    vessel_module.o utility.o inside_vessel.o boxport_limiter_check.o
 
 PROGRAMS = follow_to_wall write_coils test_vessel test_bs test_points
 
