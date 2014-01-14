@@ -102,13 +102,12 @@ end function inside_vessel
 
 ! the following is old fortran code adatped from the source: http://www.ecse.rpi.edu/~wrf/Research/Short_Notes/pnpoly.html
 ! it performs a check to see how many times a vertical line through the point passes through the polygon
-
 integer function in_polygon(Xpoint, Ypoint, Xpoly, Ypoly, poly_size)
 
   implicit none
   
   integer :: poly_size, i, j
-  real :: px, py, Xpoint, Ypoint
+  real :: px, py, Xpoint, Ypoint, qq
   logical :: mx, my, nx, ny
   real, dimension(poly_size) :: Xpoly, Ypoly
   real, allocatable, dimension(:) :: xx, yy, x, y
@@ -125,32 +124,50 @@ integer function in_polygon(Xpoint, Ypoint, Xpoly, Ypoly, poly_size)
   px=Xpoint
   py=Ypoint 
   
-  do 1 i=1,poly_size
-  	
-  	x(i)=xx(i)-px
-  1	y(i)=yy(i)-py
-  	in_polygon=-1
-  	
-  	do 2 i=1,poly_size
-  	j=1+mod(i,poly_size)
-  	mx=x(i).ge.0.0
-  	nx=x(j).ge.0.0
-  	my=y(i).ge.0.0
-  	ny=y(j).ge.0.0
-  	if(.not.((my.or.ny).and.(mx.or.nx)).or.(mx.and.nx)) go to 2
-  	if(.not.(my.and.ny.and.(mx.or.nx).and..not.(mx.and.nx))) go to 3
-  	in_polygon=-in_polygon
-  	go to 2
-  3	if ((y(i)*x(j)-x(i)*y(j))/(x(j)-x(i))) 2,4,5
-  4   in_polygon=0
-  	return
-  5   in_polygon=-in_polygon
-  2   continue	
+  do  i=1,poly_size
 
-      deallocate(xx)
-      deallocate(yy)
-      deallocate(x)
-      deallocate(y)
+     x(i)=xx(i)-px
+     y(i)=yy(i)-py
+     
+  end do
+
+  in_polygon=-1
+
+  do i=1,poly_size
+     j=1+mod(i,poly_size)
+     mx=x(i).ge.0.0
+     nx=x(j).ge.0.0
+     my=y(i).ge.0.0
+     ny=y(j).ge.0.0
+     if(.not.((my.or.ny).and.(mx.or.nx)).or.(mx.and.nx)) then
+        cycle
+     end if
+     if((my.and.ny.and.(mx.or.nx).and..not.(mx.and.nx))) then
+        in_polygon = -in_polygon
+        cycle
+     end if
+     
+     qq = (y(i)*x(j)-x(i)*y(j))/(x(j)-x(i))
+
+     if (qq.lt.0) then
+        cycle
+     else if (qq == 0) then
+        ! This condition means that it landed on the surface exactly
+        in_polygon=0
+        return
+     else
+        in_polygon=-in_polygon
+     end if
+  end do
+
+  if (in_polygon.lt.0) then
+     in_polygon = 0
+  end if
+
+  deallocate(xx)
+  deallocate(yy)
+  deallocate(x)
+  deallocate(y)
 
 
 end function in_polygon
