@@ -240,8 +240,14 @@ subroutine field_deriv(neq, t, y, dydx)
   !print *,current_point,y,t
 
   ! we already hit, so no point in calculating (this is a sanity check)
-  if (points_hit(current_point).eq.1) then
+  if (points_hit_vessel(current_point).eq.1) then
      dydx = 0
+     return
+  else if (points_hit_divertor(current_point).eq.1) then
+     dydx = 0
+     return
+  else if (points_hit_limiter(current_point).eq.1) then
+     dydx = 0   
      return
   end if
 
