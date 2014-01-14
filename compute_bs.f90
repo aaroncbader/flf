@@ -228,7 +228,7 @@ subroutine field_deriv(neq, t, y, dydx)
   use points_module
   implicit none
 
-  integer :: neq, inside_vessel, inside_div
+  integer :: neq, inside_vessel, inside_div, inside_limiter
   real, dimension(neq) :: y, dydx
   real, dimension(3) :: bxyz, pxyz, przphi
   real :: br, bphi, t
@@ -247,15 +247,35 @@ subroutine field_deriv(neq, t, y, dydx)
 
   ! check if we've hit the wall
   if (inside_vessel(y(1), y(2), t) == 0) then
-  !if (inside_div(y(1), y(2), t) == 1) then
-     points_hit(current_point) = 1
+     points_hit_vessel(current_point) = 1
      points_end(current_point,1:2) = y
      points_end(current_point,3) = t
      print *,'-------------------------------'
-     print *,'current point:',current_point
+     print *,'current point at wall:',current_point
      print *,points_end(current_point,:)
      print *,'-------------------------------'
      dydx = 0
+    ! check if we've hit the divertor
+   else if (inside_div(y(1), y(2), t) == 1) then
+     points_hit_divertor(current_point) = 1
+     points_end(current_point,1:2) = y
+     points_end(current_point,3) = t
+     print *,'-------------------------------'
+     print *,'current point at divertor:',current_point
+     print *,points_end(current_point,:)
+     print *,'-------------------------------'
+     dydx = 0
+   ! check if we're near the helical plane in the boxport (where the limiter is)  
+   else if (inside_limiter(y(1),y(2),t) == 1) then
+     points_hit_limiter(current_point)=1
+     points_end(current_point,1:2)=y
+     points_end(current_point,3)=t
+     print *,'-------------------------------'
+     print *,'current point at limiter:',current_point
+     print *,points_end(current_point,:)
+     print *,'-------------------------------'
+     dydx = 0
+   	  
      return
   end if
      
