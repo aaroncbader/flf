@@ -1,11 +1,6 @@
-<<<<<<< HEAD
-subroutine get_vessel_dimensions(vessel_file, vessel_size)
-! hello world
-=======
 subroutine allocate_vessel()
 
   use vessel_module
->>>>>>> 4c034bc377e794e2333430c2f2592354198d80ea
   implicit none
   integer :: filenum = 21
 
@@ -122,33 +117,44 @@ end function inside_vessel
 ! for the polygons. 
 ! poly_size is the number of points in the polygon
 
+! the following is old fortran code adatped from the source: http://www.ecse.rpi.edu/~wrf/Research/Short_Notes/pnpoly.html
+! it performs a check to see how many times a vertical line through the point passes through the polygon
+
 integer function in_polygon(Xpoint, Ypoint, Xpoly, Ypoly, poly_size)
 
   implicit none
   
-  integer :: poly_size
-  real :: Xpoint, Ypoint
-  real,dimension(poly_size) :: Xpoly, Ypoly, xaver, yaver, top1, top2, bottom
-  real :: summation
-
-
-  xaver = 0.5*(Xpoly + cshift(Xpoly,1)) - Xpoint
-  yaver = 0.5*(Ypoly + cshift(Ypoly,1)) - Ypoint
-
-  top1 = xaver * (cshift(Ypoly,1) - Ypoly)
-  top2 = yaver * (cshift(Xpoly,1) - Xpoly)
-
-  bottom = xaver**2 + yaver**2
+  integer :: poly_size, in_polygon, i, j
+  real :: px, py, Xpoint, Ypoint
+  logical :: mx, my, nx, ny
+  real, dimension(poly_size) :: xx, yy, x, y, Xpoly, Ypoly
   
-  summation = sum((top1 - top2)/bottom)
-
-  !print *,summation
-  if ((summation > 5.7).and.(summation < 6.8)) then
-     in_polygon = 1
-  else
-     in_polygon = 0
-  endif
-
-  return
+  xx=Xpoly
+  yy=Ypoly
+  
+  px=Xpoint
+  py=Ypoint 
+  
+  do 1 i=1,poly_size
+  	
+  	x(i)=xx(i)-px
+  1	y(i)=yy(i)-py
+  	in_polygon=-1
+  	
+  	do 2 i=1,poly_size
+  	j=1+mod(i,poly_size)
+  	mx=x(i).ge.0.0
+  	nx=x(j).ge.0.0
+  	my=y(i).ge.0.0
+  	ny=y(j).ge.0.0
+  	if(.not.((my.or.ny).and.(mx.or.nx)).or.(mx.and.nx)) go to 2
+  	if(.not.(my.and.ny.and.(mx.or.nx).and..not.(mx.and.nx))) go to 3
+  	in_polygon=-in_polygon
+  	go to 2
+  3	if ((y(i)*x(j)-x(i)*y(j))/(x(j)-x(i))) 2,4,5
+  4   in_polygon=0
+  	return
+  5   in_polygon=-in_polygon
+  2   continue	
 
 end function in_polygon
