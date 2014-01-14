@@ -24,6 +24,8 @@ TP = 	points_module.o	get_points.o
 
 TD =    utility.o 	div_module.o inside_div.o
 
+TL =    vessel_module.o inside_vessel.o boxport_limiter_check.o
+
 PROGRAMS = follow_to_wall write_coils test_vessel test_bs test_points
 
 #This is the default
@@ -37,6 +39,7 @@ all_tests:
 	make test_vessel
 	make test_points
 	make test_divread
+	make test_limiter
 
 test_write: $(WC)
 	$(FC) $(OP) write_coils.f90 $(WC) -o write_coils
@@ -52,6 +55,9 @@ test_points: $(TP)
 
 test_divread: $(TD)
 	$(FC) $(OP) test_divread.f90 $(TD) -o test_divread
+
+test_limiter: $(TL)
+	$(FC) $(OP) test_limiter.f90 $(TL) -o test_limiter
 
 
 utility.o:	utility.f90
@@ -78,6 +84,8 @@ inside_vessel.o:	inside_vessel.f90
 	$(CP)	inside_vessel.f90
 get_points.o:	get_points.f90
 	$(CP)	get_points.f90
+boxport_limiter_check.o: boxport_limiter_check.f90
+	$(CP)	boxport_limiter_check.f90
 
 clean:
 	rm -f *.o
