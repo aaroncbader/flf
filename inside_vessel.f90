@@ -2,7 +2,7 @@ subroutine allocate_vessel()
 
   use vessel_module
   implicit none
-  integer :: filenum = 21
+integer :: filenum = 21
 
   open(filenum, file=vessel_file, status='old', form = 'formatted')
   read(filenum,*) vessel_size(1:2)
@@ -17,7 +17,7 @@ subroutine load_vessel()
   use vessel_module
   implicit none
 
-  character*72 :: dummy
+character*72 :: dummy
   integer :: i,j
   real :: x,y,z
   integer :: filenum = 21
@@ -45,8 +45,7 @@ integer function inside_vessel(rin, zin, phiin)
 
   use vessel_module
   implicit none
-  
-  integer :: tor_size, pol_size, index, i, in_polygon
+integer :: tor_size, pol_size, index, i, in_polygon
   real, dimension(vessel_size(1)) :: phi_vessel
   real, dimension(vessel_size(2), 3) :: cut
   real, dimension(vessel_size(2)) :: rvessel, zvessel
@@ -91,30 +90,22 @@ integer function inside_vessel(rin, zin, phiin)
 end function inside_vessel
 
 
-! Calculates Cauchy integral and determines whether a 
-! point is inside the polygon or outside.  If inside
+! Calculates Cauchy integral and determines whether a
+! point is inside the polygon or outside. If inside
 ! it returns 1, if outside, 0.
 
 ! Xpoint and Ypoint are the X and Y coordinates of the point.
 ! Xpoly and Ypoly are two arrays with the X and Y coordinates
-! for the polygons. 
+! for the polygons.
 ! poly_size is the number of points in the polygon
 
 ! the following is old fortran code adatped from the source: http://www.ecse.rpi.edu/~wrf/Research/Short_Notes/pnpoly.html
 ! it performs a check to see how many times a vertical line through the point passes through the polygon
-
 integer function in_polygon(Xpoint, Ypoint, Xpoly, Ypoly, poly_size)
 
   implicit none
-  
-<<<<<<< HEAD
-  integer :: poly_size, in_polygon, i, j
-  real :: px, py, Xpoint, Ypoint
-  logical :: mx, my, nx, ny
-  real, dimension(poly_size) :: xx, yy, x, y, Xpoly, Ypoly
-=======
-  integer :: poly_size, i, j
-  real :: px, py, Xpoint, Ypoint
+integer :: poly_size, i, j
+  real :: px, py, Xpoint, Ypoint, qq
   logical :: mx, my, nx, ny
   real, dimension(poly_size) :: Xpoly, Ypoly
   real, allocatable, dimension(:) :: xx, yy, x, y
@@ -124,43 +115,56 @@ integer function in_polygon(Xpoint, Ypoint, Xpoly, Ypoly, poly_size)
   allocate(x(poly_size))
   allocate(y(poly_size))
 
->>>>>>> ebe160ad2127f7fed2b798c7e22c982a9a03d114
   
   xx=Xpoly
   yy=Ypoly
   
   px=Xpoint
-  py=Ypoint 
+  py=Ypoint
   
-  do 1 i=1,poly_size
-  	
-  	x(i)=xx(i)-px
-  1	y(i)=yy(i)-py
-  	in_polygon=-1
-  	
-  	do 2 i=1,poly_size
-  	j=1+mod(i,poly_size)
-  	mx=x(i).ge.0.0
-  	nx=x(j).ge.0.0
-  	my=y(i).ge.0.0
-  	ny=y(j).ge.0.0
-  	if(.not.((my.or.ny).and.(mx.or.nx)).or.(mx.and.nx)) go to 2
-  	if(.not.(my.and.ny.and.(mx.or.nx).and..not.(mx.and.nx))) go to 3
-  	in_polygon=-in_polygon
-  	go to 2
-  3	if ((y(i)*x(j)-x(i)*y(j))/(x(j)-x(i))) 2,4,5
-  4   in_polygon=0
-  	return
-  5   in_polygon=-in_polygon
-  2   continue	
-<<<<<<< HEAD
-=======
+  do i=1,poly_size
 
-      deallocate(xx)
-      deallocate(yy)
-      deallocate(x)
-      deallocate(y)
+     x(i)=xx(i)-px
+     y(i)=yy(i)-py
+     
+  end do
 
->>>>>>> ebe160ad2127f7fed2b798c7e22c982a9a03d114
+in_polygon=-1
+
+  do i=1,poly_size
+     j=1+mod(i,poly_size)
+     mx=x(i).ge.0.0
+     nx=x(j).ge.0.0
+     my=y(i).ge.0.0
+     ny=y(j).ge.0.0
+     if(.not.((my.or.ny).and.(mx.or.nx)).or.(mx.and.nx)) then
+cycle
+end if
+if((my.and.ny.and.(mx.or.nx).and..not.(mx.and.nx))) then
+in_polygon = -in_polygon
+        cycle
+end if
+qq = (y(i)*x(j)-x(i)*y(j))/(x(j)-x(i))
+
+     if (qq.lt.0) then
+cycle
+else if (qq == 0) then
+        ! This condition means that it landed on the surface exactly
+        in_polygon=0
+        return
+else
+in_polygon=-in_polygon
+     end if
+end do
+
+if (in_polygon.lt.0) then
+in_polygon = 0
+  end if
+
+deallocate(xx)
+  deallocate(yy)
+  deallocate(x)
+  deallocate(y)
+
 
 end function in_polygon

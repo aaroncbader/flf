@@ -1,10 +1,8 @@
 program test_vessel
 
+  use vessel_module
   implicit none
   
-  real,allocatable,dimension(:,:,:) :: vessel
-  integer,dimension(2) :: vessel_size
-  character*144 :: vessel_file
   integer :: i,j,isin, inside_vessel
   real :: z
 
