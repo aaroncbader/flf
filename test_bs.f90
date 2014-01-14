@@ -7,7 +7,7 @@ program test_bs
 
   call allocate_main(6,14)
   call allocate_aux('aux_c.dat')
-  call read_coils()
+  call read_coil_files(-10000)
 
 ! set current
   do i = 1,main_count
