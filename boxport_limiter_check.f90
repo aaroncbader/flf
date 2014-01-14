@@ -7,7 +7,10 @@ real, dimension(3) :: bvector
 real, dimension(3) :: baxis
 real, dimension(3) :: dist_axis
 real :: dist_plane
+<<<<<<< HEAD
 integer :: is_near_helical_plane
+=======
+>>>>>>> ebe160ad2127f7fed2b798c7e22c982a9a03d114
 real :: delta
 real, dimension(3) :: point
 
@@ -34,7 +37,11 @@ integer function hit_limiter(point,xlimiter,ylimiter,poly_size)
 implicit none
 
 real :: Xpoint, Ypoint
+<<<<<<< HEAD
 integer :: hit_limiter, in_polygon, poly_size
+=======
+integer :: in_polygon, poly_size
+>>>>>>> ebe160ad2127f7fed2b798c7e22c982a9a03d114
 real, dimension(3) :: bvector, baxis
 real, dimension(poly_size) :: Xpoly, Ypoly, xlimiter, ylimiter
 real, dimension(3) :: point, HC_out, HC_up, HC_up_norm

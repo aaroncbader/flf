@@ -13,7 +13,6 @@ subroutine follow_field(p, dphi)
   real, dimension(3) :: p
   real, dimension(2) :: y
   ! For now this is unused.
-  real, dimension(6) :: taper !may want this to be variable, we'll see.
   real :: dphi, t0, t1, tol
   ! dstuff for dlsode
   integer :: ifail, istate

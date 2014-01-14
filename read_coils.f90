@@ -64,6 +64,7 @@ subroutine allocate_aux(filename)
   open(filenum, file=filename, status='old', form='formatted')
   read(filenum,*) num_coils
   
+  taper_size = num_coils
   aux_count = num_coils * mult_factor
   aux_size = 0
   do i=1,num_coils
@@ -84,6 +85,7 @@ subroutine allocate_aux(filename)
   allocate(coil_aux(aux_count, aux_size, 3))
   allocate(aux_current(aux_count))
   allocate(aux_points(aux_count))
+  allocate(taper(taper_size))
 
   close(filenum)
 end subroutine allocate_aux
@@ -98,33 +100,8 @@ subroutine deallocate_coils()
   deallocate(aux_points)
 end subroutine deallocate_coils
   
-  
 
-
-subroutine read_coils()
-  
-  use coil_module
-  implicit none
-
-  integer :: i
-  real :: current
-  real, dimension(taper_size) :: taper
-
-
-  do i=1,taper_size
-     taper(i) = i*0.1
-  enddo
-
-  current = -150108.
-
-  call read_coil_files(taper, current)
-
-
-
-end subroutine read_coils
-
-
-subroutine read_coil_files(taper, current)
+subroutine read_coil_files(current)
 
 
   use coil_module
@@ -135,7 +112,7 @@ subroutine read_coil_files(taper, current)
   integer :: i,j,k
   integer :: piece, filenum, total_points
   integer :: nmain, naux !number of main and aux coils
-  real :: taper(*), current,x,y,z
+  real :: current,x,y,z
   character*15 :: filename, format_string
 
   nmain = main_count/mult_factor
@@ -222,9 +199,9 @@ subroutine read_coil_files(taper, current)
   enddo
 
   !Currents for auxiliary coils
-  do i=1,nmain
+  do i=1,taper_size
      do j=0,mult_factor-1
-        aux_current(i + (j*nmain)) = current*taper(i)
+        aux_current(i + (j*taper_size)) = current*taper(i)
      enddo
   enddo
 

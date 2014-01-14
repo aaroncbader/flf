@@ -76,8 +76,10 @@ subroutine load_div(filenames)
   character*72 :: dummy
 
   integer :: i,j,k,filenum,d1,d2,d3
-  real :: t,r,z, d4, d5
+  real :: t,r,z, d4, d5,pi
   
+
+  pi = 3.1415927
   filenum = 21
 
   do i = 1,div_number
@@ -88,11 +90,12 @@ subroutine load_div(filenames)
      do j=1,div_tor_num(i)
         !read in the tor value
         read(filenum,*) t
-        div_tor_vals(i,j) = t
+        div_tor_vals(i,j) = t*pi/180.
         do k=1,div_seg_num(i)
            read(filenum,*) r,z
-           divertor(i,j,k,1) = r
-           divertor(i,j,k,2) = z
+           ! XXX HACK EMC3 measures in cm, everything else is m
+           divertor(i,j,k,1) = r/100
+           divertor(i,j,k,2) = z/100
         end do
      end do
      close(filenum)
@@ -100,14 +103,123 @@ subroutine load_div(filenames)
 
 end subroutine load_div
 
-subroutine deallocate_div()
+subroutine deallocate_div_and_axis()
   use div_module
   deallocate(div_tor_num)
   deallocate(div_seg_num)
   deallocate(divertor)
   deallocate(div_tor_vals)
-end subroutine deallocate_div
+  deallocate(mag_axis)
+end subroutine deallocate_div_and_axis
 
-subroutine inside_div
+subroutine load_axis(filename)
+  use div_module
+  
+  character*144 :: filename
+  integer :: filenum, i
+  real :: pi
 
-end subroutine inside_div
+  filenum = 21
+  pi = 3.14159
+
+  open(filenum, file=trim(filename), status='old', form='formatted')
+  read(filenum, *) axis_points
+  allocate(mag_axis(axis_points,3))
+  
+  do i = 1,axis_points
+     read(filenum, *) mag_axis(i,1:2)
+     ! We calculate te phi value since it's not explicit
+     mag_axis(i,3) = (i-1)* (pi/4)/axis_points
+  end do
+
+  close(filenum)  
+
+end subroutine load_axis
+
+
+! This subroutine will calculate if a point is behind a divertor wall.
+
+! The way it works is it first calculates the intermediate divertor segment
+! for the desired phi value.  Then it draws a line between the magnetic axis
+! and the desired point.  It checks for intersections between the mag axis
+! line and each line segment of the divertor.  If the lines intersect, the
+! point is behind the wall, if they don't intersect, it is not behind the wall.
+
+! If the divertors are solid boxes, the calculation should be similar to the
+! inside vessel calculation, and that one should be used.
+integer function inside_div(rin, zin, phiin)
+  use div_module
+  implicit none
+
+  real :: rin,zin,phiin,r,z,phi
+  real :: rmag, zmag, linear_interpolate
+  real :: rseg1, rseg2, zseg1, zseg2, dum1, dum2
+  integer :: intersection, i, j, axis_index, div_index, interp_index
+  integer :: does_intersect, slice_size
+  real, dimension(:), allocatable :: tor_slice, div_slice
+
+  !Move the quadrant appropriately
+  call move_to_first_quad(rin, zin, phiin, r, z, phi)
+
+
+  ! In order to reduce redundancy in calculation we separate the steps
+  ! of getting the index, from the interpolation calculation
+  axis_index = interp_index(phi, mag_axis(:,3), axis_points)
+
+  rmag = linear_interpolate(phi, mag_axis(:,1), mag_axis(:,3), axis_index)
+  zmag = linear_interpolate(phi, mag_axis(:,2), mag_axis(:,3), axis_index)
+
+
+  do i = 1,div_number
+     ! check that there is a plate in the correct bounds
+     if ((phi .le. div_tor_vals(i,1)) .or. & 
+          phi .ge. div_tor_vals(i,div_tor_num(i))) then
+        cycle
+     end if
+     ! get index, this is where we really save time with many segmented
+     ! divertors.
+  
+     !Passing subarrays only appears to work when it's the first
+     ! index, so this guy doesn't work, we need a slice.
+     slice_size = div_tor_num(i)
+     allocate(tor_slice(slice_size))
+     tor_slice = div_tor_vals(i,:)
+     div_index = interp_index(phi, tor_slice, div_tor_num(i))
+
+     do j = 1,div_seg_num(i) - 1
+        allocate(div_slice(slice_size))
+        ! Get interpolated divertor
+        div_slice = divertor(i,:,j,1)
+        rseg1 = linear_interpolate(phi, div_slice, tor_slice, div_index)
+
+        div_slice = divertor(i,:,j+1,1)
+        rseg2 = linear_interpolate(phi, div_slice, tor_slice, div_index)
+
+        div_slice = divertor(i,:,j,2)
+        zseg1 = linear_interpolate(phi, div_slice, tor_slice, div_index)
+
+        div_slice = divertor(i,:,j+1,2)
+        zseg2 = linear_interpolate(phi, div_slice, tor_slice, div_index)
+        
+        deallocate(div_slice)
+
+        does_intersect = intersection(rseg1, zseg1, rseg2, zseg2, &
+             rmag, zmag, r, z, dum1, dum2)
+        !print *,does_intersect, dum1, dum2
+        
+        if (does_intersect .eq. 1) then
+           inside_div = 1
+           return
+        endif
+
+     end do
+     deallocate(tor_slice)
+
+  end do
+
+  ! we checked all the values and none were behind the wall
+  inside_div = 0
+  return
+
+
+end function inside_div

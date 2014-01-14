@@ -6,7 +6,7 @@ program write_coils
 
   call allocate_main(6,14)
   call allocate_aux('aux_c.dat')
-  call read_coils()
+  call read_coil_files(-150104)
   
   open(40,file='coils.out',status='unknown')
   

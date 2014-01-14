@@ -46,35 +46,18 @@ integer function inside_vessel(rin, zin, phiin)
   use vessel_module
   implicit none
   
-  integer :: tor_size, pol_size, phi8th, index, i, in_polygon
+  integer :: tor_size, pol_size, index, i, in_polygon
   real, dimension(vessel_size(1)) :: phi_vessel
   real, dimension(vessel_size(2), 3) :: cut
   real, dimension(vessel_size(2)) :: rvessel, zvessel
   real :: rin, zin, phiin, phi_step_size
   real :: ratio, pi, r, z, phi
 
-  pi = 3.141592
+  pi = 3.1415927
   tor_size = vessel_size(1)
   pol_size = vessel_size(2)
 
-  r = rin
-  z = zin
-  phi = phiin
-
-  ! Make phi between 0 and 2 pi
-  phi = mod(phi, 2. * pi)
-  ! Note which octant we're in
-  phi8th = int(phi/(pi/4.))
-  ! Move to correct octant
-  phi = mod(phi, pi / 4.)
-
-  ! Invoke stell symmetry
-  if (mod(phi8th, 2).ne.0) then
-     phi = pi/4 - phi
-     z = -1.0 * z
-  endif
-
-
+  call move_to_first_quad(rin, zin, phiin, r, z, phi)
 
   ! This is the step size in the toroidal direction
   phi_step_size = pi/(tor_size - 1)/4
@@ -124,10 +107,24 @@ integer function in_polygon(Xpoint, Ypoint, Xpoly, Ypoly, poly_size)
 
   implicit none
   
+<<<<<<< HEAD
   integer :: poly_size, in_polygon, i, j
   real :: px, py, Xpoint, Ypoint
   logical :: mx, my, nx, ny
   real, dimension(poly_size) :: xx, yy, x, y, Xpoly, Ypoly
+=======
+  integer :: poly_size, i, j
+  real :: px, py, Xpoint, Ypoint
+  logical :: mx, my, nx, ny
+  real, dimension(poly_size) :: Xpoly, Ypoly
+  real, allocatable, dimension(:) :: xx, yy, x, y
+
+  allocate(xx(poly_size))
+  allocate(yy(poly_size))
+  allocate(x(poly_size))
+  allocate(y(poly_size))
+
+>>>>>>> ebe160ad2127f7fed2b798c7e22c982a9a03d114
   
   xx=Xpoly
   yy=Ypoly
@@ -156,5 +153,14 @@ integer function in_polygon(Xpoint, Ypoint, Xpoly, Ypoly, poly_size)
   	return
   5   in_polygon=-in_polygon
   2   continue	
+<<<<<<< HEAD
+=======
+
+      deallocate(xx)
+      deallocate(yy)
+      deallocate(x)
+      deallocate(y)
+
+>>>>>>> ebe160ad2127f7fed2b798c7e22c982a9a03d114
 
 end function in_polygon
