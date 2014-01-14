@@ -107,10 +107,17 @@ integer function in_polygon(Xpoint, Ypoint, Xpoly, Ypoly, poly_size)
 
   implicit none
   
-  integer :: poly_size, in_polygon, i, j
+  integer :: poly_size, i, j
   real :: px, py, Xpoint, Ypoint
   logical :: mx, my, nx, ny
-  real, dimension(poly_size) :: xx, yy, x, y, Xpoly, Ypoly
+  real, dimension(poly_size) :: Xpoly, Ypoly
+  real, allocatable, dimension(:) :: xx, yy, x, y
+
+  allocate(xx(poly_size))
+  allocate(yy(poly_size))
+  allocate(x(poly_size))
+  allocate(y(poly_size))
+
   
   xx=Xpoly
   yy=Ypoly
@@ -139,5 +146,11 @@ integer function in_polygon(Xpoint, Ypoint, Xpoly, Ypoly, poly_size)
   	return
   5   in_polygon=-in_polygon
   2   continue	
+
+      deallocate(xx)
+      deallocate(yy)
+      deallocate(x)
+      deallocate(y)
+
 
 end function in_polygon
