@@ -9,7 +9,7 @@ CP = $(FC) $(OP) -c
 MO = 	utility.o 	coil_module.o	div_module.o 	read_coils.o\
 	points_module.o	get_points.o 	compute_bs.o\
 	dlsode.o	vessel_module.o inside_vessel.o inside_div.o\
-	follow_field.o
+	follow_field.o	inside_limiter.o limiter_module.o 
 
 WC =	coil_module.o	read_coils.o
 
@@ -26,13 +26,14 @@ TD =    utility.o 	div_module.o inside_div.o
 
 TL =    vessel_module.o utility.o inside_vessel.o boxport_limiter_check.o
 
-TL =    vessel_module.o inside_vessel.o boxport_limiter_check.o
-
 PROGRAMS = follow_to_wall write_coils test_vessel test_bs test_points
 
 #This is the default
 follow_to_wall: $(MO)
 	$(FC) $(OP) follow_to_wall.f90 $(MO) -o follow_to_wall
+
+follow_to_limiter: $(MO)
+	$(FC) $(OP) follow_to_limiter.f90 $(MO) -o follow_to_limiter
 
 
 all_tests:
@@ -68,6 +69,8 @@ div_module.o:	div_module.f90
 	$(CP)	div_module.f90
 inside_div.o: 	inside_div.f90
 	$(CP)   inside_div.f90
+inside_limiter.o:	inside_limiter.f90
+	$(CP)		inside_limiter.f90
 points_module.o:	points_module.f90
 	$(CP)	points_module.f90
 follow_field.o:	follow_field.f90
