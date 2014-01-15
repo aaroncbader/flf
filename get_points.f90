@@ -13,12 +13,16 @@ subroutine get_points()
   allocate(points_start(points_number, 3))
   allocate(points_move(points_number, 3))
   allocate(points_end(points_number, 3))
-  allocate(points_hit(points_number))
+  allocate(points_hit_vessel(points_number))
+  allocate(points_hit_divertor(points_number))
+  allocate(points_hit_limiter(points_number))
   
   do i=1,points_number
      read (3,*) points_start(i,:)
      points_move(i,:) = points_start(i,:)
-     points_hit(i) = 0
+     points_hit_vessel(i) = 0
+     points_hit_divertor(i) = 0
+     points_hit_limiter(i) = 0
   enddo
 
 end subroutine get_points
@@ -28,7 +32,9 @@ subroutine dealloc_points()
 
   deallocate(points_start)
   deallocate(points_move)
-  deallocate(points_hit)
+  deallocate(points_hit_vessel)
+  deallocate(points_hit_divertor)
+  deallocate(points_hit_limiter)
 
 end subroutine dealloc_points
   
