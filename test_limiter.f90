@@ -9,8 +9,6 @@ implicit none
 
 	point=(/1.39,-0.09715,0.1759/) ! in 3d cartesian, units (m)
 	
-	xlimiter=(/0,2,2,0,0/) ! x and y limiter coordinates in helical plane (hence 2d), units (m)
-	ylimiter=(/-2,-2,2,2,-2/)
 	poly_size=size(xlimiter)
 	
 	delta=0.1 ! proximity to helical plane
