@@ -17,7 +17,7 @@ subroutine load_vessel()
   use vessel_module
   implicit none
 
-character*72 :: dummy
+  character*72 :: dummy
   integer :: i,j
   real :: x,y,z
   integer :: filenum = 21
@@ -89,11 +89,6 @@ integer :: tor_size, pol_size, index, i, in_polygon
 
 end function inside_vessel
 
-
-! Calculates Cauchy integral and determines whether a
-! point is inside the polygon or outside. If inside
-! it returns 1, if outside, 0.
-
 ! Xpoint and Ypoint are the X and Y coordinates of the point.
 ! Xpoly and Ypoly are two arrays with the X and Y coordinates
 ! for the polygons.
@@ -138,30 +133,32 @@ in_polygon=-1
      my=y(i).ge.0.0
      ny=y(j).ge.0.0
      if(.not.((my.or.ny).and.(mx.or.nx)).or.(mx.and.nx)) then
-cycle
-end if
-if((my.and.ny.and.(mx.or.nx).and..not.(mx.and.nx))) then
-in_polygon = -in_polygon
-        cycle
-end if
-qq = (y(i)*x(j)-x(i)*y(j))/(x(j)-x(i))
+       cycle
+     end if
+     
+     if((my.and.ny.and.(mx.or.nx).and..not.(mx.and.nx))) then
+       in_polygon = -in_polygon
+       cycle
+     end if
+     
+     qq = (y(i)*x(j)-x(i)*y(j))/(x(j)-x(i))
 
      if (qq.lt.0) then
-cycle
-else if (qq == 0) then
+       cycle
+     else if (qq == 0) then
         ! This condition means that it landed on the surface exactly
         in_polygon=0
         return
-else
-in_polygon=-in_polygon
+     else
+        in_polygon=-in_polygon
      end if
-end do
+  end do
 
-if (in_polygon.lt.0) then
-in_polygon = 0
+  if (in_polygon.lt.0) then
+    in_polygon = 0
   end if
 
-deallocate(xx)
+  deallocate(xx)
   deallocate(yy)
   deallocate(x)
   deallocate(y)
