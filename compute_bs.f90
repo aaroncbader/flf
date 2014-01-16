@@ -261,16 +261,16 @@ subroutine field_deriv(neq, t, y, dydx)
      print *,points_end(current_point,:)
      print *,'-------------------------------'
      dydx = 0
-    ! check if we've hit the divertor
-   else if (inside_div(y(1), y(2), t) == 1) then
-     points_hit_divertor(current_point) = 1
-     points_end(current_point,1:2) = y
-     points_end(current_point,3) = t
-     print *,'-------------------------------'
-     print *,'current point at divertor:',current_point
-     print *,points_end(current_point,:)
-     print *,'-------------------------------'
-     dydx = 0
+  !  ! check if we've hit the divertor
+  ! else if (inside_div(y(1), y(2), t) == 1) then
+  !   points_hit_divertor(current_point) = 1
+  !   points_end(current_point,1:2) = y
+  !   points_end(current_point,3) = t
+  !   print *,'-------------------------------'
+  !   print *,'current point at divertor:',current_point
+  !   print *,points_end(current_point,:)
+  !   print *,'-------------------------------'
+  !   dydx = 0
    ! check if we're near the helical plane in the boxport (where the limiter is)  
    else if (inside_limiter(y(1),y(2),t) == 1) then
      points_hit_limiter(current_point)=1
