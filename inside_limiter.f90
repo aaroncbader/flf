@@ -2,12 +2,15 @@ subroutine allocate_limiter()
 
   use limiter_module
   implicit none
-  integer :: filenum = 21
+  integer :: filenum = 22
 
   open(filenum, file=limiter_file, status='old', form = 'formatted')
   read(filenum,*) limiter_size(1:2)
 
-  allocate(limiter(limiter_size(1),limiter_size(2),3))
+  allocate(limiter(limiter_size(1),limiter_size(2)))
+  
+  limiter(:,:)=0
+  
   close(filenum)
 
 end subroutine allocate_limiter
@@ -17,25 +20,26 @@ subroutine load_limiter()
   use limiter_module
   implicit none
 
-  character*72 :: dummy
   integer :: i,j
-  integer :: filenum = 21
+  integer :: filenum = 22
+  real, dimension(2) :: dummy
 
   open(filenum,file=limiter_file,status='old',form='formatted')
-
   
+
   ! the first two value should give the number of toroidal and poloidal
   ! points respectively.
-  read(filenum,*) dummy
-  !print *,dummy
+  read(filenum,*)
+ 
 
-  do i=1,limiter_size(1)
+  !do i=1,limiter_size(1)
      do j=1,limiter_size(2)
-        read(filenum,*) limiter(i,j)
+        read(filenum,*) dummy
+        	limiter(:,j)=dummy
      enddo
-  enddo
+  !enddo
   close(filenum)
-
+  
 end subroutine load_limiter
 
 
@@ -49,8 +53,13 @@ implicit none
 real :: Xpoint, Ypoint
 integer :: in_polygon, poly_size
 real, dimension(3) :: bvector, baxis
-real, dimension(:) :: Xpoly, Ypoly
+real, dimension(5) :: Xpoly, Ypoly
 real, dimension(3) :: point, pointc, HC_out, HC_up, HC_up_norm
+
+poly_size=size(limiter(:,1))
+
+Xpoly=limiter(1,:)
+Ypoly=limiter(2,:)
 
 ! convert point from rzphi to xyz
   call pol2cart(point,pointc)
@@ -78,11 +87,6 @@ Xpoint= pointc(1)
 Ypoint= dot_product(pointc,HC_up) 
 
 ! now we can work within the 2d helical plane
-! get 2d limiter coordinates
-Xpoly=limiter(:,1)
-Ypoly=limiter(:,2)
-poly_size=size(Xpoly)
-
 ! use in_polygon to see if the point hits the limiter	
 inside_limiter=in_polygon(Xpoint, Ypoint, Xpoly, Ypoly, poly_size)
 
