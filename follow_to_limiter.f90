@@ -5,6 +5,7 @@ program follow_to_limiter
   use coil_module
   use points_module
   use limiter_module
+  use vessel_module
 
 
   real,dimension(3) :: p
@@ -26,14 +27,14 @@ program follow_to_limiter
   do i = 1,6
      taper(i) = 0.01*i
   end do
-  do i = 7,10
-     taper(i) = 0.00
-  end do
-  do i=11,14
-     taper(i) = 0.00
-  end do
-  taper(15) = 0.000
-  taper(16) = 0.000
+!  do i = 7,10
+!     taper(i) = 0.00
+!  end do
+!  do i=11,14
+!     taper(i) = 0.00
+!  end do
+!  taper(15) = 0.000
+!  taper(16) = 0.000
 
  
   call read_coil_files(totcur)
@@ -42,10 +43,15 @@ program follow_to_limiter
   limiter_file = 'limiter.txt'
   call allocate_limiter()
   call load_limiter()
+  
+  ! load the vessel
+  vessel_file = 'vessel.txt'
+  call allocate_vessel()
+  call load_vessel()
 
 
-  allocate(filenames(1))
-  filenames(1) = 'test'
+  !allocate(filenames(1))
+  !filenames(1) = 'test'
   axis_file = 'mag_axis.dat'
   
   !call alloc_div(filenames, 1)
@@ -106,7 +112,9 @@ program follow_to_limiter
      write (1,*) 'point number',j
      write (1,'(A,3(F9.6,2X))') 'start: ',points_start(j,:)
      write (1,'(A,3(F9.6,2X))') 'end:   ',points_end(j,:)
-     write (1,*) 'hit wall:',points_hit(j)
+     write (1,*) 'hit wall:',points_hit_vessel(j)
+     write (1,*) 'hit divertor:',points_hit_divertor(j)
+     write (1,*) 'hit limiter:',points_hit_limiter(j)
      write (1,*) '------------------'
   enddo
 
@@ -114,4 +122,4 @@ program follow_to_limiter
   call deallocate_coils()
 
 
-end program follow_to_wall
+end program follow_to_limiter
