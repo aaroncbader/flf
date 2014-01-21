@@ -1,0 +1,20 @@
+! This is a comment
+! This is also a comment
+! The next line is not a comment
+filedir/filename.file
+! Here we have a number describing how many files are listed
+! It is followed by the files
+3
+file1.fil
+file2.fil
+file3.fil
+! Now we'll read in some values, first the number of points
+! and then the points
+6
+0.3 0.4
+10 20
+0.000000000007 1000000000000.
+2 16
+4	23.9
+0.3				6
+! This marks the end of the file
