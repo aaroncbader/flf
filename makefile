@@ -7,9 +7,9 @@ FF = follow_field.o
 CP = $(FC) $(OP) -c
 
 MO = 	utility.o 	coil_module.o	div_module.o 	read_coils.o\
-	points_module.o	get_points.o 	compute_bs.o\
+	points_module.o	get_points.o 	limiter_module.o compute_bs.o\
 	dlsode.o	vessel_module.o inside_vessel.o inside_div.o\
-	follow_field.o	inside_limiter.o limiter_module.o 
+	follow_field.o	inside_limiter.o  
 
 WC =	coil_module.o	read_coils.o
 
@@ -69,6 +69,8 @@ div_module.o:	div_module.f90
 	$(CP)	div_module.f90
 inside_div.o: 	inside_div.f90
 	$(CP)   inside_div.f90
+limiter_module.o:	limiter_module.f90
+	$(CP)	limiter_module.f90
 inside_limiter.o:	inside_limiter.f90
 	$(CP)		inside_limiter.f90
 points_module.o:	points_module.f90
@@ -93,5 +95,5 @@ boxport_limiter_check.o: boxport_limiter_check.f90
 	$(CP)	boxport_limiter_check.f90
 
 clean:
-	rm -f *.o
+	rm -f *.o *.mod
 	rm $(PROGRAMS)
