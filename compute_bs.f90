@@ -237,8 +237,6 @@ subroutine field_deriv(neq, t, y, dydx)
   przphi(2) = y(2)
   przphi(3) = t
 
-  !print *,current_point,y,t
-
   ! we already hit, so no point in calculating (this is a sanity check)
   if (points_hit_vessel(current_point).eq.1) then
      dydx = 0
