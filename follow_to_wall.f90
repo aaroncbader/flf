@@ -67,8 +67,12 @@ program follow_to_wall
      endif
      do j=1,points_number
         ! Skip points that already hit
-        if (points_hit(j) == 1) then
+        if (points_hit_vessel(j) == 1) then
            cycle
+        else if (points_hit_divertor(j) == 1) then
+        	cycle
+        else if (points_hit_limiter(j) == 1) then
+        	cycle	   
         endif
       
         ! check if the last move left us inside the vessel
@@ -102,7 +106,9 @@ program follow_to_wall
      write (1,*) 'point number',j
      write (1,'(A,3(F9.6,2X))') 'start: ',points_start(j,:)
      write (1,'(A,3(F9.6,2X))') 'end:   ',points_end(j,:)
-     write (1,*) 'hit wall:',points_hit(j)
+     write (1,*) 'hit wall:',points_hit_vessel(j)
+     write (1,*) 'hit divertor:', points_hit_divertor(j)
+     write (1,*) 'hit limiter:', points_hit_limiter(j)
      write (1,*) '------------------'
   enddo
 
