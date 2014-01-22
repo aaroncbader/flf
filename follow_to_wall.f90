@@ -19,22 +19,24 @@ program follow_to_wall
 
   totcur = -150105.
 
- 
-  !do i = 1,aux_count
-     !aux_current(i) = -150105*0.00000
-  !enddo
-  do i = 1,6
+  
+  if (aux_count < 10) then
+   do i = 1,aux_count
+     aux_current(i) = -150105*0.00000
+   enddo
+  else
+   do i = 1,6
      taper(i) = 0.01*i
-  end do
-  do i = 7,10
+   end do
+   do i = 7,10
      taper(i) = 0.00
-  end do
-  do i=11,14
+   end do
+   do i=11,14
      taper(i) = 0.00
-  end do
-  taper(15) = 0.000
-  taper(16) = 0.000
-
+   end do
+   taper(15) = 0.000
+   taper(16) = 0.000
+  end if
  
   call read_coil_files(totcur)
 
