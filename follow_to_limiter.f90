@@ -10,7 +10,7 @@ program follow_to_limiter
 
   real,dimension(3) :: p
   integer :: i,j,isin, inside_limiter
-  real :: dphi, totcur
+  real :: dphi, totcur, conn_length
   character*144, dimension(:), allocatable :: filenames
   character*144 :: axis_file
 
@@ -101,11 +101,11 @@ program follow_to_limiter
         write (*,'(3(F10.7,2X))'),points_move(j,:)
         call follow_field(points_move(j,:), points_dphi)
         
-        
      
         ! write the new point
         !write (1,'(3(F9.6,2X))') p(1:3)
      enddo
+     
   enddo
 
   do j=1,points_number
