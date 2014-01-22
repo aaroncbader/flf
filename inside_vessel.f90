@@ -41,11 +41,11 @@ end subroutine load_vessel
 
 
 ! note, point is in r,z,phi
-integer function inside_vessel(rin, zin, phiin)
+  integer function inside_vessel(rin, zin, phiin)
 
   use vessel_module
   implicit none
-integer :: tor_size, pol_size, index, i, in_polygon
+  integer :: tor_size, pol_size, index, i, in_polygon
   real, dimension(vessel_size(1)) :: phi_vessel
   real, dimension(vessel_size(2), 3) :: cut
   real, dimension(vessel_size(2)) :: rvessel, zvessel
@@ -99,7 +99,7 @@ end function inside_vessel
 integer function in_polygon(Xpoint, Ypoint, Xpoly, Ypoly, poly_size)
 
   implicit none
-integer :: poly_size, i, j
+  integer :: poly_size, i, j
   real :: px, py, Xpoint, Ypoint, qq
   logical :: mx, my, nx, ny
   real, dimension(poly_size) :: Xpoly, Ypoly
@@ -110,6 +110,7 @@ integer :: poly_size, i, j
   allocate(x(poly_size))
   allocate(y(poly_size))
 
+  ! print *, 'in_polygon started'	
   
   xx=Xpoly
   yy=Ypoly
@@ -162,6 +163,10 @@ in_polygon=-1
   deallocate(yy)
   deallocate(x)
   deallocate(y)
+  
+ ! print *, 'in_polygon=', in_polygon
+  
+ ! print *, 'in_polygon ended'
 
 
 end function in_polygon
