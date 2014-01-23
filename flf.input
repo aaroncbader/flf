@@ -1,0 +1,50 @@
+! Input file for Field Line Following Routines
+! lines that begin with ! are comment lines
+! Do not switch the order of things
+! Do not delete anything unless you know what you are doing
+!
+!
+!
+! File to load data from
+points.in
+! Number of points to load from the file (must be less than the
+! number of lines in the file)
+2
+! Distance to shift in each explicit step
+0.1
+! Maximum number of iterations
+10
+! File to write data to
+results.out
+! Number of main coils (c1.dat to cn.dat)
+6
+! Current value in main coils, this is total main current, 
+! not current per winding
+-150105
+! File for auxiliary coils
+aux_c.dat
+! Number of aux coils (this needs to be the same or less than
+! the first line in the aux coil file)
+6
+! taper values for aux coils, if the aux coil value is 0, do
+! not include any values here
+0.0
+0.0
+0.0
+0.0
+0.0
+0.0
+! Option of whether or not to include a vessel as a target
+! followed by the name of the vessel file
+1
+vessel.txt
+! The number of limiters included in the calculation
+! followed by the file locations for the limiters
+1
+limiter.txt
+! The number of divertors included in the calculation
+! followed by the file names for the divertors
+0
+!DIV_island4x25
+! Axis file, only needed if divertors exist
+!mag_axis.dat
