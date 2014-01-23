@@ -98,6 +98,7 @@ subroutine deallocate_coils()
   deallocate(aux_current)
   deallocate(main_points)
   deallocate(aux_points)
+  deallocate(taper)
 end subroutine deallocate_coils
   
 
