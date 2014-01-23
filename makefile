@@ -9,7 +9,7 @@ CP = $(FC) $(OP) -c
 MO = 	utility.o 	coil_module.o	div_module.o 	read_coils.o\
 	points_module.o	get_points.o 	limiter_module.o compute_bs.o\
 	dlsode.o	vessel_module.o inside_vessel.o inside_div.o\
-	follow_field.o	inside_limiter.o  
+	follow_field.o	inside_limiter.o  parser.o 	read_input.o
 
 WC =	coil_module.o	read_coils.o
 
@@ -102,6 +102,8 @@ boxport_limiter_check.o: boxport_limiter_check.f90
 	$(CP)	boxport_limiter_check.f90
 parser.o:	parser.f90
 	$(CP)	parser.f90
+read_input.o:	read_input.f90
+	$(CP)	read_input.f90
 
 
 

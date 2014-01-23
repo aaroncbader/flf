@@ -6,23 +6,16 @@ subroutine get_points()
   integer :: i
 
   !character, dimension(:) :: filename
-  open (unit=3,file='points.in',action='read')
-  read (3,*) points_number, points_dphi, n_iter
+  open (unit=3,file=trim(adjustl(points_file)),action='read')
   
   ! allocate everything
   allocate(points_start(points_number, 3))
   allocate(points_move(points_number, 3))
   allocate(points_end(points_number, 3))
-  allocate(points_hit_vessel(points_number))
-  allocate(points_hit_divertor(points_number))
-  allocate(points_hit_limiter(points_number))
   
   do i=1,points_number
      read (3,*) points_start(i,:)
      points_move(i,:) = points_start(i,:)
-     points_hit_vessel(i) = 0
-     points_hit_divertor(i) = 0
-     points_hit_limiter(i) = 0
   enddo
 
 end subroutine get_points

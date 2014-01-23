@@ -1,5 +1,5 @@
 ! Read the input from the files
-program read_input
+subroutine read_input
 
   use points_module
   use coil_module
@@ -77,12 +77,16 @@ program read_input
      call read_until_data(filenum, line)
      vessel_file = trim(adjustl(line))
   end do
+  
+  allocate(points_hit_vessel(points_number))
 
   ! Right now, can only handle one vessel
   if (num_vessels.gt.0) then
      call allocate_vessel()
      call load_vessel()
+     points_hit_vessel(:) = 0
   end if
+  
 
   ! Limiter info
   call read_until_data(filenum, line)
@@ -92,11 +96,15 @@ program read_input
      limiter_file = trim(adjustl(line))
   end do
 
+  allocate(points_hit_limiter(points_number))
+
   ! Right now, can only handle one limiter
   if (num_limiters.gt.0) then
      call allocate_limiter()
      call load_limiter()
+     points_hit_limiter(:) = 0
   end if
+  
 
   ! Divertor info
   call read_until_data(filenum, line)
@@ -110,13 +118,15 @@ program read_input
      call read_until_data(filenum, line)
      axis_file = line
   end if
+  allocate(points_hit_divertor(points_number))
 
   if (num_divertors.gt.0) then
      call alloc_div()
      call load_div()
      call load_axis()
+     points_hit_divertor(:) = 0
   end if
 
   ! No more to read
 
-end program read_input
+end subroutine read_input

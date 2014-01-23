@@ -52,6 +52,12 @@ end subroutine load_vessel
   real :: rin, zin, phiin, phi_step_size
   real :: ratio, pi, r, z, phi
 
+  ! Make sure there's even a vessel to check
+  if (num_vessels.le.0) then
+     inside_vessel = 1
+     return
+  end if
+
   pi = 3.1415927
   tor_size = vessel_size(1)
   pol_size = vessel_size(2)

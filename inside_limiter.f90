@@ -58,6 +58,11 @@ real, dimension(3) :: point, pointc, HC_out, HC_up, HC_up_mag, HC_up_norm
 
 ! use pre-calculated values of the location of the magnetic axis in QHS and the B field vector at this location
 
+if (num_limiters.le.0) then
+   inside_limiter = 0
+   return
+end if
+
 bvector=(/0.0,0.43765823,0.24171643/)
 baxis=(/1.4454,0.0,0.0/)
 delta=0.01

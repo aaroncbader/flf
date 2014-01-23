@@ -155,6 +155,11 @@ integer function inside_div(rin, zin, phiin)
   integer :: does_intersect, slice_size
   real, dimension(:), allocatable :: tor_slice, div_slice
 
+  if (num_divertors.le.0) then
+     inside_div = 0
+     return
+  end if
+
   !Move the quadrant appropriately
   call move_to_first_quad(rin, zin, phiin, r, z, phi)
 
@@ -205,7 +210,7 @@ integer function inside_div(rin, zin, phiin)
         !print *,does_intersect, dum1, dum2
         
         if (does_intersect .eq. 1) then
-           inside_div = 1
+           inside_div = i
            return
         endif
 
