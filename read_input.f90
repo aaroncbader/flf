@@ -78,6 +78,7 @@ program read_input
      vessel_file = trim(adjustl(line))
   end do
 
+  ! Right now, can only handle one vessel
   if (num_vessels.gt.0) then
      call allocate_vessel()
      call load_vessel()
@@ -89,17 +90,23 @@ program read_input
   do i=1,num_limiters
      call read_until_data(filenum, line)
      limiter_file = trim(adjustl(line))
-  end do 
+  end do
+
+  ! Right now, can only handle one limiter
+  if (num_limiters.gt.0) then
+     call allocate_limiter()
+     call load_limiter()
+  end if
 
   ! Divertor info
   call read_until_data(filenum, line)
   call string_to_int(line, num_divertors)
   allocate(div_files(num_divertors))
-  do i=1,num_limiters
+  do i=1,num_divertors
      call read_until_data(filenum, line)
      div_files(i) = trim(adjustl(line))
   end do
-  if (num_limiters.gt.0) then
+  if (num_divertors.gt.0) then
      call read_until_data(filenum, line)
      axis_file = line
   end if

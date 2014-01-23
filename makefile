@@ -28,7 +28,7 @@ TL =    vessel_module.o utility.o inside_vessel.o boxport_limiter_check.o
 
 RSI =   coil_module.o 	points_module.o	vessel_module.o	div_module.o\
 	limiter_module.o	utility.o	read_coils.o 	inside_div.o\
-	inside_vessel.o	parser.o
+	inside_vessel.o	inside_limiter.o	parser.o
 
 PROGRAMS = follow_to_wall write_coils test_vessel test_bs test_points
 

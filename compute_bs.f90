@@ -1,17 +1,3 @@
-! convert rzphi points to xyz
-subroutine pol2cart(pol, cart)
-
-  implicit none
-  real,dimension(3) :: pol, cart
-
-  cart(1) = pol(1)*cos(pol(3))
-  cart(2) = pol(1)*sin(pol(3))
-  cart(3) = pol(2)
-
-end subroutine pol2cart
-
-
-
 ! compute full field
 subroutine compute_full_bs(p, b)
 
