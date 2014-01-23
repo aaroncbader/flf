@@ -1,6 +1,6 @@
 FC = gfortran
 
-OP = -fdefault-real-8 -fdefault-double-8 -fbacktrace -fbounds-check  -O2
+OP = -fdefault-real-8 -fdefault-double-8 -fbacktrace -fbounds-check  -g
 
 FF = follow_field.o
 
@@ -26,7 +26,9 @@ TD =    utility.o 	div_module.o inside_div.o
 
 TL =    vessel_module.o utility.o inside_vessel.o boxport_limiter_check.o
 
-RSI =   parser.o
+RSI =   coil_module.o 	points_module.o	vessel_module.o	div_module.o\
+	limiter_module.o	utility.o	read_coils.o 	inside_div.o\
+	parser.o
 
 PROGRAMS = follow_to_wall write_coils test_vessel test_bs test_points
 
@@ -65,7 +67,7 @@ test_limiter: $(TL)
 	$(FC) $(OP) test_limiter.f90 $(TL) -o test_limiter
 
 test_parser: $(RSI)
-	$(FC) $(OP) read_sample_input.f90 $(RSI) -o read_sample_input
+	$(FC) $(OP) read_input.f90 $(RSI) -o read_input
 
 
 utility.o:	utility.f90

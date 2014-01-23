@@ -8,5 +8,6 @@ module points_module
   real :: points_dphi
   integer :: n_iter, points_number
   integer :: current_point
+  character*72 :: points_file, results_file
 
 end module points_module

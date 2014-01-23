@@ -14,7 +14,7 @@ program follow_to_wall
   character*144 :: axis_file
 
   ! first load the coils
-  call allocate_main(6,14)
+  call allocate_main(14)
   call allocate_aux('aux_c.dat')
 
   totcur = -150105.
