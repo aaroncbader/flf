@@ -111,6 +111,12 @@ program read_input
      axis_file = line
   end if
 
+  if (num_divertors.gt.0) then
+     call alloc_div()
+     call load_div()
+     call load_axis()
+  end if
+
   ! No more to read
 
 end program read_input

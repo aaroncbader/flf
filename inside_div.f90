@@ -110,17 +110,16 @@ subroutine deallocate_div_and_axis()
   deallocate(div_files)
 end subroutine deallocate_div_and_axis
 
-subroutine load_axis(filename)
+subroutine load_axis()
   use div_module
   
-  character*144 :: filename
   integer :: filenum, i
   real :: pi
 
   filenum = 21
   pi = 3.14159
 
-  open(filenum, file=trim(filename), status='old', form='formatted')
+  open(filenum, file=trim(axis_file), status='old', form='formatted')
   read(filenum, *) axis_points
   allocate(mag_axis(axis_points,3))
   
