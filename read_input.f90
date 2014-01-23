@@ -78,6 +78,11 @@ program read_input
      vessel_file = trim(adjustl(line))
   end do
 
+  if (num_vessels.gt.0) then
+     call allocate_vessel()
+     call load_vessel()
+  end if
+
   ! Limiter info
   call read_until_data(filenum, line)
   call string_to_int(line, num_limiters)
