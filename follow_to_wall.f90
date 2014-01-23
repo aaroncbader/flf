@@ -27,13 +27,9 @@ program follow_to_wall
      endif
      do j=1,points_number
         ! Skip points that already hit
-        if (points_hit_vessel(j) == 1) then
+        if (points_hit(j) == 1) then
            cycle
-        else if (points_hit_divertor(j) == 1) then
-        	cycle
-        else if (points_hit_limiter(j) == 1) then
-        	cycle	   
-        endif
+        end if
       
         ! check if the last move left us inside the vessel
         p = points_move(j,:)

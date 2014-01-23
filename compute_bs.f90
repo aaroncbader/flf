@@ -239,9 +239,11 @@ subroutine field_deriv(neq, t, y, dydx)
   ! then it immediately leaves the function without
   ! doing anything
 
-  ! check if we've hit the wall
+  ! check if we've hit the wall 
+  !\todo refactor this
   if ((inside_vessel(y(1), y(2), t) == 0)) then
      points_hit_vessel(current_point) = 1
+     points_hit(current_point) = 1
      points_end(current_point,1:2) = y
      points_end(current_point,3) = t
      print *,'-------------------------------'
@@ -253,6 +255,7 @@ subroutine field_deriv(neq, t, y, dydx)
   else if (inside_div(y(1), y(2), t).gt.1) then
     ! this is inefficient, but we only need to recalc once per point
     points_hit_divertor(current_point) = inside_div(y(1), y(2), t)
+    points_hit(current_point) = 1
     points_end(current_point,1:2) = y
     points_end(current_point,3) = t
     print *,'-------------------------------'
@@ -263,6 +266,7 @@ subroutine field_deriv(neq, t, y, dydx)
    ! check if we're near the helical plane in the boxport (where the limiter is)  
    else if (inside_limiter(y(1),y(2),t) == 1) then
      points_hit_limiter(current_point)=1
+     points_hit(current_point) = 1
      points_end(current_point,1:2)=y
      points_end(current_point,3)=t
      print *,'-------------------------------'

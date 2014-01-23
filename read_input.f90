@@ -23,6 +23,7 @@ subroutine read_input
   ! Get the number of points
   call read_until_data(filenum, line)
   call string_to_int(line, points_number)
+  allocate(points_hit(points_number))
 
   ! Get the shift amount
   call read_until_data(filenum, line)
