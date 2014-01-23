@@ -1,21 +1,21 @@
-subroutine allocate_main(num_coils, skip_value)
+subroutine allocate_main(skip_value)
 
   use coil_module
   implicit none
   integer, parameter :: mult_factor=8
 
   integer :: i
-  integer :: num_coils, filenum, temp_size, skip_value
+  integer :: filenum, temp_size, skip_value
   character*15 :: filename, format_string
 
   ! set values for the coil module
-  main_count = num_coils * mult_factor
+  main_count = num_main_coils * mult_factor
   skip = skip_value
   main_size = 0
 
   ! This block is used twice, we can probably extract it out
   ! generalize the coil loading for multiple coils
-  do i=1,num_coils
+  do i=1,num_main_coils
      filenum = 30 + i
 
      ! if more than 10 coils we need two characters for the string
@@ -55,19 +55,19 @@ subroutine allocate_aux(filename)
   integer, parameter :: mult_factor=8
   integer :: i,j,k
 
-  integer :: num_coils, temp_size, dummy, filenum
+  integer :: temp_size, dummy, filenum
   real :: x,y,z !dummy variables
   character(*) :: filename
 
   filenum = 41
 
   open(filenum, file=filename, status='old', form='formatted')
-  read(filenum,*) num_coils
+  read(filenum,*) dummy
   
-  taper_size = num_coils
-  aux_count = num_coils * mult_factor
+  taper_size = num_aux_coils
+  aux_count = num_aux_coils * mult_factor
   aux_size = 0
-  do i=1,num_coils
+  do i=1,num_aux_coils
      read(filenum,*) temp_size
      do j=1,temp_size
         read(filenum,*) x,y,z
@@ -110,17 +110,15 @@ subroutine read_coil_files(current)
   integer, parameter :: mult_factor=8
 
   integer :: i,j,k
-  integer :: piece, filenum, total_points
-  integer :: nmain, naux !number of main and aux coils
+  integer :: piece, filenum, total_points, dummy
   real :: current,x,y,z
   character*15 :: filename, format_string
 
-  nmain = main_count/mult_factor
-  naux = aux_count/mult_factor
+  
 
 
   ! generalize the coil loading for multiple coils
-  do i=1,nmain
+  do i=1,num_main_coils
      filenum = 30 + i
 
      ! if more than 10 coils we need two characters for the string
@@ -136,7 +134,7 @@ subroutine read_coil_files(current)
   
 
   ! iterate over coil files
-  do i=1,nmain
+  do i=1,num_main_coils
      piece = 0 !reset piece value
 
      filenum = i + 30
@@ -176,8 +174,8 @@ subroutine read_coil_files(current)
 
   ! All aux coils are in one file, no need to skip
   open(67,file='aux_c.dat',status='old',form='formatted')
-  read(67,*) naux
-  do i=1,naux
+  read(67,*) dummy
+  do i=1,num_aux_coils
      read(67,*) aux_points(i)
      do j=1,aux_points(i)
         read(67,*) x,y,z
@@ -189,12 +187,13 @@ subroutine read_coil_files(current)
   close(67)
 
   call move_coils(coil_main, main_points, &
-       nmain, main_size)
-  call move_coils(coil_aux, aux_points, naux, &
+       num_main_coils, main_size)
+  call move_coils(coil_aux, aux_points, num_aux_coils, &
        aux_size)
   !Input the currents into the main coils
-  do i=1,nmain * mult_factor
-     ! i'm not sure why /14, but it's in konstantin's version
+  do i=1,num_main_coils * mult_factor
+     ! There are 14 windings in the main coils, this is independent of the
+     ! skip value
      main_current = current/14 
   enddo
 
@@ -204,8 +203,6 @@ subroutine read_coil_files(current)
         aux_current(i + (j*taper_size)) = current*taper(i)
      enddo
   enddo
-
-
 
   return
 end subroutine read_coil_files

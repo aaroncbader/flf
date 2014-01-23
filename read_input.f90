@@ -68,7 +68,7 @@ program read_input
      taper(i) = dummy
   end do
 
-  ! PUT READ COILS HERE
+  call read_coil_files(totcur)
      
   ! VESSEL INFO
   call read_until_data(filenum, line)
