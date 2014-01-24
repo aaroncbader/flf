@@ -59,8 +59,7 @@ program follow_to_wall
         call follow_field(points_move(j,:), points_dphi, dist)
         
         conn_length(j)=conn_length(j)+dist
-        
-        write (*,'(3(F10.7,2X))'), conn_length(j)
+
         
      
         ! write the new point
