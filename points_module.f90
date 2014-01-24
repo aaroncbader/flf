@@ -4,6 +4,7 @@ module points_module
 
   implicit none
   real, dimension(:,:), allocatable :: points_start, points_move, points_end
+  real, dimension(:), allocatable :: conn_length
   integer, dimension(:), allocatable :: points_hit_vessel, points_hit_limiter
   integer, dimension(:), allocatable :: points_hit_divertor, points_hit
   real :: points_dphi
