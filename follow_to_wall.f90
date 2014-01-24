@@ -6,7 +6,7 @@ program follow_to_wall
 
   real,dimension(3) :: p
   integer :: i,j,isin, inside_vessel,outfile
-  real :: dphi, totcur
+  real :: dphi, totcur, dist
 
   call read_input()
 
@@ -14,6 +14,9 @@ program follow_to_wall
   ! get the points
   call get_points()
   outfile = 1
+  
+  allocate(conn_length(points_number))
+  conn_length=0.0
 
   !file to write output
   open (unit=outfile,file=trim(adjustl(results_file)),status='unknown')
@@ -38,8 +41,11 @@ program follow_to_wall
         current_point = j
 
         write (*,'(3(F10.7,2X))'),points_move(j,:)
-        call follow_field(points_move(j,:), points_dphi)
+        call follow_field(points_move(j,:), points_dphi, dist)
         
+        conn_length(j)=conn_length(j)+dist
+        
+        write (*,'(3(F10.7,2X))'), conn_length(j)
         
      
         ! write the new point
@@ -65,11 +71,12 @@ subroutine record_output(filenum)
   implicit none
   
   integer :: j,k,filenum
-
+  
   do j=1,points_number
      write (filenum,*) 'point number',j
      write (filenum,'(A,3(F9.6,2X))') 'start: ',points_start(j,:)
      write (filenum,'(A,3(F9.6,2X))') 'end:   ',points_end(j,:)
+     write (filenum,'(A,3(F9.6,2X))') 'connection length:', conn_length(j)
      if (num_vessels.gt.0) then
         write (filenum,*) 'hit wall:',points_hit_vessel(j)
      end if
@@ -81,4 +88,5 @@ subroutine record_output(filenum)
      end if
      write (filenum,*) '------------------'
   enddo  
+  
 end subroutine record_output
