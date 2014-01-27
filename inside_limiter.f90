@@ -65,7 +65,7 @@ end if
 
 bvector=(/0.0,0.43765823,0.24171643/)
 baxis=(/1.4454,0.0,0.0/)
-delta=0.01
+delta=0.005 !5mm away from helical plane, try +/- this value
 
   point=(/r,z,phi/)
   
