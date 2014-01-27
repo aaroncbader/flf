@@ -228,6 +228,8 @@ subroutine field_deriv(neq, t, y, dydx)
      dydx = 0
      return
   end if
+  
+  ! print *, 'points_end=', points_end
 
   ! For all these checks, if there is no object loaded,
   ! then it immediately leaves the function without
