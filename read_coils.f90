@@ -48,7 +48,7 @@ subroutine allocate_main(skip_value)
 
 end subroutine allocate_main
 
-subroutine allocate_aux(filename)
+subroutine allocate_aux()
   use coil_module
   implicit none
 
@@ -57,11 +57,10 @@ subroutine allocate_aux(filename)
 
   integer :: temp_size, dummy, filenum
   real :: x,y,z !dummy variables
-  character(*) :: filename
 
   filenum = 41
 
-  open(filenum, file=filename, status='old', form='formatted')
+  open(filenum, file=trim(aux_file), status='old', form='formatted')
   read(filenum,*) dummy
   
   taper_size = num_aux_coils
@@ -98,6 +97,7 @@ subroutine deallocate_coils()
   deallocate(aux_current)
   deallocate(main_points)
   deallocate(aux_points)
+  deallocate(taper)
 end subroutine deallocate_coils
   
 
@@ -173,7 +173,7 @@ subroutine read_coil_files(current)
   enddo !end of all files
 
   ! All aux coils are in one file, no need to skip
-  open(67,file='aux_c.dat',status='old',form='formatted')
+  open(67,file=aux_file,status='old',form='formatted')
   read(67,*) dummy
   do i=1,num_aux_coils
      read(67,*) aux_points(i)

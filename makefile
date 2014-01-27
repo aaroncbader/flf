@@ -26,10 +26,6 @@ TD =    utility.o 	div_module.o inside_div.o
 
 TL =    vessel_module.o utility.o inside_vessel.o boxport_limiter_check.o
 
-RSI =   coil_module.o 	points_module.o	vessel_module.o	div_module.o\
-	limiter_module.o	utility.o	read_coils.o 	inside_div.o\
-	inside_vessel.o	inside_limiter.o	parser.o
-
 PROGRAMS = follow_to_wall write_coils test_vessel test_bs test_points
 
 #This is the default
@@ -66,8 +62,8 @@ test_divread: $(TD)
 test_limiter: $(TL)
 	$(FC) $(OP) test_limiter.f90 $(TL) -o test_limiter
 
-test_parser: $(RSI)
-	$(FC) $(OP) read_input.f90 $(RSI) -o read_input
+comp_test: $(MO)
+	$(FC) $(OP) comprehensive_test.f90 $(MO) -o comprehensive_test
 
 
 utility.o:	utility.f90
