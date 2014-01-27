@@ -41,11 +41,13 @@ program follow_to_wall
         current_point = j
 
         write (*,'(3(F10.7,2X))'),points_move(j,:)
+        
         call follow_field(points_move(j,:), points_dphi, dist)
         
         conn_length(j)=conn_length(j)+dist
-
         
+        !added this line back in, otherwise the results.out file doesn't write values for the end point
+        points_end=points_move
      
         ! write the new point
         !write (1,'(3(F9.6,2X))') p(1:3)
