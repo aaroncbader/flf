@@ -1257,7 +1257,6 @@ C***FIRST EXECUTABLE STATEMENT  DLSODE
       GO TO 20
  10   INIT = 0
       IF (TOUT .EQ. T) RETURN
- 
 C-----------------------------------------------------------------------
 C Block B.
 C The next code block is executed for the initial call (ISTATE = 1),
