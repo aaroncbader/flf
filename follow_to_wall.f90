@@ -40,7 +40,7 @@ program follow_to_wall
         ! set the current point
         current_point = j
 
-        write (*,'(3(F10.7,2X))'),points_move(j,:)
+        write (*,'(3(F12.7,2X))'),points_move(j,:)
         
         call follow_field(points_move(j,:), points_dphi, dist)
         
@@ -75,9 +75,9 @@ subroutine record_output(filenum)
   
   do j=1,points_number
      write (filenum,*) 'point number',j
-     write (filenum,'(A,3(F9.6,2X))') 'start: ',points_start(j,:)
-     write (filenum,'(A,3(F9.6,2X))') 'end:   ',points_end(j,:)
-     write (filenum,'(A,3(F9.6,2X))') 'connection length:', conn_length(j)
+     write (filenum,'(A,3(F11.6,2X))') 'start: ',points_start(j,:)
+     write (filenum,'(A,3(F11.6,2X))') 'end:   ',points_end(j,:)
+     write (filenum,'(A,3(F11.6,2X))') 'connection length:', conn_length(j)
      if (num_vessels.gt.0) then
         write (filenum,*) 'hit wall:',points_hit_vessel(j)
      end if
