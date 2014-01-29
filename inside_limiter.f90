@@ -53,8 +53,11 @@ implicit none
 real :: Xpoint, Ypoint, dist_plane, delta, r, z, phi
 integer :: in_polygon, poly_size, is_near_helical_plane
 real, dimension(3) :: bvector, baxis, dist_axis
-real, dimension(4) :: Xpoly, Ypoly
+real, dimension(:), allocatable :: Xpoly, Ypoly
 real, dimension(3) :: point, pointc, HC_out, HC_up, HC_up_mag, HC_up_norm
+
+allocate(xpoly(limiter_size(2)))
+allocate(ypoly(limiter_size(2)))
 
 ! use pre-calculated values of the location of the magnetic axis in QHS and the B field vector at this location
 
@@ -127,8 +130,11 @@ else if (dist_plane <= delta) then
 	inside_limiter=in_polygon(Xpoint, Ypoint, Xpoly, Ypoly, poly_size)
 	
 	! print *, 'inside_limiter=', inside_limiter
-
-end if
+	
+end if	
+	
+deallocate(xpoly)
+deallocate(ypoly)	
 
 
 
