@@ -248,7 +248,7 @@ subroutine field_deriv(neq, t, y, dydx)
      print *,'-------------------------------'
      dydx = 0
    ! check if we've hit the divertor
-  else if (inside_div(y(1), y(2), t).gt.1) then
+  else if (inside_div(y(1), y(2), t).ge.1) then
     ! this is inefficient, but we only need to recalc once per point
     points_hit_divertor(current_point) = inside_div(y(1), y(2), t)
     points_hit(current_point) = 1
