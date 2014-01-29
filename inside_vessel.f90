@@ -78,9 +78,9 @@ end subroutine load_vessel
 
 
   ! ratio for interpolation
-  ratio = mod(phi, phi_step_size) / phi_step_size
+  ratio = modulo(phi, phi_step_size) / phi_step_size
   ! Index for first surface
-  index = int((phi - mod(phi, phi_step_size))/phi_step_size) + 1
+  index = int((phi - modulo(phi, phi_step_size))/phi_step_size) + 1
   
   ! Interpolate
   cut = vessel(index,:,:) * (1 - ratio) + vessel(index + 1,:,:) * ratio
@@ -134,7 +134,7 @@ integer function in_polygon(Xpoint, Ypoint, Xpoly, Ypoly, poly_size)
 in_polygon=-1
 
   do i=1,poly_size
-     j=1+mod(i,poly_size)
+     j=1+modulo(i,poly_size)
      mx=x(i).ge.0.0
      nx=x(j).ge.0.0
      my=y(i).ge.0.0
