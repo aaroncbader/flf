@@ -47,7 +47,7 @@ program follow_to_wall
         conn_length(j)=conn_length(j)+dist
         
         !added this line back in, otherwise the results.out file doesn't write values for the end point
-        points_end=points_move
+        
      
         ! write the new point
         !write (1,'(3(F9.6,2X))') p(1:3)
@@ -76,7 +76,11 @@ subroutine record_output(filenum)
   do j=1,points_number
      write (filenum,*) 'point number',j
      write (filenum,'(A,3(F11.6,2X))') 'start: ',points_start(j,:)
-     write (filenum,'(A,3(F11.6,2X))') 'end:   ',points_end(j,:)
+     if (points_hit(j).eq.1) then
+        write (filenum,'(A,3(F11.6,2X))') 'end:   ',points_end(j,:)
+     else
+        write (filenum,'(A,3(F11.6,2X))') 'end:   ',points_move(j,:)
+     end if
      write (filenum,'(A,3(F11.6,2X))') 'connection length:', conn_length(j)
      if (num_vessels.gt.0) then
         write (filenum,*) 'hit wall:',points_hit_vessel(j)
