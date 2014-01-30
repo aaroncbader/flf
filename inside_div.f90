@@ -102,12 +102,12 @@ end subroutine load_div
 
 subroutine deallocate_div_and_axis()
   use div_module
-  deallocate(div_tor_num)
-  deallocate(div_seg_num)
-  deallocate(divertor)
-  deallocate(div_tor_vals)
-  deallocate(mag_axis)
-  deallocate(div_files)
+  if (allocated(div_tor_num)) deallocate(div_tor_num)
+  if (allocated(div_seg_num)) deallocate(div_seg_num)
+  if (allocated(divertor)) deallocate(divertor)
+  if (allocated(div_tor_vals)) deallocate(div_tor_vals)
+  if (allocated(mag_axis)) deallocate(mag_axis)
+  if (allocated(div_files)) deallocate(div_files)
 end subroutine deallocate_div_and_axis
 
 subroutine load_axis()
