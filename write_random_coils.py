@@ -25,4 +25,4 @@ def write_random_coils(coil_num, mag):
 
     f.close()
 
-write_random_coils(48, 1)
+write_random_coils(48, 0.000001)
