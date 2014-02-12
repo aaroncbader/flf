@@ -98,10 +98,7 @@ subroutine read_input
      call read_until_data(filenum, line)
      lim_files(i) = trim(adjustl(line))
   end do
-    if (num_limiters.gt.0) then
-    	call read_until_data(filenum, line)
-    	axis_file = line
-  end if
+
   allocate(points_hit_limiter(points_number))
   
   if (num_limiters.gt.0) then
