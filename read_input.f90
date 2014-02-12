@@ -104,7 +104,7 @@ subroutine read_input
   end if
   allocate(points_hit_limiter(points_number))
   
-  if (num_limiters.gt.o) then
+  if (num_limiters.gt.0) then
   	call allocate_limiter()
   	call load_limiter()
   	points_hit_limiter(:) = 0
