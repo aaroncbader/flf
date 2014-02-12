@@ -5,7 +5,7 @@ subroutine allocate_limiter()
   integer :: filenum = 22
   integer :: i
   
-  !do i=1,num_limiters
+  do i=1,num_limiters
 
   	open(filenum, file=trim(lim_files(i)), status='old', form = 'formatted')
   	read(filenum,*) limiter_size(1:2)
@@ -16,7 +16,7 @@ subroutine allocate_limiter()
   
   	close(filenum)
   	
- !end do	
+ end do	
 
 end subroutine allocate_limiter
 
