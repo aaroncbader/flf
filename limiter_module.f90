@@ -6,5 +6,6 @@ module limiter_module
   
   real, allocatable, dimension(:,:) :: limiter
   character*72 :: limiter_file
+  character*72, dimension(:), allocatable :: lim_files
 
 end module limiter_module
