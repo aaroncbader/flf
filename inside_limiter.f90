@@ -3,15 +3,20 @@ subroutine allocate_limiter()
   use limiter_module
   implicit none
   integer :: filenum = 22
-
-  open(filenum, file=limiter_file, status='old', form = 'formatted')
-  read(filenum,*) limiter_size(1:2)
-
-  allocate(limiter(limiter_size(1),limiter_size(2)))
+  integer :: i
   
-  limiter(:,:)=0
+  do i=1,num_limiters
+
+  	open(filenum, file=trim(lim_files(i)), status='old', form = 'formatted')
+  	read(filenum,*) limiter_size(1:2)
+
+  	allocate(limiter(limiter_size(1),limiter_size(2)))
   
-  close(filenum)
+  	limiter(:,:)=0
+  
+  	close(filenum)
+  	
+  end do	
 
 end subroutine allocate_limiter
 
@@ -23,8 +28,10 @@ subroutine load_limiter()
   integer :: i,j
   integer :: filenum = 22
   real, dimension(2) :: dummy
+  
+  do i=1,num_limiters
 
-  open(filenum,file=limiter_file,status='old',form='formatted')
+  open(filenum,file=trim(lim_files(i)),status='old',form='formatted')
   
 
   ! the first two value should give the number of toroidal and poloidal
@@ -39,6 +46,8 @@ subroutine load_limiter()
      enddo
   !enddo
   close(filenum)
+  
+  end do
   
 end subroutine load_limiter
 
