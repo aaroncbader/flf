@@ -90,21 +90,26 @@ subroutine read_input
   
 
   ! Limiter info
+  ! changed to allow more than one limiter
   call read_until_data(filenum, line)
   call string_to_int(line, num_limiters)
+  allocate(lim_files(num_limiters))
   do i=1,num_limiters
      call read_until_data(filenum, line)
-     limiter_file = trim(adjustl(line))
+     lim_files(i) = trim(adjustl(line))
   end do
-
-  allocate(points_hit_limiter(points_number))
-
-  ! Right now, can only handle one limiter
-  if (num_limiters.gt.0) then
-     call allocate_limiter()
-     call load_limiter()
-     points_hit_limiter(:) = 0
+    if (num_limiters.gt.0) then
+    	call read_until_data(filenum, line)
+    	axis_file = line
   end if
+  allocate(points_hit_limiter(points_number))
+  
+  if (num_limiters.gt.o) then
+  	call allocate_limiter()
+  	call load_limiter()
+  	points_hit_limiter(:) = 0
+  end if
+
   
 
   ! Divertor info
