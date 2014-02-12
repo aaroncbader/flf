@@ -5,18 +5,18 @@ subroutine allocate_limiter()
   integer :: filenum = 22
   integer :: i
   
-  do i=1,num_limiters
+  !do i=1,num_limiters
 
   	open(filenum, file=trim(lim_files(i)), status='old', form = 'formatted')
   	read(filenum,*) limiter_size(1:2)
 
-  	allocate(limiter(limiter_size(1),limiter_size(2)))
+  	allocate(limiter(num_limiters,limiter_size(1),limiter_size(2)))
   
-  	limiter(:,:)=0
+  	limiter(:,:,:)=0
   
   	close(filenum)
   	
-  end do	
+ !end do	
 
 end subroutine allocate_limiter
 
@@ -42,7 +42,7 @@ subroutine load_limiter()
   !do i=1,limiter_size(1)
      do j=1,limiter_size(2)
         read(filenum,*) dummy
-        	limiter(:,j)=dummy
+        	limiter(i,:,j)=dummy
      enddo
   !enddo
   close(filenum)
@@ -60,9 +60,9 @@ use limiter_module
 implicit none
 
 real :: Xpoint, Ypoint, dist_plane, delta, r, z, phi
-integer :: in_polygon, poly_size, is_near_helical_plane
+integer :: in_polygon, poly_size, is_near_helical_plane, i
 real, dimension(3) :: bvector, baxis, dist_axis
-real, dimension(:), allocatable :: Xpoly, Ypoly
+real, dimension(:), allocatable :: xpoly, ypoly
 real, dimension(3) :: point, pointc, HC_out, HC_up, HC_up_mag, HC_up_norm
 
 allocate(xpoly(limiter_size(2)))
@@ -98,12 +98,14 @@ if (abs(dist_plane) > delta) then
    return
 else if (dist_plane <= delta) then
 
+do i=1,num_limiters
+
 	! print *, 'performing limiter check'
 
-	poly_size=size(limiter(1,:))
+	poly_size=limiter_size(2)
 
-	Xpoly=limiter(1,:)
-	Ypoly=limiter(2,:)
+	Xpoly=limiter(i,1,:)
+	Ypoly=limiter(i,2,:)
 
 	! need to project point into 2D plane
 	! we'll do this in the same way that Chris Clark does in his matlab scripts
@@ -136,9 +138,11 @@ else if (dist_plane <= delta) then
 	! use in_polygon to see if the point hits the limiter	
 
 
-	inside_limiter=in_polygon(Xpoint, Ypoint, Xpoly, Ypoly, poly_size)
+	inside_limiter=in_polygon(Xpoint, Ypoint, xpoly, ypoly, poly_size)
 	
 	! print *, 'inside_limiter=', inside_limiter
+	
+end do	
 	
 end if	
 	
