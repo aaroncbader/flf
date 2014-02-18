@@ -1,16 +1,19 @@
-!  program test_random_number
-!    implicit none
-!    integer :: i
-!    real :: r(1000), rand_normal
+! program test_random_number
+!   implicit none
+!   integer :: i
+!   real :: r(3), rand_normal, vec(3)
   
-!    call init_random_seed()
-! !   call random_number(r)
+!   call init_random_seed()
+! ! !   call random_number(r)
 
-!    do i =1,1000
-!       print *,rand_normal(0., 1.)
-!    end do
+!   do i=1,10 
+!      call rand_vector(vec)
+!      print *,vec
+!   end do
+ 
+  
 
-!  end program test_random_number
+! end program test_random_number
 
 !Algorithm stolen from gcc.gnu.org/onlinedocs/gfortran/RANDOM_005fSEED.html
 subroutine init_random_seed()
@@ -74,4 +77,21 @@ function rand_normal(mu, sigma)
   rand_normal = mu + sigma*rand_normal
 
 end function rand_normal
+
+
+! Get an isotropic random vector  
+subroutine rand_vector(answer)
+  implicit none
+  real, dimension(3) :: answer
+  real :: rand_normal, vector_size
+  integer :: i
+
+  do i=1,3
+     answer(i) = rand_normal(0., 1.)
+  end do
   
+  vector_size = answer(1)**2 + answer(2)**2 + answer(3)**2
+  vector_size = vector_size**0.5
+  answer = answer/vector_size
+  return
+end subroutine rand_vector
