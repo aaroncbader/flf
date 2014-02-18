@@ -1,14 +1,16 @@
-program test_random_number
-  implicit none
-  integer :: i
-  real :: r
+!  program test_random_number
+!    implicit none
+!    integer :: i
+!    real :: r(1000), rand_normal
   
-  call init_random_seed()
-  call random_number(r)
+!    call init_random_seed()
+! !   call random_number(r)
 
-  print *,r
+!    do i =1,1000
+!       print *,rand_normal(0., 1.)
+!    end do
 
-end program test_random_number
+!  end program test_random_number
 
 !Algorithm stolen from gcc.gnu.org/onlinedocs/gfortran/RANDOM_005fSEED.html
 subroutine init_random_seed()
@@ -54,3 +56,22 @@ subroutine init_random_seed()
   call random_seed(put=seed)
 
 end subroutine init_random_seed
+
+
+! Simple box muller algorithm
+function rand_normal(mu, sigma)
+
+  implicit none
+  real :: theta, r, rand_normal, pi, mu, sigma, num(2)
+  
+  pi = 3.14159265358
+  
+  call random_number(num)
+  theta = 2.0*pi*num(1)
+  r = (-2.0* log(num(2)))**0.5
+  rand_normal = (r * cos(theta))
+
+  rand_normal = mu + sigma*rand_normal
+
+end function rand_normal
+  
