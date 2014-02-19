@@ -169,3 +169,15 @@ integer function intersection(x1, y1, x2, y2, x3, y3, x4, y4, xint, yint)
   end if
 
 end function intersection
+
+! Compute cross product of 2 three dimensional vectors
+subroutine cross_product(a, b, c)
+  implicit none
+  real, dimension(3) :: a, b, c
+
+  c(1) = a(2) * b(3) - a(3) * b(2)
+  c(2) = a(3) * b(1) - a(1) * b(3)
+  c(3) = a(1) * b(2) - a(2) * b(1)
+  return
+end subroutine cross_product
+  

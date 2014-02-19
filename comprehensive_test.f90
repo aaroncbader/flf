@@ -4,7 +4,8 @@ program comprehensive_test
   use div_module
 
   integer :: i,j, inside_div, isok, answer
-  real :: dist
+  real :: dist, D, Te
+  real, dimension(3) :: newp
 
   !Run some tests to make sure everything is correct
   !with loading and other stuff
@@ -102,6 +103,23 @@ program comprehensive_test
   else
      print *,'Divertor test 2 PASS'
   end if
+  
+
+  !! tests for diffusion
+  points_start(1,1) = 1.45
+  points_start(1,2) = 0.
+  points_start(1,3) = 0.
+  call init_random_seed()
+  Te = 50.
+  D = 1.
+  points_dphi = 0.01
+  call follow_field(points_move(1,:), points_dphi, dist)
+  print *,'new point location',points_move(1,:)
+  print *,'Lc',dist
+  call diffuse_point(points_move(1,:), newp, dist, Te, D, 1)
+  points_move(1,:) = newp
+  print *,'after diffusion',points_move(1,:)
+  
   
 
 end program comprehensive_test

@@ -8,7 +8,8 @@ CP = $(FC) $(OP) -c
 
 MO = 	utility.o 	coil_module.o	div_module.o 	read_coils.o\
 	points_module.o	get_points.o 	limiter_module.o compute_bs.o\
-	dlsode.o	vessel_module.o inside_vessel.o inside_div.o\
+	dlsode.o	vessel_module.o inside_vessel.o randomize.o\
+	inside_div.o	diffusion.o\
 	follow_field.o	inside_limiter.o  parser.o 	read_input.o
 
 WC =	coil_module.o	read_coils.o
@@ -92,6 +93,10 @@ vessel_module.o:	vessel_module.f90
 	$(CP)	vessel_module.f90
 inside_vessel.o:	inside_vessel.f90
 	$(CP)	inside_vessel.f90
+randomize.o:	randomize.f90
+	$(CP)	randomize.f90
+diffusion.o:	diffusion.f90
+	$(CP)	diffusion.f90
 get_points.o:	get_points.f90
 	$(CP)	get_points.f90
 boxport_limiter_check.o: boxport_limiter_check.f90
