@@ -6,11 +6,13 @@ subroutine read_input
   use limiter_module
   use vessel_module
   use div_module
+  use options_module
   implicit none
 
   character*72 :: input_file, line
   integer :: filenum, i
   real :: totcur, dummy
+  real, allocatable, dimension(:) :: dummy_arr
 
   filenum = 10
   input_file = 'flf.input'
@@ -63,15 +65,32 @@ subroutine read_input
   call allocate_aux(aux_file)
   
   ! taper values
-  do i = 1,taper_size ! taper_size is redundnat, should be removed
+  do i = 1,taper_size ! taper_size is redundant, should be removed
      call read_until_data(filenum, line)
      call string_to_real(line, dummy)
      taper(i) = dummy
   end do
 
   call read_coil_files(totcur)
+
+  ! DIFFUSION INFO ------------------------
+  ! is diffusion on
+  call read_until_data(filenum, line)
+  call string_to_int(line, use_diffusion)
+
+  ! what species to use
+  call read_until_data(filenum, line)
+  call string_to_int(line, diffusion_species)
+
+  ! temperature and D
+  call read_until_data(filenum, line)
+  allocate(dummy_arr(2))
+  call string_to_reals(line, dummy_arr, 2)
+  diffusion_D = dummy_arr(1)
+  temperature = dummy_arr(2)
+  deallocate(dummy_arr)
      
-  ! VESSEL INFO
+  ! VESSEL INFO --------------------------
   call read_until_data(filenum, line)
   call string_to_int(line, num_vessels)
   do i=1,num_vessels

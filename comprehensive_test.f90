@@ -2,6 +2,7 @@ program comprehensive_test
   use points_module
   use coil_module
   use div_module
+  use options_module
 
   integer :: i,j, inside_div, isok, answer
   real :: dist, D, Te
@@ -110,8 +111,10 @@ program comprehensive_test
   points_start(1,2) = 0.
   points_start(1,3) = 0.
   call init_random_seed()
-  Te = 50.
-  D = 1.
+  Te = temperature
+  D = diffusion_D
+  print *,Te, D
+  print *,use_diffusion, diffusion_species
   points_dphi = 0.01
   call follow_field(points_move(1,:), points_dphi, dist)
   print *,'new point location',points_move(1,:)

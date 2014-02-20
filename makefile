@@ -7,7 +7,8 @@ FF = follow_field.o
 CP = $(FC) $(OP) -c
 
 MO = 	utility.o 	coil_module.o	div_module.o 	read_coils.o\
-	points_module.o	get_points.o 	limiter_module.o compute_bs.o\
+	points_module.o	get_points.o 	limiter_module.o options_module.o\
+	compute_bs.o\
 	dlsode.o	vessel_module.o inside_vessel.o randomize.o\
 	inside_div.o	diffusion.o\
 	follow_field.o	inside_limiter.o  parser.o 	read_input.o
@@ -85,6 +86,8 @@ coil_module.o:	coil_module.f90
 	$(CP)	coil_module.f90
 read_coils.o:	read_coils.f90
 	$(CP)	read_coils.f90
+options_module.o:	options_module.f90
+	$(CP)	options_module.f90
 compute_bs.o:	compute_bs.f90
 	$(CP)	compute_bs.f90
 dlsode.o:	dlsode.f
