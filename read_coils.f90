@@ -209,26 +209,6 @@ subroutine read_coil_files(current)
   return
 end subroutine read_coil_files
 
-! HACKYHACK - put random translations for each coil, need to read them in
-! first
-subroutine randomize_coils()
-  use coil_module
-  implicit none
-
-  real, dimension(3) :: rand_coil
-  integer :: rand_file, i
-  
-  rand_file = 70
-  open(rand_file, file='coil_rand', status='old', form='formatted')
-  do i = 1,48
-     read(rand_file,*) rand_coil(1:3)
-     coil_main(i,:,1) = coil_main(i,:,1) + rand_coil(1)
-     coil_main(i,:,2) = coil_main(i,:,2) + rand_coil(2)
-     coil_main(i,:,3) = coil_main(i,:,3) + rand_coil(3)
-  end do
-  
-end subroutine randomize_coils
-
 
 ! It's harder to generalize this for devices that do not have 
 ! 4 part symmetry, so i'm not going to bother

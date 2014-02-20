@@ -10,7 +10,6 @@ program follow_to_wall
   real :: dphi, totcur, dist
 
   call read_input()
-  call randomize_coils()
 
 
   ! get the points
