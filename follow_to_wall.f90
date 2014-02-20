@@ -3,6 +3,7 @@
 program follow_to_wall
 
   use points_module
+  use options_module
 
   real,dimension(3) :: p
   integer :: i,j,isin, inside_vessel,outfile
@@ -34,9 +35,6 @@ program follow_to_wall
         if (points_hit(j) == 1) then
            cycle
         end if
-      
-        ! check if the last move left us inside the vessel
-        p = points_move(j,:)
         
         ! set the current point
         current_point = j
@@ -46,6 +44,14 @@ program follow_to_wall
         call follow_field(points_move(j,:), points_dphi, dist)
         
         conn_length(j)=conn_length(j)+dist
+
+        ! Do diffusion
+        if (use_diffusion.eq.1) then
+           call diffuse_point(points_move(j,:), p, dist, temperature,&
+                diffusion_D, diffusion_species)
+           points_move(j,:) = p
+           !write (*,'(3(F12.7,2X))'),points_move(j,:)
+        end if
         
         !added this line back in, otherwise the results.out file doesn't write values for the end point
         

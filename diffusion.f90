@@ -54,6 +54,8 @@ subroutine diffuse_point(p, newp, Lc, Te, D, species)
   real :: Lc, Te, tau, dist, D 
   integer :: species
 
+  !print *,'LC',Lc
+
   call get_perp_vec(p, perp_vec)
   !print *,'perp vec',perp_vec
   
@@ -64,6 +66,9 @@ subroutine diffuse_point(p, newp, Lc, Te, D, species)
   !print *,'diff dist',dist
 
   newp = p + dist * perp_vec
+  !print *,'oldp',p
+  !print *,'move',dist * perp_vec
+  !print *,'newp',newp
   return
 end subroutine diffuse_point
   
