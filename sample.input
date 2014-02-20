@@ -34,6 +34,13 @@ aux_c.dat
 0.0
 0.0
 0.0
+! Option of whether or not to include diffusion, Don't comment out the
+! lines even if diffusion is turned off.  The code just won't use them
+1
+! Diffusion species 1 = electron, anything else = proton (for now)
+1
+! Two inputs, the first is D_perp, the second is temperature
+1.0  50.0
 ! Option of whether or not to include a vessel as a target
 ! followed by the name of the vessel file
 1
