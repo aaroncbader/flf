@@ -23,20 +23,20 @@ program follow_to_wall
   open (unit=outfile,file=trim(adjustl(results_file)),status='unknown')
   !write (1,'(3(F9.6,2X))') p(1:3)
 
-  
+   
+  points_move(:,:) = points_start(:,:)
 
-  do i=1,n_iter
-     if (i == 1) then
-        points_move(:,:) = points_start(:,:)
-     endif
-     do j=1,points_number
+  do j=1,points_number
+
+     ! set the current point
+     current_point = j
+     write(*,*),'point number',j
+
+     do i=1,n_iter
         ! Skip points that already hit
         if (points_hit(j) == 1) then
            cycle
         end if
-        
-        ! set the current point
-        current_point = j
 
         write (*,'(3(F12.7,2X))'),points_move(j,:)
         
@@ -52,9 +52,6 @@ program follow_to_wall
            !write (*,'(3(F12.7,2X))'),points_move(j,:)
         end if
         
-        !added this line back in, otherwise the results.out file doesn't write values for the end point
-        
-     
         ! write the new point
         !write (1,'(3(F9.6,2X))') p(1:3)
      enddo
