@@ -25,7 +25,6 @@ subroutine read_input
   ! Get the number of points
   call read_until_data(filenum, line)
   call string_to_int(line, points_number)
-  allocate(points_hit(points_number))
 
   ! Get the shift amount
   call read_until_data(filenum, line)
@@ -121,9 +120,9 @@ subroutine read_input
   allocate(points_hit_limiter(points_number))
   
   if (num_limiters.gt.0) then
-  	call allocate_limiter()
-  	call load_limiter()
-  	points_hit_limiter(:) = 0
+     call allocate_limiter()
+     call load_limiter()
+     points_hit_limiter(:) = 0
   end if
 
   
