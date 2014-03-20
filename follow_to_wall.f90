@@ -38,7 +38,6 @@ program follow_to_wall
            cycle
         end if
 
-        write (*,'(3(F12.7,2X))'),points_move(j,:)
         
         call follow_field(points_move(j,:), points_dphi, dist)
         
@@ -51,6 +50,7 @@ program follow_to_wall
            points_move(j,:) = p
            !write (*,'(3(F12.7,2X))'),points_move(j,:)
         end if
+        write (*,'(3(F12.7,2X))'),points_move(j,:)
         
         ! write the new point
         !write (1,'(3(F9.6,2X))') p(1:3)
