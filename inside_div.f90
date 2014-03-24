@@ -10,7 +10,7 @@ subroutine alloc_div()
 
   implicit none
 
-  integer :: i, filenum, tor_points, div_segs, tor_max, seg_max
+  integer :: i, filenum, tor_points, div_segs, tor_max, seg_max, repeating
   character*72 :: dummy
 
   filenum = 21
@@ -29,6 +29,7 @@ subroutine alloc_div()
   ! segments there are for each divertor.
   allocate(div_tor_num(num_divertors))
   allocate(div_seg_num(num_divertors))
+  allocate(div_repeat(num_divertors))
 
   ! Go through all the files and assign the values to the appropriate segments
   do i =1,num_divertors
@@ -36,12 +37,14 @@ subroutine alloc_div()
      ! first line is a dummy variable
      read(filenum,*) dummy
      ! this is all we need
-     read(filenum,*) tor_points, div_segs
+     read(filenum,*) tor_points, div_segs, repeating
      close(filenum)
      
      ! put them into the arrays
      div_tor_num(i) = tor_points
      div_seg_num(i) = div_segs
+     div_repeat(i) = repeating
+     
 
      ! set the max values for allocating the divertors
      if (tor_points .gt. tor_max) then

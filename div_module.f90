@@ -4,7 +4,7 @@ module div_module
   
   integer :: num_divertors, axis_points
 
-  integer, allocatable, dimension(:) :: div_tor_num, div_seg_num
+  integer, allocatable, dimension(:) :: div_tor_num, div_seg_num, div_repeat
   ! index for divertor is
   !divertor(divertor number, toroidal seg index, segment part index, 
   !   r or z)
