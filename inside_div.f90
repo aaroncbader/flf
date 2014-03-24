@@ -163,19 +163,25 @@ integer function inside_div(rin, zin, phiin)
      return
   end if
 
-  !Move the quadrant appropriately
-  call move_to_first_quad(rin, zin, phiin, r, z, phi)
 
-
-  ! In order to reduce redundancy in calculation we separate the steps
-  ! of getting the index, from the interpolation calculation
-  axis_index = interp_index(phi, mag_axis(:,3), axis_points)
-
-  rmag = linear_interpolate(phi, mag_axis(:,1), mag_axis(:,3), axis_index)
-  zmag = linear_interpolate(phi, mag_axis(:,2), mag_axis(:,3), axis_index)
 
 
   do i = 1,num_divertors
+
+     !Move the quadrant appropriately
+     if (div_repeat(i).eq.8) then
+        call move_to_first_quad(rin, zin, phiin, r, z, phi)
+     else
+        phi = modulo(phiin, 2 * 3.1415927)
+     endif
+
+     ! Got to move this inside the loop now, since some divertors may have
+     ! different calculation
+     axis_index = interp_index(phi, mag_axis(:,3), axis_points)
+
+     rmag = linear_interpolate(phi, mag_axis(:,1), mag_axis(:,3), axis_index)
+     zmag = linear_interpolate(phi, mag_axis(:,2), mag_axis(:,3), axis_index)
+
      ! check that there is a plate in the correct bounds
      if ((phi .le. div_tor_vals(i,1)) .or. & 
           phi .ge. div_tor_vals(i,div_tor_num(i))) then
