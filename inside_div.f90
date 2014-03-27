@@ -151,11 +151,12 @@ integer function inside_div(rin, zin, phiin)
   use div_module
   implicit none
 
-  real :: rin,zin,phiin,r,z,phi
+  real :: pi
+  real :: rin,zin,phiin,r,z,phi,axis_phi
   real :: rmag, zmag, linear_interpolate
   real :: rseg1, rseg2, zseg1, zseg2, dum1, dum2
   integer :: intersection, i, j, axis_index, div_index, interp_index
-  integer :: does_intersect, slice_size
+  integer :: does_intersect, slice_size, axis_flip
   real, dimension(:), allocatable :: tor_slice, div_slice
 
   if (num_divertors.le.0) then
@@ -163,25 +164,41 @@ integer function inside_div(rin, zin, phiin)
      return
   end if
 
-
-
-
+  pi = 3.1415927
+ 
   do i = 1,num_divertors
 
      !Move the quadrant appropriately
      if (div_repeat(i).eq.8) then
         call move_to_first_quad(rin, zin, phiin, r, z, phi)
      else
-        phi = modulo(phiin, 2 * 3.1415927)
+        phi = modulo(phiin, 2 * pi)
+        r = rin
+        z = zin
      endif
 
      ! Got to move this inside the loop now, since some divertors may have
      ! different calculation
-     axis_index = interp_index(phi, mag_axis(:,3), axis_points)
 
-     rmag = linear_interpolate(phi, mag_axis(:,1), mag_axis(:,3), axis_index)
-     zmag = linear_interpolate(phi, mag_axis(:,2), mag_axis(:,3), axis_index)
+     ! handle getting the axis for values of phi greater than pi/2
+     axis_flip = 1 !deal with stell symmetry
+     if (phi > pi / 2) then
+        axis_phi = modulo(phi, pi/2)
+        if (axis_phi > pi/4) then
+           axis_flip = -1
+           axis_phi = pi/2 - axis_phi
+        endif
+     else
+        axis_phi = phi
+     endif
+     axis_index = interp_index(axis_phi, mag_axis(:,3), axis_points)
 
+     rmag = linear_interpolate(axis_phi, mag_axis(:,1), mag_axis(:,3), &
+          axis_index)
+     rmag = rmag * axis_flip
+     zmag = linear_interpolate(axis_phi, mag_axis(:,2), mag_axis(:,3), &
+          axis_index)
+     zmag = zmag * axis_flip
      ! check that there is a plate in the correct bounds
      if ((phi .le. div_tor_vals(i,1)) .or. & 
           phi .ge. div_tor_vals(i,div_tor_num(i))) then
@@ -196,6 +213,7 @@ integer function inside_div(rin, zin, phiin)
      allocate(tor_slice(slice_size))
      tor_slice = div_tor_vals(i,:)
      div_index = interp_index(phi, tor_slice, div_tor_num(i))
+
 
      do j = 1,div_seg_num(i) - 1
         allocate(div_slice(slice_size))
