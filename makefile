@@ -37,6 +37,9 @@ follow_to_wall: $(MO)
 follow_to_limiter: $(MO)
 	$(FC) $(OP) follow_to_limiter.f90 $(MO) -o follow_to_limiter
 
+Bmag: $(MO)
+	$(FC) $(OP) Bmag.f90 $(MO) -o Bmag
+
 
 all_tests:
 	make test_write
