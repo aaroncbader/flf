@@ -62,29 +62,33 @@ subroutine read_input
      main_files(i) = line
   end do
 
+  ! Allocate the main coils
+  call allocate_main(14)
+
   ! Current in main coils
-  allocate(main_current(num_main_coils * coil_sections * (is_mirrored+1)))
   do i = 1,num_main_coils
      call read_until_data(filenum, line)
      call string_to_real(line, main_current(i))
   end do
 
-  ! Allocate the main coils
-  call allocate_main(14)
 
   ! Get the aux file
   call read_until_data(filenum, line)
   aux_file = trim(adjustl(line))
 
-  ! Number of aux coils
+  ! Number of aux coils and windings
   call read_until_data(filenum, line)
-  call string_to_int(line, num_aux_coils)
+  allocate(dummy_int(2))
+  call string_to_ints(line, dummy_int, 2)
+  num_aux_coils = dummy_int(1)
+  main_winding = dummy_int(2)
+  deallocate(dummy_int)
 
   ! Allocate the aux values
   call allocate_aux(aux_file)
   
   ! taper values
-  do i = 1,taper_size ! taper_size is redundant, should be removed
+  do i = 1,num_aux_coils ! taper_size is redundant, should be removed
      call read_until_data(filenum, line)
      call string_to_real(line, dummy)
      taper(i) = dummy

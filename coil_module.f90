@@ -6,7 +6,7 @@ module coil_module
    !integer, parameter :: main_count = 48, aux_count = 48, taper_size = 6
 
    ! aux_count is equal to num_aux_coils * 8.
-   integer :: coil_sections, is_mirrored
+   integer :: coil_sections, is_mirrored, main_winding
    integer :: num_main_coils, num_aux_coils
    integer :: main_size, aux_size, main_count, aux_count, taper_size, skip
    real, allocatable, dimension(:,:,:) :: coil_main, coil_aux

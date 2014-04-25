@@ -44,6 +44,7 @@ subroutine allocate_main(skip_value)
 
   !Allocate the array to be the size of the largest one
   allocate(coil_main(main_count, main_size, 3))
+  allocate(main_current(main_count))
   allocate(main_points(main_count))
 
 end subroutine allocate_main
@@ -199,7 +200,7 @@ subroutine read_coil_files()
   !Currents for auxiliary coils
   do i=1,taper_size
      do j=0,mult_factor-1
-        aux_current(i + (j*taper_size)) = main_current(1)*taper(i)*14
+        aux_current(i + (j*taper_size)) = main_current(1)*taper(i)*main_winding
      enddo
   enddo
 
