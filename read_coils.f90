@@ -123,13 +123,8 @@ subroutine read_coil_files(current)
   do i=1,num_main_coils
      filenum = 30 + i
 
-     ! if more than 10 coils we need two characters for the string
-     if (i < 10) then
-        format_string = '(A1,I1,A4)'
-     else
-        format_string = '(A1,I2,A4)'
-     endif
-     write (filename, format_string),'c',i,'.dat'
+     filename = trim(main_files(i))
+     
      open(filenum, file=filename, status='old', form='formatted')
   enddo
 

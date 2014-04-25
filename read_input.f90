@@ -44,6 +44,15 @@ subroutine read_input
   ! Number of main coils
   call read_until_data(filenum, line)
   call string_to_int(line, num_main_coils)
+
+  !allocate files for main coils
+  allocate(main_files(num_main_coils))
+
+  ! Names of main coils
+  do i=1,num_main_coils
+     call read_until_data(filenum, line)
+     main_files(i) = line
+  end do
   
   ! Current in main coils
   call read_until_data(filenum, line)

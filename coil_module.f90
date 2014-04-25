@@ -12,6 +12,7 @@ module coil_module
    real, allocatable, dimension(:) :: main_current, aux_current, taper
    integer, allocatable, dimension(:) :: main_points, aux_points
    character*72 :: aux_file
+   character*72, dimension(:), allocatable :: main_files
 
 
 end module coil_module
