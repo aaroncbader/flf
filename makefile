@@ -2,73 +2,47 @@ FC = gfortran
 
 OP = -fdefault-real-8 -fdefault-double-8 -fbacktrace -fbounds-check  -g
 
-FF = follow_field.o
-
 CP = $(FC) $(OP) -c
 
 MO = 	utility.o 	coil_module.o	div_module.o 	read_coils.o\
 	points_module.o	get_points.o 	limiter_module.o options_module.o\
 	compute_bs.o\
+	dlsode.o	vessel_module.o inside_vessel.o\
+	inside_div.o	diffusion.o	randomize.o\
+	follow_field.o	inside_limiter.o  parser.o 	read_input.o\
+	follow_to_wall.o
+
+BM =    utility.o 	coil_module.o	div_module.o 	read_coils.o\
+	points_module.o	get_points.o 	limiter_module.o options_module.o\
+	compute_bs.o\
+	dlsode.o	vessel_module.o inside_vessel.o\
+	inside_div.o	diffusion.o\
+	follow_field.o	inside_limiter.o  parser.o 	read_input.o\
+	Bmag.o
+
+CT = 	utility.o 	coil_module.o	div_module.o 	read_coils.o\
+	points_module.o	get_points.o 	limiter_module.o options_module.o\
+	compute_bs.o\
 	dlsode.o	vessel_module.o inside_vessel.o randomize.o\
 	inside_div.o	diffusion.o\
-	follow_field.o	inside_limiter.o  parser.o 	read_input.o
+	follow_field.o	inside_limiter.o  parser.o 	read_input.o\
+	comprehensive_test.o
 
-WC =	coil_module.o	read_coils.o
 
-TBS = 	coil_module.o 	points_module.o div_module.o 	vessel_module.o\
-	utility.o 	inside_vessel.o inside_div.o\
-	read_coils.o\
-	compute_bs.o
 
-TV = 	utility.o 	vessel_module.o inside_vessel.o
-
-TP = 	points_module.o	get_points.o
-
-TD =    utility.o 	div_module.o inside_div.o
-
-TL =    vessel_module.o utility.o inside_vessel.o boxport_limiter_check.o
-
-PROGRAMS = follow_to_wall write_coils test_vessel test_bs test_points
+PROGRAMS = follow_to_wall Bmag comprehensive_test
 
 #This is the default
 follow_to_wall: $(MO)
-	$(FC) $(OP) follow_to_wall.f90 $(MO) -o follow_to_wall
+	$(FC) $(OP) -o follow_to_wall $(MO) 
 
-follow_to_limiter: $(MO)
-	$(FC) $(OP) follow_to_limiter.f90 $(MO) -o follow_to_limiter
 
 Bmag: $(MO)
-	$(FC) $(OP) Bmag.f90 $(MO) -o Bmag
+	$(FC) $(OP) -o Bmag $(BM)
 
-
-all_tests:
-	make test_write
-	make test_bs
-	make test_vessel
-	make test_points
-	make test_divread
-	make test_limiter
-
-test_write: $(WC)
-	$(FC) $(OP) write_coils.f90 $(WC) -o write_coils
-
-test_bs: $(TBS)
-	$(FC) $(OP) test_bs.f90 $(TBS) -o test_bs
-
-test_vessel: $(TV)
-	$(FC) $(OP) test_vessel.f90 $(TV) -o test_vessel
-
-test_points: $(TP)
-	$(FC) $(OP) test_points.f90 $(TP) -o test_points
-
-test_divread: $(TD)
-	$(FC) $(OP) test_divread.f90 $(TD) -o test_divread
-
-test_limiter: $(TL)
-	$(FC) $(OP) test_limiter.f90 $(TL) -o test_limiter
 
 comp_test: $(MO)
-	$(FC) $(OP) comprehensive_test.f90 $(MO) -o comprehensive_test
+	$(FC) $(OP) -o comprehensive_test $(CT)
 
 
 utility.o:	utility.f90
@@ -111,6 +85,12 @@ parser.o:	parser.f90
 	$(CP)	parser.f90
 read_input.o:	read_input.f90
 	$(CP)	read_input.f90
+Bmag.o:		Bmag.f90
+	$(CP)	Bmag.f90
+comprehensive_test.o:	comprehensive_test.f90
+	$(CP)	comprehensive_test.f90
+follow_to_wall.o:	follow_to_wall.f90
+	$(CP)	follow_to_wall.f90
 
 
 
