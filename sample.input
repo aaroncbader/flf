@@ -9,49 +9,82 @@
 points.in
 ! Number of points to load from the file (must be less than the
 ! number of lines in the file)
-2
+1
 ! Distance to shift in each explicit step
-0.1
+!0.00872664625
+1.57079632679
+!0.2
 ! Maximum number of iterations
-10
+400
 ! File to write data to
 results.out
-! Number of main coils (c1.dat to cn.dat)
+!----Coils and geometry section----
+!Number of periods, and whether to use mirror symmetry (1=yes, 0=no)
+!For 4,1 (HSX) you only need to provide coils for 1/8 of the machine
+!Right now, only 4,1 and 1,0 (no moving) are supported
+4       1
+! Number of main coils followed by file names (c1.dat to cn.dat)
 6
-! Current value in main coils, this is total main current, 
-! not current per winding
--150105
+c1.dat
+c2.dat
+c3.dat
+c4.dat
+c5.dat
+c6.dat
+! Current value in main coils, this is current per winding
+! this is a change from previous behavior
+-10721.8
+-10721.8
+-10721.8
+-10721.8
+-10721.8
+-10721.8
 ! File for auxiliary coils
-aux_c.dat
+aux_icdiv.dat
 ! Number of aux coils (this needs to be the same or less than
 ! the first line in the aux coil file)
-6
+! The second number represents the number of windings in the main coils
+! This is used for scaling purposes, the current in aux coils is:
+! main_1 * taper_value * windings
+6     14
 ! taper values for aux coils, if the aux coil value is 0, do
-! not include any values here
-0.0
-0.0
-0.0
-0.0
-0.0
-0.0
+! not include any values here.  These are percentages relative
+! to the current in the first main coil
+0.0000
+0.0000
+0.0000
+0.0000
+0.0000
+0.0000
+!-0.02
+!-0.02
+!-0.02
+!-0.02
+!0.02
+!0.02
+!0.02
+!0.02
+!0.015
+!-0.015
 ! Option of whether or not to include diffusion, Don't comment out the
 ! lines even if diffusion is turned off.  The code just won't use them
-1
+0
 ! Diffusion species 1 = electron, anything else = proton (for now)
-1
+0
 ! Two inputs, the first is D_perp, the second is temperature
 1.0  50.0
 ! Option of whether or not to include a vessel as a target
 ! followed by the name of the vessel file
-1
-vessel.txt
+0
+!vessel.txt
 ! The number of limiters included in the calculation
 ! followed by the file locations for the limiters
-1
-limiter.txt
+0
+!limiter.txt
 ! The number of divertors included in the calculation
 ! followed by the file names for the divertors
 0
+!Enrico_div
 !DIV_island4x25
 ! Axis file, only needed if divertors exist
 !mag_axis.dat

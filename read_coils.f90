@@ -186,10 +186,13 @@ subroutine read_coil_files()
   enddo
   close(67)
 
-  call move_coils(coil_main, main_points, &
-       num_main_coils, main_size)
-  call move_coils(coil_aux, aux_points, num_aux_coils, &
-       aux_size)
+  !Right now we only have moving for the HSX configuration
+  if (is_mirrored == 1 .and. coil_sections == 4) then
+     call move_coils(coil_main, main_points, &
+          num_main_coils, main_size)
+     call move_coils(coil_aux, aux_points, num_aux_coils, &
+          aux_size)
+  end if
   !Input the currents into the main coils
   do i=1,num_main_coils
      do j = 0,mult_factor-1
