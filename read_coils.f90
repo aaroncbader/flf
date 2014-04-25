@@ -19,13 +19,11 @@ subroutine allocate_main(skip_value)
   do i=1,num_main_coils
      filenum = 30 + i
 
-     ! if more than 10 coils we need two characters for the string
-     if (i < 10) then
-        format_string = '(A1,I1,A4)'
-     else
-        format_string = '(A1,I2,A4)'
-     endif
-     write (filename, format_string),'c',i,'.dat'
+
+     filenum = 30 + i
+
+     filename = trim(main_files(i))
+     
      open(filenum, file=filename, status='old', form='formatted')
 
      read(filenum,*) temp_size
@@ -192,6 +190,13 @@ subroutine read_coil_files()
           num_main_coils, main_size)
      call move_coils(coil_aux, aux_points, num_aux_coils, &
           aux_size)
+  else if (coil_sections > 1 .and. is_mirrored == 0) then
+     call move_coils_gen(coil_main, main_points, &
+          num_main_coils, main_size, coil_sections)
+     if (num_aux_coils > 0) then
+         call move_coils_gen(coil_aux, aux_points, num_aux_coils, &
+          aux_size, coil_sections)
+     end if
   end if
   !Input the currents into the main coils
   do i=1,num_main_coils
@@ -282,3 +287,36 @@ subroutine move_coils(coils, coil_counts, coil_number, piece_count)
   return
 end subroutine move_coils
 
+subroutine move_coils_gen(coils, coil_counts, coil_number, piece_count, period)
+  implicit none
+
+
+  integer :: i,j,k,revj,count
+  integer :: piece_count, coil_number, coil_index, period
+  real :: coils(coil_number * period, piece_count, 3)
+  integer :: coil_counts(coil_number * period)  
+  !real, dimension (:,:), allocatable :: coilrzp
+  real, dimension (3) :: xyz, rzp
+  real :: pi
+
+  pi = 3.141592653
+  do i = 1,coil_number
+
+     count = 0
+     ! Update the counts in the coils file
+     do coil_index = i,coil_number * period, coil_number
+        coil_counts(coil_index) = coil_counts(i)
+     enddo
+
+     do j = 1,coil_counts(i) !loop over all points in the coil
+        ! get the rzp representation
+        xyz = coils(i,j,:)
+        call cart2pol(xyz, rzp)
+        do k = i+coil_number,coil_number*period, coil_number
+           rzp(3) = rzp(3) + (2. * pi / period)
+           call pol2cart(rzp, xyz)
+           coils(k,j,:) = xyz
+        end do
+     end do
+  end do
+end subroutine move_coils_gen

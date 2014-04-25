@@ -1,3 +1,14 @@
+!convert xyz to rzphi
+subroutine cart2pol(cart, pol)
+  implicit none
+  real, dimension(3) :: pol, cart
+
+  pol(1) = sqrt(cart(1)**2 + cart(2)**2)
+  pol(2) = cart(3)
+  pol(3) = atan2(cart(2), cart(1))
+end subroutine cart2pol
+
+
 ! convert rzphi points to xyz
 subroutine pol2cart(pol, cart)
 
