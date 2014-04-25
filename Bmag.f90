@@ -21,7 +21,7 @@ program Bmag
      call pol2cart(points_start(j,:), pxyz)
      call compute_full_bs(pxyz, b)
      magb = (b(1)**2 + b(2)**2 + b(3)**2)**0.5
-     !print *,b, magb
+     print *,b, magb
      write(outfile, '(F11.6)') magb
   end do
 

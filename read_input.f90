@@ -10,7 +10,7 @@ subroutine read_input
   implicit none
 
   character*72 :: input_file, line
-  integer :: filenum, i, int_dummy
+  integer :: filenum, i
   real :: totcur, dummy
   integer, allocatable, dimension(:) :: dummy_int
   real, allocatable, dimension(:) :: dummy_arr
@@ -61,19 +61,13 @@ subroutine read_input
      call read_until_data(filenum, line)
      main_files(i) = line
   end do
-  
-  ! coil windings
-  allocate(main_windings(num_main_coils))
-  do i=1,num_main_coils
-     call read_until_data(filenum, line)
-     call string_to_int(line, main_windings(i))
-  end do
 
   ! Current in main coils
-  !allocate(main_files
-  !do i = 1,num_main_coils
-  call read_until_data(filenum, line)
-  call string_to_real(line, totcur)
+  allocate(main_current(num_main_coils * coil_sections * (is_mirrored+1)))
+  do i = 1,num_main_coils
+     call read_until_data(filenum, line)
+     call string_to_real(line, main_current(i))
+  end do
 
   ! Allocate the main coils
   call allocate_main(14)
@@ -96,7 +90,7 @@ subroutine read_input
      taper(i) = dummy
   end do
 
-  call read_coil_files(totcur)
+  call read_coil_files()
 
   ! DIFFUSION INFO ------------------------
   ! is diffusion on

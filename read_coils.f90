@@ -44,7 +44,6 @@ subroutine allocate_main(skip_value)
 
   !Allocate the array to be the size of the largest one
   allocate(coil_main(main_count, main_size, 3))
-  allocate(main_current(main_count))
   allocate(main_points(main_count))
 
 end subroutine allocate_main
@@ -104,7 +103,7 @@ subroutine deallocate_coils()
 end subroutine deallocate_coils
   
 
-subroutine read_coil_files(current)
+subroutine read_coil_files()
 
 
   use coil_module
@@ -191,16 +190,16 @@ subroutine read_coil_files(current)
   call move_coils(coil_aux, aux_points, num_aux_coils, &
        aux_size)
   !Input the currents into the main coils
-  do i=1,num_main_coils * mult_factor
-     ! There are 14 windings in the main coils, this is independent of the
-     ! skip value
-     main_current(i) = current/main_windings(1) 
+  do i=1,num_main_coils
+     do j = 0,mult_factor-1
+        main_current(i + j*num_main_coils) =main_current(i) 
+     end do
   enddo
 
   !Currents for auxiliary coils
   do i=1,taper_size
      do j=0,mult_factor-1
-        aux_current(i + (j*taper_size)) = current*taper(i)
+        aux_current(i + (j*taper_size)) = main_current(1)*taper(i)*14
      enddo
   enddo
 
