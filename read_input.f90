@@ -62,8 +62,11 @@ subroutine read_input
      main_files(i) = line
   end do
 
+  call read_until_data(filenum, line)
+  call string_to_int(line, skip_value)
+
   ! Allocate the main coils
-  call allocate_main(14)
+  call allocate_main()
 
   ! Current in main coils
   do i = 1,num_main_coils

@@ -7,8 +7,8 @@ module coil_module
 
    ! aux_count is equal to num_aux_coils * 8.
    integer :: coil_sections, is_mirrored, main_winding
-   integer :: num_main_coils, num_aux_coils
-   integer :: main_size, aux_size, main_count, aux_count, taper_size, skip
+   integer :: num_main_coils, num_aux_coils, skip_value
+   integer :: main_size, aux_size, main_count, aux_count, taper_size
    real, allocatable, dimension(:,:,:) :: coil_main, coil_aux
    real, allocatable, dimension(:) :: main_current, aux_current, taper
    integer, allocatable, dimension(:) :: main_points, aux_points

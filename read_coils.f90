@@ -1,17 +1,16 @@
-subroutine allocate_main(skip_value)
+subroutine allocate_main()
 
   use coil_module
   implicit none
   integer :: mult_factor
 
   integer :: i
-  integer :: filenum, temp_size, skip_value
+  integer :: filenum, temp_size
   character*15 :: filename, format_string
 
   mult_factor = coil_sections * (is_mirrored + 1)
   ! set values for the coil module
   main_count = num_main_coils * mult_factor
-  skip = skip_value
   main_size = 0
 
   ! This block is used twice, we can probably extract it out
@@ -28,8 +27,8 @@ subroutine allocate_main(skip_value)
 
      read(filenum,*) temp_size
      !set the temp_size if necessary
-     if (temp_size / skip > main_size) then
-        main_size = temp_size / skip
+     if (temp_size / skip_value > main_size) then
+        main_size = temp_size / skip_value
      endif
 
      close(filenum)
@@ -56,6 +55,10 @@ subroutine allocate_aux()
 
   integer :: temp_size, dummy, filenum
   real :: x,y,z !dummy variables
+
+  if (num_aux_coils == 0) then
+     return
+  end if
 
   mult_factor = coil_sections * (is_mirrored + 1)
 
@@ -108,28 +111,27 @@ subroutine read_coil_files()
   use coil_module
   implicit none
 
-  integer, parameter :: mult_factor=8
-
+  integer:: mult_factor
   integer :: i,j,k
   integer :: piece, filenum, total_points, dummy
   real :: current,x,y,z
   character*15 :: filename, format_string
-  
-  
 
 
-  
+
+  mult_factor = coil_sections * (is_mirrored + 1)
+
 
   ! generalize the coil loading for multiple coils
   do i=1,num_main_coils
      filenum = 30 + i
 
      filename = trim(main_files(i))
-     
+
      open(filenum, file=filename, status='old', form='formatted')
   enddo
 
-  
+
 
   ! iterate over coil files
   do i=1,num_main_coils
@@ -143,7 +145,7 @@ subroutine read_coil_files()
      read(filenum,*) x,y,z
 
      ! read all individual coil points into the first six places
-     do j = 1, total_points, skip
+     do j = 1, total_points, skip_value
 
         !increment the piece value
         piece = piece + 1
@@ -154,12 +156,12 @@ subroutine read_coil_files()
         coil_main(i,piece,3) = z
 
         ! Get out if we we're at the end
-        if (j + skip .gt. total_points) then 
+        if (j + skip_value .gt. total_points) then 
            exit !this is fortran's "break"
         endif
 
         ! dump the values we're not using into dummy vars
-        do k=1,skip-1
+        do k=1,skip_value-1
            read(filenum,*) x,y,z
 
         enddo !end of dumping loop
@@ -171,18 +173,21 @@ subroutine read_coil_files()
   enddo !end of all files
 
   ! All aux coils are in one file, no need to skip
-  open(67,file=aux_file,status='old',form='formatted')
-  read(67,*) dummy
-  do i=1,num_aux_coils
-     read(67,*) aux_points(i)
-     do j=1,aux_points(i)
-        read(67,*) x,y,z
-        coil_aux(i,j,1) = x
-        coil_aux(i,j,2) = y
-        coil_aux(i,j,3) = z
+  if (num_aux_coils > 0) then
+     open(67,file=aux_file,status='old',form='formatted')
+     read(67,*) dummy
+     do i=1,num_aux_coils
+        read(67,*) aux_points(i)
+        do j=1,aux_points(i)
+           read(67,*) x,y,z
+           coil_aux(i,j,1) = x
+           coil_aux(i,j,2) = y
+           coil_aux(i,j,3) = z
+        enddo
      enddo
-  enddo
-  close(67)
+     close(67)
+  end if
+
 
   !Right now we only have moving for the HSX configuration
   if (is_mirrored == 1 .and. coil_sections == 4) then
@@ -194,8 +199,8 @@ subroutine read_coil_files()
      call move_coils_gen(coil_main, main_points, &
           num_main_coils, main_size, coil_sections)
      if (num_aux_coils > 0) then
-         call move_coils_gen(coil_aux, aux_points, num_aux_coils, &
-          aux_size, coil_sections)
+        call move_coils_gen(coil_aux, aux_points, num_aux_coils, &
+             aux_size, coil_sections)
      end if
   end if
   !Input the currents into the main coils

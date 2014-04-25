@@ -22,7 +22,7 @@ results.out
 !Number of periods, and whether to use mirror symmetry (1=yes, 0=no)
 !For 4,1 (HSX) you only need to provide coils for 1/8 of the machine
 !Right now, only 4,1 and 1,0 (no moving) are supported
-4       1
+4      1
 ! Number of main coils followed by file names (c1.dat to cn.dat)
 6
 c1.dat
@@ -31,6 +31,8 @@ c3.dat
 c4.dat
 c5.dat
 c6.dat
+! Skip value for main coils, leave at 1 if you want to use every point
+14
 ! Current value in main coils, this is current per winding
 ! this is a change from previous behavior
 -10721.8
@@ -88,3 +90,5 @@ aux_icdiv.dat
 !DIV_island4x25
 ! Axis file, only needed if divertors exist
 !mag_axis.dat
+!Protocleo bfield option
+0.0
