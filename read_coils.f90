@@ -194,7 +194,7 @@ subroutine read_coil_files(current)
   do i=1,num_main_coils * mult_factor
      ! There are 14 windings in the main coils, this is independent of the
      ! skip value
-     main_current = current/14 
+     main_current(i) = current/main_windings(1) 
   enddo
 
   !Currents for auxiliary coils

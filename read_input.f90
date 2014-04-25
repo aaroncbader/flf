@@ -10,7 +10,7 @@ subroutine read_input
   implicit none
 
   character*72 :: input_file, line
-  integer :: filenum, i
+  integer :: filenum, i, int_dummy
   real :: totcur, dummy
   integer, allocatable, dimension(:) :: dummy_int
   real, allocatable, dimension(:) :: dummy_arr
@@ -62,7 +62,16 @@ subroutine read_input
      main_files(i) = line
   end do
   
+  ! coil windings
+  allocate(main_windings(num_main_coils))
+  do i=1,num_main_coils
+     call read_until_data(filenum, line)
+     call string_to_int(line, main_windings(i))
+  end do
+
   ! Current in main coils
+  !allocate(main_files
+  !do i = 1,num_main_coils
   call read_until_data(filenum, line)
   call string_to_real(line, totcur)
 
