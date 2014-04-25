@@ -37,11 +37,11 @@ follow_to_wall: $(MO)
 	$(FC) $(OP) -o follow_to_wall $(MO) 
 
 
-Bmag: $(MO)
+Bmag: $(BM)
 	$(FC) $(OP) -o Bmag $(BM)
 
 
-comp_test: $(MO)
+comp_test: $(CT)
 	$(FC) $(OP) -o comprehensive_test $(CT)
 
 
