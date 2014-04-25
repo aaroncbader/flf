@@ -141,8 +141,7 @@ subroutine read_coil_files()
 
      read(filenum,*) total_points
 
-     ! Konstantin skips the first one, maybe we should too?
-     read(filenum,*) x,y,z
+     
 
      ! read all individual coil points into the first six places
      do j = 1, total_points, skip_value
@@ -161,10 +160,12 @@ subroutine read_coil_files()
         endif
 
         ! dump the values we're not using into dummy vars
-        do k=1,skip_value-1
-           read(filenum,*) x,y,z
-
-        enddo !end of dumping loop
+        if (skip_value > 1) then
+           do k=1,skip_value-1
+              read(filenum,*) x,y,z
+             
+           enddo !end of dumping loop
+        end if
      enddo ! end of individual file loop
      ! Load number of segments
      main_points(i) = piece
