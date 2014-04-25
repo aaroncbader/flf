@@ -2,12 +2,13 @@ subroutine allocate_main(skip_value)
 
   use coil_module
   implicit none
-  integer, parameter :: mult_factor=8
+  integer :: mult_factor
 
   integer :: i
   integer :: filenum, temp_size, skip_value
   character*15 :: filename, format_string
 
+  mult_factor = coil_sections * (is_mirrored + 1)
   ! set values for the coil module
   main_count = num_main_coils * mult_factor
   skip = skip_value
@@ -52,11 +53,13 @@ subroutine allocate_aux()
   use coil_module
   implicit none
 
-  integer, parameter :: mult_factor=8
+  integer :: mult_factor
   integer :: i,j,k
 
   integer :: temp_size, dummy, filenum
   real :: x,y,z !dummy variables
+
+  mult_factor = coil_sections * (is_mirrored + 1)
 
   filenum = 41
 

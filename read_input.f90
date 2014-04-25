@@ -12,6 +12,7 @@ subroutine read_input
   character*72 :: input_file, line
   integer :: filenum, i
   real :: totcur, dummy
+  integer, allocatable, dimension(:) :: dummy_int
   real, allocatable, dimension(:) :: dummy_arr
 
   filenum = 10
@@ -40,6 +41,13 @@ subroutine read_input
 
   !----------------------------------
   ! Coil information
+  ! symmetry information
+  call read_until_data(filenum, line)
+  allocate(dummy_int(2))
+  call string_to_ints(line, dummy_int, 2)
+  coil_sections = dummy_int(1)
+  is_mirrored = dummy_int(2)
+  deallocate(dummy_int)
 
   ! Number of main coils
   call read_until_data(filenum, line)
