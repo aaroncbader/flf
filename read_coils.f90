@@ -95,13 +95,16 @@ end subroutine allocate_aux
 
 subroutine deallocate_coils()
   use coil_module
-  deallocate(coil_main)
-  deallocate(coil_aux)
-  deallocate(main_current)
-  deallocate(aux_current)
+  deallocate(coil_main)  
+  deallocate(main_current)  
   deallocate(main_points)
-  deallocate(aux_points)
-  deallocate(taper)
+
+  if (num_aux_coils > 1) then
+     deallocate(coil_aux)
+     deallocate(aux_current)
+     deallocate(aux_points)
+     deallocate(taper)
+  end if
 end subroutine deallocate_coils
   
 
