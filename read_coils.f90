@@ -18,9 +18,6 @@ subroutine allocate_main()
   do i=1,num_main_coils
      filenum = 30 + i
 
-
-     filenum = 30 + i
-
      filename = trim(main_files(i))
      
      open(filenum, file=filename, status='old', form='formatted')
@@ -146,7 +143,7 @@ subroutine read_coil_files()
 
      
 
-     ! read all individual coil points into the first six places
+     ! read all individual coil points into the first n places
      do j = 1, total_points, skip_value
 
         !increment the piece value
@@ -210,13 +207,14 @@ subroutine read_coil_files()
   !Input the currents into the main coils
   do i=1,num_main_coils
      do j = 0,mult_factor-1
-        main_current(i + j*num_main_coils) =main_current(i) 
+        main_current(i + j*num_main_coils) =main_current(i)
      end do
   enddo
 
   !Currents for auxiliary coils
   do i=1,taper_size
      do j=0,mult_factor-1
+ 
         aux_current(i + (j*taper_size)) = main_current(1)*taper(i)*main_winding
      enddo
   enddo
