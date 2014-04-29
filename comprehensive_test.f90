@@ -41,14 +41,14 @@ program comprehensive_test
   do i=1,6
      taper(i) = (0.02*i)
      do j=0,7
-        aux_current(i + (j*6)) = main_current(1)*14 * 0.02*i
-        
+        aux_current(i + (j*6)) = main_current(1)* 14*0.02*i
      end do
   end do
 
   points_move(1,:) = points_start(1,:)
   call follow_field(points_move(1,:), points_dphi, dist)
-  if ((points_move(1,1).gt.1.09810).and.(points_move(1,1).lt.(1.09811)).and.&
+  !print *,points_move
+  if ((points_move(1,1).gt.1.09810).and.(points_move(1,1).lt.(1.09812)).and.&
       (points_move(1,2).gt.(-0.09564)).and.(points_move(1,2).lt.(-0.09563)))&
       then
      print *,'test with auxiliary current PASS'

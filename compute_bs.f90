@@ -14,7 +14,6 @@ subroutine compute_full_bs(p, b)
   ! aux fields
   call compute_bs(p, 1, btemp)
   b = b + btemp
-
 end subroutine compute_full_bs
   
 
