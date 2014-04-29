@@ -170,9 +170,12 @@ integer function inside_div(rin, zin, phiin)
   do i = 1,num_divertors
 
      !Move the quadrant appropriately
+     !You are only allowed to repeat a divertor in line with the amount
+     ! you repeat coils.  It doesn't make sense to do otherwise, but
+     ! if you do, just make multiple divertors.
      if (div_repeat(i).gt.1) then
-        call move_to_first_quad(rin, zin, phiin, r, z, phi, div_repeat, &
-             is_mirrored)
+        call move_to_first_quad(rin, zin, phiin, r, z, phi, &
+             coil_sections, is_mirrored)
      else
         phi = modulo(phiin, 2 * pi)
         r = rin

@@ -64,22 +64,20 @@ end subroutine load_vessel
   tor_size = vessel_size(1)
   pol_size = vessel_size(2)
   ! for now assume the vessel spans the same as the coil set
-  phi_extent = 2 * pi /coil_sections
+  phi_extent = 2 * pi /coil_sections / (is_mirrored + 1)
 
   call move_to_first_quad(rin, zin, phiin, r, z, phi, coil_sections, &
        is_mirrored)
 
   ! This is the step size in the toroidal direction
-  phi_step_size = phi_extent/(tor_size - 1)
+  phi_step_size = phi_extent/(tor_size - 3)
+  
 
   ! \todo find a quicker assignment for fortran
   do i=1,tor_size
-     phi_vessel(i) = real(i-1)
+     !phi_vessel(i) = real(i-1)
+     phi_vessel(i) = phi_step_size  * (i-2)
   enddo
-  phi_vessel = phi_vessel / tor_size
-  phi_vessel = phi_vessel * phi_extent + (2 * phi_step_size)
-  phi_vessel = phi_vessel - phi_step_size
-
 
 
   ! ratio for interpolation
@@ -93,6 +91,10 @@ end subroutine load_vessel
   ! convert to R and Z
   rvessel = sqrt(cut(:,1)**2 + cut(:,2)**2)
   zvessel = cut(:,3)
+
+  !do i =1,100
+  !print *,rvessel(i),zvessel(i)
+  !end do
 
   inside_vessel = in_polygon(r, z, rvessel, zvessel, vessel_size(2))
 

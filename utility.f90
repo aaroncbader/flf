@@ -35,19 +35,19 @@ subroutine move_to_first_quad(r,z,phi,newr,newz,newphi, period, mirrored)
 
   pi = 3.1415927
   
-  period_size = 2.*pi / period
+  period_size = 2.*pi / period / (mirrored + 1)
   ! Make phi between 0 and 2 pi
   newphi = modulo(phi, 2. * pi)
 
   ! Note which period we're in
-  phi_period = int(newphi/period_size)  
+  phi_period = int(newphi/period_size)
 
   ! Move to correct octant
   newphi = modulo(newphi, period_size)
 
   ! Invoke stell symmetry if needed
   if ((modulo(phi_period, 2).ne.0).and.(mirrored == 1)) then
-     newphi = pi/4 - newphi
+     newphi = period_size - newphi
      newz = -1.0 * z
   else
      newz = z
