@@ -149,6 +149,7 @@ end subroutine load_axis
 ! inside vessel calculation, and that one should be used.
 integer function inside_div(rin, zin, phiin)
   use div_module
+  use coil_module !needed to know whether it's mirrored
   implicit none
 
   real :: pi
@@ -169,8 +170,9 @@ integer function inside_div(rin, zin, phiin)
   do i = 1,num_divertors
 
      !Move the quadrant appropriately
-     if (div_repeat(i).eq.8) then
-        call move_to_first_quad(rin, zin, phiin, r, z, phi)
+     if (div_repeat(i).gt.1) then
+        call move_to_first_quad(rin, zin, phiin, r, z, phi, div_repeat, &
+             is_mirrored)
      else
         phi = modulo(phiin, 2 * pi)
         r = rin

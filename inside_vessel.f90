@@ -44,12 +44,14 @@ end subroutine load_vessel
   integer function inside_vessel(rin, zin, phiin)
 
   use vessel_module
+  use coil_module
+
   implicit none
   integer :: tor_size, pol_size, index, i, in_polygon
   real, dimension(vessel_size(1)) :: phi_vessel
   real, dimension(vessel_size(2), 3) :: cut
   real, dimension(vessel_size(2)) :: rvessel, zvessel
-  real :: rin, zin, phiin, phi_step_size
+  real :: rin, zin, phiin, phi_step_size, phi_extent
   real :: ratio, pi, r, z, phi
 
   ! Make sure there's even a vessel to check
@@ -61,18 +63,21 @@ end subroutine load_vessel
   pi = 3.1415927
   tor_size = vessel_size(1)
   pol_size = vessel_size(2)
+  ! for now assume the vessel spans the same as the coil set
+  phi_extent = 2 * pi /coil_sections
 
-  call move_to_first_quad(rin, zin, phiin, r, z, phi)
+  call move_to_first_quad(rin, zin, phiin, r, z, phi, coil_sections, &
+       is_mirrored)
 
   ! This is the step size in the toroidal direction
-  phi_step_size = pi/(tor_size - 1)/4
+  phi_step_size = phi_extent/(tor_size - 1)
 
   ! \todo find a quicker assignment for fortran
   do i=1,tor_size
      phi_vessel(i) = real(i-1)
   enddo
   phi_vessel = phi_vessel / tor_size
-  phi_vessel = phi_vessel * pi/4 + (2 * phi_step_size)
+  phi_vessel = phi_vessel * phi_extent + (2 * phi_step_size)
   phi_vessel = phi_vessel - phi_step_size
 
 

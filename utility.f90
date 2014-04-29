@@ -25,23 +25,28 @@ end subroutine pol2cart
 
 !Technically nothing happens to the r coordinate, so this can be eliminated
 ! But for completeness it is included.
-subroutine move_to_first_quad(r,z,phi,newr,newz,newphi)
-  real :: r,z,phi,newr,newz,newphi,pi
-  integer :: phi8th
+! period is the periodicity of the system
+! mirrored indicates whether the alternate periods are mirrored
+subroutine move_to_first_quad(r,z,phi,newr,newz,newphi, period, mirrored)
+  implicit none
+  
+  real :: r,z,phi,newr,newz,newphi, pi, period_size
+  integer :: phi8th, period, mirrored, phi_period
 
   pi = 3.1415927
   
+  period_size = 2.*pi / period
   ! Make phi between 0 and 2 pi
   newphi = modulo(phi, 2. * pi)
 
-  ! Note which octant we're in
-  phi8th = int(newphi/(pi/4.))  
+  ! Note which period we're in
+  phi_period = int(newphi/period_size)  
 
   ! Move to correct octant
-  newphi = modulo(newphi, pi / 4.)
+  newphi = modulo(newphi, period_size)
 
-  ! Invoke stell symmetry
-  if (modulo(phi8th, 2).ne.0) then
+  ! Invoke stell symmetry if needed
+  if ((modulo(phi_period, 2).ne.0).and.(mirrored == 1)) then
      newphi = pi/4 - newphi
      newz = -1.0 * z
   else
