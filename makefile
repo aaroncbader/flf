@@ -1,6 +1,6 @@
 FC = gfortran
 
-OP = -fdefault-real-8 -fdefault-double-8 -fbacktrace -fbounds-check  -g
+OP = -fdefault-real-8 -fdefault-double-8 -fbacktrace -fbounds-check  -O2
 
 CP = $(FC) $(OP) -c
 
@@ -28,6 +28,13 @@ CT = 	utility.o 	coil_module.o	div_module.o 	read_coils.o\
 	follow_field.o	inside_limiter.o  parser.o 	read_input.o\
 	comprehensive_test.o
 
+WC =    utility.o       coil_module.o   div_module.o    read_coils.o\
+        points_module.o get_points.o    limiter_module.o options_module.o\
+        compute_bs.o\
+        dlsode.o        vessel_module.o inside_vessel.o randomize.o\
+        inside_div.o    diffusion.o\
+        follow_field.o  inside_limiter.o  parser.o      read_input.o\
+	write_coils.o
 
 
 PROGRAMS = follow_to_wall Bmag comprehensive_test
@@ -43,6 +50,9 @@ Bmag: $(BM)
 
 comp_test: $(CT)
 	$(FC) $(OP) -o comprehensive_test $(CT)
+
+write_coils: $(WC)
+	$(FC) $(OP) -o write_coils $(WC)
 
 
 utility.o:	utility.f90
@@ -85,6 +95,8 @@ parser.o:	parser.f90
 	$(CP)	parser.f90
 read_input.o:	read_input.f90
 	$(CP)	read_input.f90
+write_coils.o:	write_coils.f90
+	$(CP)	write_coils.f90
 Bmag.o:		Bmag.f90
 	$(CP)	Bmag.f90
 comprehensive_test.o:	comprehensive_test.f90
