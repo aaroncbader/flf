@@ -16,7 +16,7 @@ BM =    utility.o 	coil_module.o	div_module.o 	read_coils.o\
 	points_module.o	get_points.o 	limiter_module.o options_module.o\
 	compute_bs.o\
 	dlsode.o	vessel_module.o inside_vessel.o\
-	inside_div.o	diffusion.o\
+	inside_div.o\
 	follow_field.o	inside_limiter.o  parser.o 	read_input.o\
 	Bmag.o
 
@@ -31,8 +31,8 @@ CT = 	utility.o 	coil_module.o	div_module.o 	read_coils.o\
 WC =    utility.o       coil_module.o   div_module.o    read_coils.o\
         points_module.o get_points.o    limiter_module.o options_module.o\
         compute_bs.o\
-        dlsode.o        vessel_module.o inside_vessel.o randomize.o\
-        inside_div.o    diffusion.o\
+        dlsode.o        vessel_module.o inside_vessel.o\
+        inside_div.o\
         follow_field.o  inside_limiter.o  parser.o      read_input.o\
 	write_coils.o
 
