@@ -13,11 +13,12 @@ subroutine allocate_limiter()
   allocate(limiter_size(num_limiters))
   allocate(lim_bvector(num_limiters, 3))
   allocate(lim_baxis(num_limiters, 3))
+  allocate(lim_inside(num_limiters))
 
   do i=1,num_limiters
 
      open(filenum, file=trim(lim_files(i)), status='old', form = 'formatted')
-     read(filenum,*) limiter_size(i)
+     read(filenum,*) limiter_size(i), lim_inside(i)
      if (limiter_size(i) > max_size) max_size = limiter_size(i)
      close(filenum)
   end do
@@ -64,7 +65,7 @@ subroutine load_limiter()
      !enddo
      close(filenum)
 
-  end do
+  end do  
 
 end subroutine load_limiter
 
@@ -76,18 +77,19 @@ integer function inside_limiter(r,z,phi)
 
   implicit none
 
-  real :: Xpoint, Ypoint, dist_plane, delta, r, z, phi
+  real :: Xpoint, Ypoint, dist_plane, delta, r, z, phi, phi_mod, phi_mod2, pi
   integer :: in_polygon, poly_size, is_near_helical_plane, i
-  real, dimension(3) :: dist_axis
+  real, dimension(3) :: dist_axis, lim_rzp
   real, dimension(:), allocatable :: Xpoly, Ypoly
   real, dimension(3) :: point, pointc, HC_out, HC_up, HC_up_mag, HC_up_norm
 
- 
+
   if (num_limiters.le.0) then
      inside_limiter = 0
      return
   end if
 
+  pi = 3.1415927
   delta=0.005 !5mm away from helical plane, try +/- this value
 
   point=(/r,z,phi/)
@@ -104,10 +106,40 @@ integer function inside_limiter(r,z,phi)
      allocate(Xpoly(limiter_size(i)))
      allocate(Ypoly(limiter_size(i)))
 
+     ! Coarse check for phi distance (the detailed check with dot-products can
+     ! produce errors when 180 degrees off)
+
+     ! Convert to cartesian
+     call cart2pol(lim_baxis(i,:), lim_rzp)
+
+     ! Get everything between 0 and 2pi
+     lim_rzp(3) = modulo(lim_rzp(3), 2 * pi)
+     phi_mod = modulo(point(3), 2* pi)
+     if (lim_rzp(3) > phi_mod) then
+        phi_mod2 = phi_mod + (2 * pi)
+     else
+        phi_mod2 = phi_mod - (2 * pi)
+     end if
+
+     !print *,'stuff',phi_mod, phi_mod2, lim_rzp(3)
+     ! We check if it's 1 radian away.  If greater, then skip this check,
+     ! we do two checks to avoid the annoying wrap around at 0, 2*pi
+     if ((abs(lim_rzp(3) - phi_mod) > 1.0) .and. &
+          (abs(lim_rzp(3) - phi_mod2) > 1.0)) then
+        is_near_helical_plane=0
+        inside_limiter=0
+        cycle
+     endif
+
      ! use the B field vector as the normal vector to the helical plane. Find
      ! the distance to this plane by using the dot product.
+
      dist_axis = pointc - lim_baxis(i,:)
-     dist_plane = dot_product(dist_axis,lim_bvector(i,:))
+     dist_plane = dot_product(dist_axis, lim_bvector(i,:))
+     ! print *,'phi',point(3)
+     ! print *,'pointc',pointc(:)
+     ! print *,'dist_axis',dist_axis(:)
+     ! print *,'dist_plane',dist_plane
 
 
      ! Check if we're too far away
@@ -144,7 +176,7 @@ integer function inside_limiter(r,z,phi)
      HC_up_norm=HC_up/HC_up_mag
 
 
-     ! print *, HC_up_norm
+     !print *, HC_up_norm
 
      ! find the dot product 
      Xpoint= pointc(1) 
@@ -154,21 +186,20 @@ integer function inside_limiter(r,z,phi)
 
      ! now we can work within the 2d helical plane
      ! use in_polygon to see if the point hits the limiter	
+     !print *,Xpoint, Ypoint
 
-
-     inside_limiter=in_polygon(Xpoint, Ypoint, Xpoly, Ypoly, poly_size)
-
-     ! print *, 'inside_limiter=', inside_limiter
+     inside_limiter=in_polygon(Xpoint, Ypoint, Xpoly, Ypoly, poly_size) + &
+          lim_inside(i)
+     inside_limiter = modulo(inside_limiter, 2)
 
      deallocate(Xpoly)
      deallocate(Ypoly)
 
+     if (inside_limiter == 1) exit
+
+     ! print *, 'inside_limiter=', inside_limiter
+
   end do
-
-
-
-  	
-
 
 
 end function inside_limiter
