@@ -5,9 +5,9 @@ program follow_to_wall
   use points_module
   use options_module
 
-  real,dimension(3) :: p
+  real,dimension(3) :: p, b, pxyz
   integer :: i,j,isin, inside_vessel,outfile
-  real :: dphi, totcur, dist
+  real :: dphi, totcur, dist, magb
 
   call read_input()
 
@@ -50,7 +50,13 @@ program follow_to_wall
            points_move(j,:) = p
            !write (*,'(3(F12.7,2X))'),points_move(j,:)
         end if
-        write (*,'(3(F12.7,2X))'),points_move(j,:)
+
+        !for writing B field
+        call pol2cart(points_move(j,:), pxyz)
+        call compute_full_bs(pxyz, b)
+        magb = (b(1)**2 + b(2)**2 + b(3)**2)**0.5
+
+        write (*,'(4(F12.7,2X))'),points_move(j,:), magb
         
         ! write the new point
         !write (1,'(3(F9.6,2X))') p(1:3)
