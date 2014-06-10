@@ -88,8 +88,9 @@ real function distance_to_lcfs(rin, zin, phiin)
   
   x1 = rlcfs(mindex)
   y1 = zlcfs(mindex)
+  
   ! case where you are not on the end
-  if (mindex > 1 .or. mindex < lcfs_size(2)) then
+  if (mindex > 1 .and. mindex < lcfs_size(2)) then
      if (dist(mindex + 1) > dist(mindex - 1)) then        
         x2 = rlcfs(mindex - 1)
         y2 = zlcfs(mindex - 1)
