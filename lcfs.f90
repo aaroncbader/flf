@@ -70,7 +70,7 @@ real function distance_to_lcfs(rin, zin, phiin)
   ! ratio for interpolation
   ratio = modulo(phi, phi_step_size) / phi_step_size
   ! Index for first surface
-  index = int((phi - modulo(phi, phi_step_size))/phi_step_size) + 1
+  index = int(phi/phi_step_size) + 1
   
   ! Interpolate
   cut = lcfs(index,:,:) * (1 - ratio) + lcfs(index + 1,:,:) * ratio
@@ -106,6 +106,10 @@ real function distance_to_lcfs(rin, zin, phiin)
         y2 = zlcfs(2)
      end if
   end if
+  !write (*,*) 'phi_step_size',phi_step_size
+  !write (*,*) 'phi, index ratio',phi, index, ratio
+  !write (*,*) 'x1, y1, x2, y2',x1,y1,x2,y2
+
 
   ! now we've got the line points for the closest segment, so calculate the
   ! distance to that segment, line equation is y - mx - b = 0
