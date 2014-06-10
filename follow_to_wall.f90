@@ -8,6 +8,7 @@ program follow_to_wall
   real,dimension(3) :: p, b, pxyz
   integer :: i,j,isin, inside_vessel,outfile
   real :: dphi, totcur, dist, magb
+  real :: distance_to_lcfs, dist_lcfs
 
   call read_input()
 
@@ -55,8 +56,13 @@ program follow_to_wall
         call pol2cart(points_move(j,:), pxyz)
         call compute_full_bs(pxyz, b)
         magb = (b(1)**2 + b(2)**2 + b(3)**2)**0.5
+        dist_lcfs = distance_to_lcfs(points_move(j,1), points_move(j,2), &
+             points_move(j,3))
 
-        write (*,'(4(F12.7,2X))'),points_move(j,:), magb
+
+        write (*,'(5(F12.7,2X))'),points_move(j,:), magb, dist_lcfs
+        
+        
         
         ! write the new point
         !write (1,'(3(F9.6,2X))') p(1:3)

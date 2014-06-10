@@ -7,8 +7,8 @@ CP = $(FC) $(OP) -c
 MO = 	utility.o 	coil_module.o	div_module.o 	read_coils.o\
 	points_module.o	get_points.o 	limiter_module.o options_module.o\
 	compute_bs.o\
-	dlsode.o	vessel_module.o inside_vessel.o\
-	inside_div.o	diffusion.o	randomize.o\
+	dlsode.o	vessel_module.o inside_vessel.o	lcfs_module.o\
+	inside_div.o	diffusion.o	randomize.o	lcfs.o\
 	follow_field.o	inside_limiter.o  parser.o 	read_input.o\
 	follow_to_wall.o
 
@@ -67,6 +67,8 @@ inside_limiter.o:	inside_limiter.f90
 	$(CP)		inside_limiter.f90
 points_module.o:	points_module.f90
 	$(CP)	points_module.f90
+lcfs_module.o:	lcfs_module.f90
+	$(CP)	lcfs_module.f90
 follow_field.o:	follow_field.f90
 	$(CP)	follow_field.f90
 coil_module.o:	coil_module.f90
@@ -97,6 +99,8 @@ read_input.o:	read_input.f90
 	$(CP)	read_input.f90
 write_coils.o:	write_coils.f90
 	$(CP)	write_coils.f90
+lcfs.o:		lcfs.f90
+	$(CP)	lcfs.f90
 Bmag.o:		Bmag.f90
 	$(CP)	Bmag.f90
 comprehensive_test.o:	comprehensive_test.f90

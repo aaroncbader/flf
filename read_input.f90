@@ -7,6 +7,7 @@ subroutine read_input
   use vessel_module
   use div_module
   use options_module
+  use lcfs_module
   implicit none
 
   character*72 :: input_file, line
@@ -174,6 +175,16 @@ subroutine read_input
      call load_axis()
      points_hit_divertor(:) = 0
   end if
+
+  call read_until_data(filenum, line)
+  call string_to_int(line, num_lcfs)
+  if (num_lcfs.gt.0) then
+     call read_until_data(filenum, line)
+     lcfs_file = trim(adjustl(line))
+     call allocate_lcfs()
+     call load_lcfs()
+  end if
+
 
   ! No more to read
 
