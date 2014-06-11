@@ -56,12 +56,15 @@ program follow_to_wall
         call pol2cart(points_move(j,:), pxyz)
         call compute_full_bs(pxyz, b)
         magb = (b(1)**2 + b(2)**2 + b(3)**2)**0.5
-        dist_lcfs = distance_to_lcfs(points_move(j,1), points_move(j,2), &
-             points_move(j,3))
+        if (num_lcfs > 0) then 
+           dist_lcfs = distance_to_lcfs(points_move(j,1), points_move(j,2), &
+                points_move(j,3))
 
 
-        write (*,'(5(F12.7,2X))'),points_move(j,:), magb, dist_lcfs
-        
+           write (*,'(5(F12.7,2X))'),points_move(j,:), magb, dist_lcfs
+        else
+           write (*,'(5(F12.7,2X))'),points_move(j,:), magb
+        end if
         
         
         ! write the new point
