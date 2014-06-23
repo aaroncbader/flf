@@ -27,11 +27,19 @@ program follow_to_wall
    
   points_move(:,:) = points_start(:,:)
 
+
   do j=1,points_number
 
      ! set the current point
      current_point = j
      write(*,*),'point number',j
+
+     call pol2cart(points_move(j,:), pxyz)
+     call compute_full_bs(pxyz, b)
+     magb = (b(1)**2 + b(2)**2 + b(3)**2)**0.5
+
+
+     write(*,'(4(F12.7,2X))'), points_move(j,:), magb
 
      do i=1,n_iter
         ! Skip points that already hit
