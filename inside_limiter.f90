@@ -132,16 +132,18 @@ integer function inside_limiter(r,z,phi)
         inside_limiter=0
         cycle
      endif
+     
+     ! print *, 'point is closer than 1 radian'
 
      ! use the B field vector as the normal vector to the helical plane. Find
      ! the distance to this plane by using the dot product.
 
      dist_axis = pointc - lim_baxis(i,:)
      dist_plane = dot_product(dist_axis, lim_bvector(i,:))
-     ! print *,'phi',point(3)
-     ! print *,'pointc',pointc(:)
-     ! print *,'dist_axis',dist_axis(:)
-     ! print *,'dist_plane',dist_plane
+     !print *,'phi',point(3)
+     !print *,'pointc',pointc(:)
+     !print *,'dist_axis',dist_axis(:)
+     !print *,'dist_plane',dist_plane
 
 
      ! Check if we're too far away
@@ -200,6 +202,7 @@ integer function inside_limiter(r,z,phi)
      if (inside_limiter == 1) exit
 
      ! print *, 'inside_limiter=', inside_limiter
+     
 
   end do
 
