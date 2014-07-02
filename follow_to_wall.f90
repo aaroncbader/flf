@@ -6,7 +6,7 @@ program follow_to_wall
   use options_module
 
   real,dimension(3) :: p, b, pxyz
-  integer :: i,j,isin, inside_vessel,outfile
+  integer :: i,j,isin, inside_vessel,outfile, step_number
   real :: dphi, totcur, dist, magb
   real :: distance_to_lcfs, dist_lcfs
 
@@ -34,13 +34,15 @@ program follow_to_wall
      write(*,*),'point number',j
 
      do i=1,n_iter
+     	  ! keep track of number of steps for limiter calculation
+     	  step_number=i
         ! Skip points that already hit
         if (points_hit(j) == 1) then
            cycle
         end if
 
         
-        call follow_field(points_move(j,:), points_dphi, dist)
+        call follow_field(points_move(j,:), points_dphi, dist, step_number)
         
         conn_length(j)=conn_length(j)+dist
 
