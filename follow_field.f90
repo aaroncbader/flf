@@ -1,7 +1,7 @@
 ! p is the point in rzphi
 ! dphi is the distance in phi to follow
 
-subroutine follow_field(p, dphi, dist)
+subroutine follow_field(p, dphi, dist, step_number)
 
   use coil_module
 
@@ -10,12 +10,12 @@ subroutine follow_field(p, dphi, dist)
   parameter (liw=22)
   parameter (itask=1)
 
-  real, dimension(3) :: p, pold, pnew, poldc, pnewc
+  real, dimension(3) :: p, pold, pnew, poldc, pnew
   real, dimension(2) :: y
   ! For now this is unused.
   real :: dphi, t0, t1, tol
   ! dstuff for dlsode
-  integer :: ifail, istate
+  integer :: ifail, istate, step_number
   real, dimension(liw) :: iwork
   real, dimension(lrw) :: rwork
   real, dimension(1) :: dist, r1, z1, phi1, r2, z2, phi2, x1, x2, y1, y2
