@@ -10,7 +10,7 @@ subroutine follow_field(p, dphi, dist, step_number)
   parameter (liw=22)
   parameter (itask=1)
 
-  real, dimension(3) :: p, pold, pnew, poldc
+  real, dimension(3) :: p, pold, pnew, poldc, pnewc
   real, dimension(2) :: y
   ! For now this is unused.
   real :: dphi, t0, t1, tol
