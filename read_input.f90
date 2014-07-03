@@ -182,7 +182,9 @@ subroutine read_input
      call read_until_data(filenum, line)
      lcfs_file = trim(adjustl(line))
      call allocate_lcfs()
+     !	print *, 'number of LCFS:', num_lcfs
      call load_lcfs()
+     !	print *, 'number of LCFS:', num_lcfs
   end if
 
 
