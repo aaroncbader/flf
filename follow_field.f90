@@ -1,7 +1,8 @@
 ! p is the point in rzphi
 ! dphi is the distance in phi to follow
 
-subroutine follow_field(p, dphi, dist, step_number)
+subroutine follow_field(p, dphi, dist, istate, step_number)
+
 
   use coil_module
 
@@ -43,10 +44,17 @@ subroutine follow_field(p, dphi, dist, step_number)
   call dlsode(field_deriv, 2, y, t0, t1, 1, tol, tol, itask, istate, 0, &
        rwork, lrw, iwork, liw, jacl, 22)
 
+  ! This indicates that dlsode exited improperly
+  if (istate < 0) then
+     dist = 0.
+     return
+  end if
+
   p(1) = y(1)
   p(2) = y(2)
   p(3) = t1
   
+
   ! keep track of new point
   r2=p(1)
   z2=p(2)

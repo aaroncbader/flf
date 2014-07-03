@@ -13,6 +13,7 @@ subroutine get_points()
   allocate(points_move(points_number, 3))
   allocate(points_end(points_number, 3))
   allocate(points_hit(points_number))
+  allocate(points_complete(points_number))
   points_hit(:) = 0
 
   do i=1,points_number

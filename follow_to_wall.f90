@@ -6,7 +6,7 @@ program follow_to_wall
   use options_module
 
   real,dimension(3) :: p, b, pxyz
-  integer :: i,j,isin, inside_vessel,outfile, step_number
+  integer :: i,j,isin, inside_vessel,outfile, istate, step_number
   real :: dphi, totcur, dist, magb
   real :: distance_to_lcfs, dist_lcfs
 
@@ -27,11 +27,20 @@ program follow_to_wall
    
   points_move(:,:) = points_start(:,:)
 
+
   do j=1,points_number
+     points_complete(j) = 1
 
      ! set the current point
      current_point = j
      write(*,*),'point number',j
+
+     call pol2cart(points_move(j,:), pxyz)
+     call compute_full_bs(pxyz, b)
+     magb = (b(1)**2 + b(2)**2 + b(3)**2)**0.5
+
+
+     write(*,'(4(F12.7,2X))'), points_move(j,:), magb
 
      do i=1,n_iter
      	  ! keep track of number of steps for limiter calculation
@@ -42,7 +51,13 @@ program follow_to_wall
         end if
 
         
-        call follow_field(points_move(j,:), points_dphi, dist, step_number)
+        call follow_field(points_move(j,:), points_dphi, dist, istate, step_number)
+        !write (*,*) 'istate',istate
+        if (istate < 0) then
+           
+           points_complete(j) = 0
+           exit
+        end if
         
         conn_length(j)=conn_length(j)+dist
 
@@ -94,7 +109,11 @@ subroutine record_output(filenum)
   integer :: j,k,filenum
   
   do j=1,points_number
-     write (filenum,*) 'point number',j
+     if (points_complete(j) == 1) then
+        write (filenum,*) 'point number',j,' completed orbit'
+     else
+        write (filenum,*) 'point number',j,' did NOT complete orbit'
+     end if
      write (filenum,'(A,3(F11.6,2X))') 'start: ',points_start(j,:)
      if (points_hit(j).eq.1) then
         write (filenum,'(A,3(F11.6,2X))') 'end:   ',points_end(j,:)
