@@ -75,7 +75,7 @@ program follow_to_wall
         call compute_full_bs(pxyz, b)
         magb = (b(1)**2 + b(2)**2 + b(3)**2)**0.5
         if (num_lcfs > 0) then 
-        print *, 'number of LCFS:', num_lcfs
+        ! print *, 'number of LCFS:', num_lcfs
            dist_lcfs = distance_to_lcfs(points_move(j,1), points_move(j,2), &
                 points_move(j,3))
 
