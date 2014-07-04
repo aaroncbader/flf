@@ -80,7 +80,7 @@ program follow_to_wall
                 points_move(j,3))
 
 
-           write (*,'(5(F12.7,2X))'),points_move(j,:), magb, dist_lcfs
+           write (*,'(5(F12.7,2X))'),points_move(j,:), conn_length, dist_lcfs
         else
            write (*,'(5(F12.7,2X))'),points_move(j,:), magb
         end if
