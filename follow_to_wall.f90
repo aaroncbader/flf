@@ -17,13 +17,15 @@ program follow_to_wall
   ! get the points
   call get_points()
   outfile = 1
-  
-  allocate(conn_length(points_number))
-  conn_length=0.0
+ 
 
   !file to write output
   open (unit=outfile,file=trim(adjustl(results_file)),status='unknown')
   !write (1,'(3(F9.6,2X))') p(1:3)
+  
+  ! start by setting connection length to zero for each point
+  allocate(conn_length(points_number))
+  conn_length=0.0
 
    
   points_move(:,:) = points_start(:,:)
@@ -31,6 +33,8 @@ program follow_to_wall
 
   do j=1,points_number
      points_complete(j) = 1
+     
+
 
      ! set the current point
      current_point = j
@@ -42,6 +46,8 @@ program follow_to_wall
 
 
      write(*,'(4(F12.7,2X))'), points_move(j,:), magb
+     
+
 
      do i=1,n_iter
      	  ! keep track of number of steps for limiter calculation
@@ -50,6 +56,7 @@ program follow_to_wall
         if (points_hit(j) == 1) then
            cycle
         end if
+       
 
         
         call follow_field(points_move(j,:), points_dphi, dist, istate, step_number)
@@ -60,7 +67,10 @@ program follow_to_wall
            exit
         end if
         
+
         conn_length(j)=conn_length(j)+dist
+       !  print *, 'conn_length(j):', conn_length(j)
+       !  print *, 'dist:', dist
 
         ! Do diffusion
         if (use_diffusion.eq.1) then
@@ -84,6 +94,7 @@ program follow_to_wall
         else
            write (*,'(5(F12.7,2X))'),points_move(j,:), magb
         end if
+        
         
         
         ! write the new point
