@@ -8,7 +8,7 @@ subroutine allocate_limiter()
 
   if (num_limiters == 0) return
   
-  print *, 'number of limiters loaded:',num_limiters
+  ! print *, 'number of limiters loaded:',num_limiters
 
   max_size = 0
   ! Read through all limiter files and set allocation values
