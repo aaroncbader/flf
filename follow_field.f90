@@ -22,6 +22,9 @@ subroutine follow_field(p, dphi, dist, istate, step_number)
   real, dimension(1) :: dist, r1, z1, phi1, r2, z2, phi2, x1, x2, y1, y2
 
   external field_deriv
+  
+  ! start by resetting dist to zero
+  dist=0.0
 
   y(1) = p(1)
   y(2) = p(2)
