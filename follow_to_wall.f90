@@ -7,7 +7,7 @@ program follow_to_wall
   use lcfs_module
 
   real,dimension(3) :: p, b, pxyz
-  integer :: i,j,isin, inside_vessel,outfile, istate, step_number
+  integer :: i,j,isin, inside_vessel,outfile, istate
   real :: dphi, totcur, dist, magb
   real :: distance_to_lcfs, dist_lcfs
 
@@ -50,16 +50,16 @@ program follow_to_wall
 
 
      do i=1,n_iter
-     	  ! keep track of number of steps for limiter calculation
-     	  step_number=i
+     	! keep track of number of steps for limiter calculation
+     	current_step=i
+        
         ! Skip points that already hit
         if (points_hit(j) == 1) then
            cycle
         end if
        
-
-        
-        call follow_field(points_move(j,:), points_dphi, dist, istate, step_number)
+        call follow_field(points_move(j,:), points_dphi, dist, &
+             istate)
         !write (*,*) 'istate',istate
         if (istate < 0) then
            

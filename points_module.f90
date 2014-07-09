@@ -9,7 +9,7 @@ module points_module
   integer, dimension(:), allocatable :: points_hit_divertor, points_hit, points_complete
   real :: points_dphi
   integer :: n_iter, points_number
-  integer :: current_point
+  integer :: current_point, current_step
   character*72 :: points_file, results_file
 
 end module points_module

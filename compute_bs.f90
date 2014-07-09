@@ -208,12 +208,12 @@ end subroutine compute_bs
 ! y is the dependent variables (r and z)
 ! dydx are the derivatives (dr/dphi and dz/dphi)
 
-subroutine field_deriv(neq, t, y, dydx, step_number)
+subroutine field_deriv(neq, t, y, dydx)
   
   use points_module
   implicit none
 
-  integer :: neq, inside_vessel, inside_div, inside_limiter, step_number
+  integer :: neq, inside_vessel, inside_div, inside_limiter
   real, dimension(neq) :: y, dydx, div_hit
   real, dimension(3) :: bxyz, pxyz, przphi
   real :: br, bphi, t
@@ -259,9 +259,8 @@ subroutine field_deriv(neq, t, y, dydx, step_number)
     print *,'-------------------------------'
     dydx = 0
    ! check if we're near the helical plane in the boxport (where the limiter is)  
-   ! skip this check for the first five steps for each point to avoid losing points
    ! if we start them at the limiter
-   else if (inside_limiter(y(1),y(2),t) == 1 .and. step_number .ge. 5) then
+   else if (inside_limiter(y(1), y(2), t) .ge. 1) then
      points_hit_limiter(current_point)=1
      points_hit(current_point) = 1
      points_end(current_point,1:2)=y

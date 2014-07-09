@@ -140,9 +140,12 @@ subroutine read_input
   call read_until_data(filenum, line)
   call string_to_int(line, num_limiters)
   allocate(lim_files(num_limiters))
+  allocate(lim_minstep(num_limiters))
   do i=1,num_limiters
      call read_until_data(filenum, line)
      lim_files(i) = trim(adjustl(line))
+     call read_until_data(filenum, line)
+     call string_to_int(line, lim_minstep(i))
   end do
 
   allocate(points_hit_limiter(points_number))

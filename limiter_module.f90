@@ -1,7 +1,7 @@
 module limiter_module
 
   implicit none
-  integer, allocatable, dimension(:) :: limiter_size
+  integer, allocatable, dimension(:) :: limiter_size, lim_minstep
   integer :: num_limiters
   
   real, allocatable, dimension(:) :: lim_inside

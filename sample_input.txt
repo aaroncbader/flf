@@ -68,9 +68,13 @@ aux_icdiv.dat
 0
 !vessel.txt
 ! The number of limiters included in the calculation
-! followed by the file locations for the limiters
+! followed by two lines. The file name for the limiters, and
+! the minimum step number in which to start calculating intersection
+! (allowing you to start a point on the limiter)
 0
 !limiter.txt
+! start calculating at step
+5
 ! The number of divertors included in the calculation
 ! followed by the file names for the divertors
 0

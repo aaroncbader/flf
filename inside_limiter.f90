@@ -16,6 +16,7 @@ subroutine allocate_limiter()
   allocate(lim_bvector(num_limiters, 3))
   allocate(lim_baxis(num_limiters, 3))
   allocate(lim_inside(num_limiters))
+  
 
   do i=1,num_limiters
 
@@ -50,7 +51,7 @@ subroutine load_limiter()
   do i=1,num_limiters
 
      open(filenum,file=trim(lim_files(i)),status='old',form='formatted')
-
+     
 
      ! the first two value should give the number of toroidal and poloidal
      ! points respectively.
@@ -73,9 +74,10 @@ end subroutine load_limiter
 
 
 ! note, point is in r,z,phi
-integer function inside_limiter(r,z,phi)
+integer function inside_limiter(r, z, phi)
 
   use limiter_module
+  use points_module
 
   implicit none
 
@@ -104,7 +106,14 @@ integer function inside_limiter(r,z,phi)
 
 
   do i=1,num_limiters
-
+     
+     ! Only do the calculation if you are less than the step number
+     if (lim_minstep(i) .gt. current_step) then
+        is_near_helical_plane = 0
+        inside_limiter = 0
+        cycle
+     end if
+     
      allocate(Xpoly(limiter_size(i)))
      allocate(Ypoly(limiter_size(i)))
 

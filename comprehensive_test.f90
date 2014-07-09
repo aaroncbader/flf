@@ -5,7 +5,7 @@ program comprehensive_test
   use options_module
   use vessel_module
 
-  integer :: i,j, inside_div, isok, answer, inside_vessel, step_number, istate
+  integer :: i,j, inside_div, isok, answer, inside_vessel, istate
   real :: dist, D, Te, z
   real, dimension(3) :: newp
 
@@ -21,7 +21,7 @@ program comprehensive_test
   points_dphi = 1.0
   current_point = 1
 
-  step_number = 1
+  current_step = 1
   
   points_start(1,1) = 1.45
   points_start(1,2) = 0.
@@ -29,7 +29,7 @@ program comprehensive_test
 
   points_move(1,:) = points_start(1,:)
   !write (*,'(3(F10.7,2X))'),points_move(1,:)
-  call follow_field(points_move(1,:), points_dphi, dist, istate, step_number)
+  call follow_field(points_move(1,:), points_dphi, dist, istate)
   !write (*,'(3(F10.7,2X))'),points_move(1,:)
   if ((points_move(1,1).gt.1.09181).and.(points_move(1,1).lt.(1.09183)).and.&
       (points_move(1,2).gt.(-0.10317)).and.(points_move(1,2).lt.(-0.10316)))&
@@ -48,7 +48,7 @@ program comprehensive_test
   end do
 
   points_move(1,:) = points_start(1,:)
-  call follow_field(points_move(1,:), points_dphi, dist, istate, step_number)
+  call follow_field(points_move(1,:), points_dphi, dist, istate)
   !print *,points_start
   !print *,points_move
   if ((points_move(1,1).gt.1.09810).and.(points_move(1,1).lt.(1.09812)).and.&
@@ -156,7 +156,7 @@ program comprehensive_test
   print *,Te, D
   print *,use_diffusion, diffusion_species
   points_dphi = 0.01
-  call follow_field(points_move(1,:), points_dphi, dist, istate, step_number)
+  call follow_field(points_move(1,:), points_dphi, dist, istate)
   print *,'new point location',points_move(1,:)
   print *,'Lc',dist
   call diffuse_point(points_move(1,:), newp, dist, Te, D, 1)
