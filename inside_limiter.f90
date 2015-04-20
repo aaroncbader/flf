@@ -138,6 +138,8 @@ integer function inside_limiter(r, z, phi)
           (abs(lim_rzp(3) - phi_mod2) > 1.0)) then
         is_near_helical_plane=0
         inside_limiter=0
+        deallocate(Xpoly)
+        deallocate(Ypoly)
         cycle
      endif
      
@@ -159,6 +161,8 @@ integer function inside_limiter(r, z, phi)
      if (abs(dist_plane) > delta) then
         is_near_helical_plane=0
         inside_limiter=0
+        deallocate(Xpoly)
+        deallocate(Ypoly)
         cycle
      endif
 
@@ -166,8 +170,8 @@ integer function inside_limiter(r, z, phi)
 
      poly_size=limiter_size(i)
 
-     ! xpoly=limiter(i,:,1)
-     ! ypoly=limiter(i,:,2)
+      Xpoly=limiter(i,:,1)
+      Ypoly=limiter(i,:,2)
 
      ! need to project point into 2D plane we'll do this in the same way
      ! that Chris Clark does in his matlab scripts the 2d HC plane is
