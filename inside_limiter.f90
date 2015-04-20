@@ -94,15 +94,14 @@ integer function inside_limiter(r, z, phi)
   end if
 
   pi = 3.1415927
-  delta=0.005 !5mm away from helical plane, try +/- this value
-
+  delta=0.01!1 cm away from helical plane, try +/- this value
   point=(/r,z,phi/)
 
   ! print *, 'point in limiter=', point
 
   call pol2cart(point,pointc)
 
- 
+  ! print *, "pointc=", pointc
 
 
   do i=1,num_limiters
@@ -147,7 +146,8 @@ integer function inside_limiter(r, z, phi)
      ! use the B field vector as the normal vector to the helical plane. Find
      ! the distance to this plane by using the dot product.
 
-     dist_axis = pointc - lim_baxis(i,:)
+     !dist_axis = pointc - lim_baxis(i,:)
+	 dist_axis = abs(pointc - lim_baxis(i,:))
      dist_plane = dot_product(dist_axis, lim_bvector(i,:))
      !print *,'phi',point(3)
      !print *,'pointc',pointc(:)
@@ -162,7 +162,7 @@ integer function inside_limiter(r, z, phi)
         cycle
      endif
 
-     ! print *, 'performing limiter check'
+     print *, 'performing limiter check'
 
      poly_size=limiter_size(i)
 
@@ -195,6 +195,11 @@ integer function inside_limiter(r, z, phi)
      Xpoint= pointc(1) 
 
      Ypoint= dot_product(pointc,HC_up_norm) 
+	 
+	 print *, "Xpoint=", Xpoint
+	 print *, "Ypoint=", Ypoint
+	 print *, "Xpoly=", Xpoly
+	 print *, "Ypoly=", Ypoly
 
 
      ! now we can work within the 2d helical plane
@@ -203,14 +208,17 @@ integer function inside_limiter(r, z, phi)
 
      inside_limiter=in_polygon(Xpoint, Ypoint, Xpoly, Ypoly, poly_size) + &
           lim_inside(i)
+	 print *, "first inside_limiter= ", inside_limiter	  
      inside_limiter = modulo(inside_limiter, 2)
 
      deallocate(Xpoly)
      deallocate(Ypoly)
+     deallocate(xpoly)
+     deallocate(ypoly)
 
      if (inside_limiter == 1) exit
 
-     ! print *, 'inside_limiter=', inside_limiter
+     print *, 'inside_limiter=', inside_limiter
      
 
   end do
