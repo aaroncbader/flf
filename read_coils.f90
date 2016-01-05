@@ -6,7 +6,7 @@ subroutine allocate_main()
 
   integer :: i
   integer :: filenum, temp_size
-  character*15 :: filename, format_string
+  character*72 :: filename, format_string
 
   mult_factor = coil_sections * (is_mirrored + 1)
   ! set values for the coil module
@@ -115,7 +115,7 @@ subroutine read_coil_files()
   integer :: i,j,k
   integer :: piece, filenum, total_points, dummy
   real :: current,x,y,z
-  character*15 :: filename, format_string
+  character*72 :: filename, format_string
 
 
 
