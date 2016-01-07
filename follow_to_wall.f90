@@ -5,9 +5,15 @@ program follow_to_wall
   use points_module
   use options_module
   use lcfs_module
+  use div_module
+  use coil_module
 
   real,dimension(3) :: p, b, pxyz
   integer :: i,j,isin, inside_vessel,outfile, istate
+  integer :: pushout, axis_index, interp_index
+  real :: phi, phiin, r, z, axis_phi, rmag, zmag, amount_to_move, pi
+  real :: linear_interpolate
+  real :: rline, zline, magline
   real :: dphi, totcur, dist, magb
   real :: distance_to_lcfs, dist_lcfs
 
@@ -16,6 +22,7 @@ program follow_to_wall
 
   ! get the points
   call get_points()
+  call load_axis()
   outfile = 1
  
 
@@ -29,7 +36,8 @@ program follow_to_wall
 
    
   points_move(:,:) = points_start(:,:)
-
+  pushout = 20
+  amount_to_move = 0.001
 
   do j=1,points_number
      points_complete(j) = 1
@@ -84,12 +92,58 @@ program follow_to_wall
         call pol2cart(points_move(j,:), pxyz)
         call compute_full_bs(pxyz, b)
         magb = (b(1)**2 + b(2)**2 + b(3)**2)**0.5
+        
+
+        !Move the point radially after some number of iterations
+        if (modulo(i, pushout) == 0) then
+           
+           phi = points_move(j,3)
+           r = points_move(j,1)
+           z = points_move(j,2)
+           
+           call move_to_first_quad(r, z, phi, r, z, phi, &
+             coil_sections, is_mirrored)
+           
+           pi = 3.14159265
+           axis_flip = 1
+           axis_phi = phi
+           if (z .ne. points_move(j,2)) then
+             axis_flip = -1
+           end if
+          
+           axis_index = interp_index(axis_phi, mag_axis(:,3), axis_points)
+           
+
+           rmag = linear_interpolate(axis_phi, mag_axis(:,1), mag_axis(:,3), &
+                axis_index)
+           
+           rmag = rmag * axis_flip
+           zmag = linear_interpolate(axis_phi, mag_axis(:,2), mag_axis(:,3), &
+                axis_index)
+           zmag = zmag * axis_flip
+
+           rline = r - rmag
+           zline = z - zmag
+           !write(*,*) rline, zline
+           magline = sqrt(rline**2 + zline**2)
+           !write(*,*) magline
+           rline = rline/magline*amount_to_move
+           zline = zline/magline*amount_to_move
+           
+           !write (*,*) r, z, rmag, zmag, rline, zline
+
+           !Move the point
+           write(*,'(5(F12.7,2X))'),points_move(j,:), magb
+           points_move(j,1) = r + rline
+           !write(*,*) axis_flip
+           points_move(j,2) = (z + zline) * axis_flip
+           !write(*,*) 'Point moved to'
+        end if
+           
         if (num_lcfs > 0) then 
-        ! print *, 'number of LCFS:', num_lcfs
+           ! print *, 'number of LCFS:', num_lcfs
            dist_lcfs = distance_to_lcfs(points_move(j,1), points_move(j,2), &
                 points_move(j,3))
-
-
            write (*,'(5(F12.7,2X))'),points_move(j,:), conn_length(j), dist_lcfs
         else
            write (*,'(5(F12.7,2X))'),points_move(j,:), magb
