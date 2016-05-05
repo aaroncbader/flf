@@ -1,5 +1,6 @@
 ! needed functions
 
+
 ! get random vector perp to field vector
 ! p is the point in space
 subroutine get_perp_vec(p, perp_vec)
@@ -57,13 +58,13 @@ subroutine diffuse_point(p, newp, Lc, Te, D, species)
   !print *,'LC',Lc
 
   call get_perp_vec(p, perp_vec)
-  !print *,'perp vec',perp_vec
+  print *,'perp vec',perp_vec
   
   call get_diff_time(Lc, Te, species, tau)
-  !print *,'diff time',tau
+  print *,'diff time',tau
 
   call get_diff_distance(tau, D, dist)
-  !print *,'diff dist',dist
+  print *,'diff dist',dist
 
   newp = p + dist * perp_vec
   !print *,'oldp',p
@@ -71,4 +72,58 @@ subroutine diffuse_point(p, newp, Lc, Te, D, species)
   !print *,'newp',newp
   return
 end subroutine diffuse_point
-  
+
+subroutine diffuse_boozer(p, newp, step)
+  use coil_module
+  use div_module
+
+  real, dimension(3) :: p, newp
+  real :: phi, r, z, axis_phi, pi, step
+  real :: rmag, zmag, rline, zline, magline
+  integer :: axis_flip, axis_index
+
+
+  phi = p(3)
+  r = p(1)
+  z = p(2)
+
+  call move_to_first_quad(r, z, phi, r, z, phi, &
+        coil_sections, is_mirrored)
+
+  !We move stuff into the first quadrant to do the magnetic axis
+  !calculation. But we need to save whether we're in a mirrored
+  ! section, in order to properly move the point back after
+  ! we're done with the diffusing
+  pi = 3.14159265
+  axis_flip = 1
+  axis_phi = phi
+  ! This is the test whether we are in a mirrored section
+  if (z .ne. p(2)) then
+     axis_flip = -1
+  end if
+
+  axis_index = interp_index(axis_phi, mag_axis(:,3), axis_points)
+
+
+   rmag = linear_interpolate(axis_phi, mag_axis(:,1), mag_axis(:,3), &
+         axis_index)
+
+   rmag = rmag * axis_flip
+   zmag = linear_interpolate(axis_phi, mag_axis(:,2), mag_axis(:,3), &
+         axis_index)
+   zmag = zmag * axis_flip
+
+   rline = r - rmag
+   zline = z - zmag
+   magline = sqrt(rline**2 + zline**2)
+   rline = rline/magline*step
+   zline = zline/magline*step
+   !write (*,*) r, z, rmag, zmag, rline, zline
+
+   !Move the point
+   newp(1) = r + rline
+   !write(*,*) axis_flip
+   newp(2) = (z + zline) * axis_flip
+   newp(3) = p(3)
+   !write(*,*) 'Point moved to'
+end subroutine

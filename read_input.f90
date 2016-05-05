@@ -104,18 +104,32 @@ subroutine read_input
   ! is diffusion on
   call read_until_data(filenum, line)
   call string_to_int(line, use_diffusion)
+  dpar1 = 0
+  dpar2 = 0
+  if (use_diffusion.gt.0) then
 
-  ! what species to use
-  call read_until_data(filenum, line)
-  call string_to_int(line, diffusion_species)
+     ! what species to use
+     call read_until_data(filenum, line)
+     call string_to_int(line, diffusion_species)
 
-  ! temperature and D
-  call read_until_data(filenum, line)
-  allocate(dummy_arr(2))
-  call string_to_reals(line, dummy_arr, 2)
-  diffusion_D = dummy_arr(1)
-  temperature = dummy_arr(2)
-  deallocate(dummy_arr)
+     ! temperature and D
+     call read_until_data(filenum, line)
+     allocate(dummy_arr(2))
+     call string_to_reals(line, dummy_arr, 2)
+     dpar1 = dummy_arr(1)
+     dpar2 = dummy_arr(2)
+     deallocate(dummy_arr)
+
+     ! Axis file used for Boozer diffusion
+     if (use_diffusion.eq.2) then
+       !Sanity check on dpar2
+       if (dpar2 < 1) dpar2 = 1
+       call read_until_data(filenum, line)
+       axis_file = line
+       call load_axis()
+     end if
+     
+  endif
      
   ! VESSEL INFO --------------------------
   call read_until_data(filenum, line)
@@ -166,10 +180,10 @@ subroutine read_input
      call read_until_data(filenum, line)
      div_files(i) = trim(adjustl(line))
   end do
-  !if (num_divertors.gt.0) then
+  if (num_divertors.gt.0) then
      call read_until_data(filenum, line)
      axis_file = line
-  !end if
+  end if
   allocate(points_hit_divertor(points_number))
 
   if (num_divertors.gt.0) then

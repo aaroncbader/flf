@@ -151,8 +151,8 @@ program comprehensive_test
   points_start(1,2) = 0.
   points_start(1,3) = 0.
   call init_random_seed()
-  Te = temperature
-  D = diffusion_D
+  Te = 50
+  D = 1
   print *,Te, D
   print *,use_diffusion, diffusion_species
   points_dphi = 0.01
@@ -160,8 +160,12 @@ program comprehensive_test
   print *,'new point location',points_move(1,:)
   print *,'Lc',dist
   call diffuse_point(points_move(1,:), newp, dist, Te, D, 1)
-  points_move(1,:) = newp
-  print *,'after diffusion',points_move(1,:)
+  print *,'after normal diffusion',newp
+
+  !!test for boozer diffusion
+  step = 0.01
+  call diffuse_boozer(points_move(1,:), newp, step)
+  print *,'after boozer diffusion',newp
   
   
 

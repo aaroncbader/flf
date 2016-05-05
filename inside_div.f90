@@ -124,7 +124,11 @@ subroutine load_axis()
 
   open(filenum, file=trim(axis_file), status='old', form='formatted')
   read(filenum, *) axis_points
-  allocate(mag_axis(axis_points,3))
+
+  !mag_axis might have been allocated if boozer diffusion was selected
+  if (.not. allocated(mag_axis)) then 
+     allocate(mag_axis(axis_points,3))
+  end if
   
   do i = 1,axis_points
      read(filenum, *) mag_axis(i,1:2)
