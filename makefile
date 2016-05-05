@@ -5,16 +5,16 @@ OP = -fdefault-real-8 -fdefault-double-8 -fbacktrace -fbounds-check  -O2
 CP = $(FC) $(OP) -c
 
 MO = 	utility.o 	coil_module.o	div_module.o 	read_coils.o\
-	points_module.o	get_points.o 	limiter_module.o options_module.o\
-	compute_bs.o\
+	points_module.o	mgrid_module.o  get_points.o 	limiter_module.o\
+	options_module.o  compute_bs.o    read_mgrid.o\
 	dlsode.o	vessel_module.o inside_vessel.o	lcfs_module.o\
 	inside_div.o	diffusion.o	randomize.o	lcfs.o\
 	follow_field.o	inside_limiter.o  parser.o 	read_input.o\
 	follow_to_wall.o
 
 BM =    utility.o 	coil_module.o	div_module.o 	read_coils.o\
-	points_module.o	get_points.o 	limiter_module.o options_module.o\
-	compute_bs.o\
+	points_module.o	mgrid_module.o  get_points.o 	limiter_module.o\
+	options_module.o  compute_bs.o    read_mgrid.o\
 	dlsode.o	vessel_module.o inside_vessel.o\
 	inside_div.o    lcfs_module.o  	lcfs.o\
 	follow_field.o	inside_limiter.o  parser.o 	read_input.o\
@@ -73,8 +73,12 @@ follow_field.o:	follow_field.f90
 	$(CP)	follow_field.f90
 coil_module.o:	coil_module.f90
 	$(CP)	coil_module.f90
+mgrid_module.o:	mgrid_module.f90
+	$(CP)	mgrid_module.f90
 read_coils.o:	read_coils.f90
 	$(CP)	read_coils.f90
+read_mgrid.o:	read_mgrid.f90
+	$(CP)	read_mgrid.f90
 options_module.o:	options_module.f90
 	$(CP)	options_module.f90
 compute_bs.o:	compute_bs.f90

@@ -8,6 +8,7 @@ subroutine read_input
   use div_module
   use options_module
   use lcfs_module
+  use mgrid_module
   implicit none
 
   character*72 :: input_file, line
@@ -54,51 +55,63 @@ subroutine read_input
   call read_until_data(filenum, line)
   call string_to_int(line, num_main_coils)
 
-  !allocate files for main coils
-  allocate(main_files(num_main_coils))
+  if (num_main_coils.gt.0) then
+    coil_type = 1
 
-  ! Names of main coils
-  do i=1,num_main_coils
-     call read_until_data(filenum, line)
-     main_files(i) = line
-  end do
+    !allocate files for main coils
+    allocate(main_files(num_main_coils))
 
-  call read_until_data(filenum, line)
-  call string_to_int(line, skip_value)
+    ! Names of main coils
+    do i=1,num_main_coils
+       call read_until_data(filenum, line)
+       main_files(i) = line
+    end do
 
-  ! Allocate the main coils
-  call allocate_main()
+    call read_until_data(filenum, line)
+    call string_to_int(line, skip_value)
 
-  ! Current in main coils
-  do i = 1,num_main_coils
-     call read_until_data(filenum, line)
-     call string_to_real(line, main_current(i))
-  end do
+    ! Allocate the main coils
+    call allocate_main()
+
+    ! Current in main coils
+    do i = 1,num_main_coils
+       call read_until_data(filenum, line)
+       call string_to_real(line, main_current(i))
+    end do
 
 
-  ! Get the aux file
-  call read_until_data(filenum, line)
-  aux_file = trim(adjustl(line))
+    ! Get the aux file
+    call read_until_data(filenum, line)
+    aux_file = trim(adjustl(line))
 
-  ! Number of aux coils and windings
-  call read_until_data(filenum, line)
-  allocate(dummy_int(2))
-  call string_to_ints(line, dummy_int, 2)
-  num_aux_coils = dummy_int(1)
-  main_winding = dummy_int(2)
-  deallocate(dummy_int)
+    ! Number of aux coils and windings
+    call read_until_data(filenum, line)
+    allocate(dummy_int(2))
+    call string_to_ints(line, dummy_int, 2)
+    num_aux_coils = dummy_int(1)
+    main_winding = dummy_int(2)
+    deallocate(dummy_int)
 
-  ! Allocate the aux values
-  call allocate_aux(aux_file)
-  
-  ! taper values
-  do i = 1,num_aux_coils ! taper_size is redundant, should be removed
-     call read_until_data(filenum, line)
-     call string_to_real(line, dummy)
+    ! Allocate the aux values
+    call allocate_aux(aux_file)
+    
+    ! taper values
+    do i = 1,num_aux_coils ! taper_size is redundant, should be removed
+       call read_until_data(filenum, line)
+       call string_to_real(line, dummy)
      taper(i) = dummy
-  end do
+    end do
 
-  call read_coil_files()
+    call read_coil_files()
+  else
+    coil_type = 2
+    num_main_coils = 0
+    num_aux_coils = 0
+    call read_until_data(filenum, line)
+    mgrid_file = line
+    call allocate_mgrid()
+    call load_mgrid()
+  end if
 
   ! DIFFUSION INFO ------------------------
   ! is diffusion on
