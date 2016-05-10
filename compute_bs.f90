@@ -1,6 +1,7 @@
 ! compute full field
 subroutine compute_full_bs(p, b)
 
+  use options_module
   implicit none
 
   real,dimension(3) :: p,b,btemp
@@ -8,14 +9,107 @@ subroutine compute_full_bs(p, b)
   ! Initialize b field
   b =  0
 
-  ! main fields
-  call compute_bs(p, 0, btemp)
-  b = b + btemp
-  ! aux fields
-  call compute_bs(p, 1, btemp)
-  b = b + btemp
+  !*** BIOT SAVART field calculation ***
+  if (coil_type.eq.1) then
+
+    ! main fields
+    call compute_bs(p, 0, btemp)
+    b = b + btemp
+    ! aux fields
+    call compute_bs(p, 1, btemp)
+    b = b + btemp
+
+  !*** Magnetic grid field calculation ***  
+  else if (coil_type.eq.2) then
+    call field_from_mgrid(p, b)
+  end if
 end subroutine compute_full_bs
-  
+
+!Calculate the field from a uniform magnetic grid in
+! r z phi space
+subroutine field_from_mgrid(p, b)
+  use mgrid_module
+  use coil_module
+  implicit none
+
+  real,dimension(3) :: p, b, przphi, temp
+  real :: br1, br2, br3, br4, br5, br6, br7
+  real :: bz1, bz2, bz3, bz4, bz5, bz6, bz7
+  real :: bp1, bp2, bp3, bp4, bp5, bp6, bp7
+  real :: rstep, zstep, phistep, rd, zd, phid
+  integer :: ri1, ri2, zi1, zi2, pi1, pi2
+
+  ! convert to rzphi
+  call cart2pol(p, temp)
+  call move_to_first_quad(temp(1), temp(2), temp(3), przphi(1), &
+        przphi(2), przphi(3), coil_sections, is_mirrored)
+   
+  !HACK, if the grid is slightly off you might be able to sneak
+  !in between phi values, causing an error
+  if (przphi(3) > mgrid_phimax) przphi(3) = mgrid_phimax - 0.00000000001
+  !make sure we are within the bounds
+  if ((przphi(1) < mgrid_rmin).or.(przphi(1) > mgrid_rmax).or.&
+      (przphi(2) < mgrid_zmin).or.(przphi(2) > mgrid_zmax).or.&
+      (przphi(3) < mgrid_phimin).or.(przphi(3) > mgrid_phimax)) then
+
+      b = 0
+      return
+  end if
+
+  !The mgrids all have uniform grids, so we can cheat to determine
+  !which indices are the appropriate ones
+  rstep = (mgrid_r(mgrid_nr) - mgrid_r(1))/(mgrid_nr - 1)
+  ri1 = floor((przphi(1) - mgrid_rmin)/rstep) + 1
+  ri2 = ri1 + 1
+
+  zstep = (mgrid_z(mgrid_nz) - mgrid_z(1))/(mgrid_nz - 1)
+  zi1 = floor((przphi(2) - mgrid_zmin)/zstep) + 1
+  zi2 = zi1 + 1
+
+  phistep = (mgrid_phi(mgrid_nphi) - mgrid_phi(1))/(mgrid_nphi - 1)
+  pi1 = floor((przphi(3) - mgrid_phimin)/phistep) + 1
+  pi2 = pi1 + 1
+
+  rd = (przphi(1) - mgrid_r(ri1))/(mgrid_r(ri2) - mgrid_r(ri1))
+  zd = (przphi(2) - mgrid_z(zi1))/(mgrid_z(zi2) - mgrid_z(zi1))
+  phid = (przphi(3) - mgrid_phi(pi1))/(mgrid_phi(pi2) - mgrid_phi(pi1))
+
+  !Linear interpolate r
+  br1 = mgrid_br(pi1, zi1, ri1)*(1-rd) + mgrid_br(pi1, zi1, ri2)*rd
+  br2 = mgrid_br(pi1, zi2, ri1)*(1-rd) + mgrid_br(pi1, zi2, ri2)*rd
+  br3 = mgrid_br(pi2, zi1, ri1)*(1-rd) + mgrid_br(pi2, zi1, ri2)*rd
+  br4 = mgrid_br(pi2, zi2, ri1)*(1-rd) + mgrid_br(pi2, zi2, ri2)*rd
+  bz1 = mgrid_bz(pi1, zi1, ri1)*(1-rd) + mgrid_bz(pi1, zi1, ri2)*rd
+  bz2 = mgrid_bz(pi1, zi2, ri1)*(1-rd) + mgrid_bz(pi1, zi2, ri2)*rd
+  bz3 = mgrid_bz(pi2, zi1, ri1)*(1-rd) + mgrid_bz(pi2, zi1, ri2)*rd
+  bz4 = mgrid_bz(pi2, zi2, ri1)*(1-rd) + mgrid_bz(pi2, zi2, ri2)*rd
+  bp1 = mgrid_bphi(pi1, zi1, ri1)*(1-rd) + mgrid_bphi(pi1, zi1, ri2)*rd
+  bp2 = mgrid_bphi(pi1, zi2, ri1)*(1-rd) + mgrid_bphi(pi1, zi2, ri2)*rd
+  bp3 = mgrid_bphi(pi2, zi1, ri1)*(1-rd) + mgrid_bphi(pi2, zi1, ri2)*rd
+  bp4 = mgrid_bphi(pi2, zi2, ri1)*(1-rd) + mgrid_bphi(pi2, zi2, ri2)*rd
+
+  !Linear interpolate z
+  br5 = br1*(1-zd) + br2*zd
+  br6 = br3*(1-zd) + br4*zd
+  bz5 = bz1*(1-zd) + bz2*zd
+  bz6 = bz3*(1-zd) + bz4*zd
+  bp5 = bp1*(1-zd) + bp2*zd
+  bp6 = bp3*(1-zd) + bp4*zd
+
+  !Linear interpolate phi
+  br7 = br5*(1-phid) + br6*phid
+  bz7 = bz5*(1-phid) + bz6*phid
+  bp7 = bp5*(1-phid) + bp6*phid
+
+  b(1) = br7*cos(temp(3)) - bp7*sin(temp(3)) 
+  b(2) = br7*sin(temp(3)) + bp7*cos(temp(3))
+  b(3) = bz7
+  !Check if in a mirrored section
+  if (temp(2).ne.(przphi(2))) then
+    b(3) = -1*b(3)
+  end if
+
+end subroutine field_from_mgrid  
 
 subroutine compute_bs(p, isaux, b)
       
@@ -221,7 +315,6 @@ subroutine field_deriv(neq, t, y, dydx)
   przphi(1) = y(1)
   przphi(2) = y(2)
   przphi(3) = t
-
   ! we already hit, so no point in calculating (this is a sanity check)
   if (points_hit(current_point).eq.1) then
      dydx = 0

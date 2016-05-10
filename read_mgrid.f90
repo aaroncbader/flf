@@ -40,6 +40,13 @@ subroutine load_mgrid
     read(filenum,*) mgrid_z
     read(filenum,*) mgrid_phi
 
+    mgrid_rmin = mgrid_r(1)
+    mgrid_rmax = mgrid_r(mgrid_nr)
+    mgrid_zmin = mgrid_z(1)
+    mgrid_zmax = mgrid_z(mgrid_nz)
+    mgrid_phimin = mgrid_phi(1)
+    mgrid_phimax = mgrid_phi(mgrid_nphi)
+
     !now read the data
     do i=1,mgrid_nphi
       do j=1,mgrid_nz
