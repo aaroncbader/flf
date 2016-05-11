@@ -76,11 +76,13 @@ end subroutine diffuse_point
 subroutine diffuse_boozer(p, newp, step)
   use coil_module
   use div_module
+  implicit none
 
   real, dimension(3) :: p, newp
   real :: phi, r, z, axis_phi, pi, step
   real :: rmag, zmag, rline, zline, magline
-  integer :: axis_flip, axis_index
+  real :: linear_interpolate
+  integer :: axis_flip, axis_index, interp_index
 
 
   phi = p(3)
