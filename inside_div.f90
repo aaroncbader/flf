@@ -134,7 +134,7 @@ subroutine load_axis()
   do i = 1,axis_points
      read(filenum, *) mag_axis(i,1:2)
      ! We calculate te phi value since it's not explicit
-     mag_axis(i,3) = (i-1)* (2*pi)/(coil_sections * (1 + is_mirrored))/axis_points
+     mag_axis(i,3) = (i-1)* (2*pi)/(coil_sections * (1 + is_mirrored))/(axis_points - 1)
   end do
 
   close(filenum)  
