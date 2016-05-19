@@ -8,7 +8,7 @@ subroutine compute_full_bs(p, b)
   
   ! Initialize b field
   b =  0
-
+  
   !*** BIOT SAVART field calculation ***
   if (coil_type.eq.1) then
 
@@ -21,13 +21,239 @@ subroutine compute_full_bs(p, b)
 
   !*** Magnetic grid field calculation ***  
   else if (coil_type.eq.2) then
-    call field_from_mgrid(p, b)
+    call field_from_mgrid_cubic(p, b)
+    !call field_from_mgrid_linear(p, b)
   end if
 end subroutine compute_full_bs
 
+subroutine field_from_mgrid_cubic(p,b)
+  use coil_module
+  use mgrid_module
+  implicit none
+  real,dimension(3) :: p,b,brzphi,temp,przphi
+
+  call cart2pol(p, temp)
+  call move_to_first_quad(temp(1), temp(2), temp(3), przphi(1), &
+        przphi(2), przphi(3), coil_sections, is_mirrored)
+   
+  !HACK, if the grid is slightly off you might be able to sneak
+  !in between phi values, causing an error
+  if (przphi(3) > mgrid_phimax) przphi(3) = mgrid_phimax - 0.00000000001
+  !make sure we are within the bounds
+  if ((przphi(1) < mgrid_rmin).or.(przphi(1) > mgrid_rmax).or.&
+      (przphi(2) < mgrid_zmin).or.(przphi(2) > mgrid_zmax).or.&
+      (przphi(3) < mgrid_phimin).or.(przphi(3) > mgrid_phimax)) then
+
+      b = 0
+      return
+  end if
+
+  call interp_single_variable_cubic(przphi,brzphi(3),3)
+  call interp_single_variable_cubic(przphi,brzphi(2),2)
+  call interp_single_variable_cubic(przphi,brzphi(1),1)
+
+  b(1) = brzphi(1)*cos(temp(3)) - brzphi(3)*sin(temp(3)) 
+  b(2) = brzphi(1)*sin(temp(3)) + brzphi(3)*cos(temp(3))
+  b(3) = brzphi(2)
+
+  !figure out if we're in a mirrored section
+  if (temp(2).ne.(przphi(2))) then
+    b(3) = -1*b(3)
+  end if
+
+end subroutine field_from_mgrid_cubic
+
+subroutine interp_single_variable_cubic(p,b,bselect)
+  use mgrid_module
+  use coil_module
+  implicit none
+
+  real,dimension(3) :: p,temp
+  integer :: ri1, zi1, pi1, bselect
+  integer :: tri1, tzi1, tpi1
+  !real,pointer,dimension(mgrid_nphi, mgrid_nz, mgrid_nr) :: bgrid
+  real,pointer,dimension(:,:,:) :: bgrid
+  real,dimension(4,4,4) :: bmat
+  real,dimension(4) :: parr, zarr, rarr, u
+  real :: pstep, b
+  real, dimension(4,4) :: s
+
+
+  if (bselect .eq. 3) then
+    bgrid => mgrid_bphi
+  else if (bselect .eq. 2) then
+    bgrid => mgrid_bz
+  else 
+    bgrid => mgrid_br
+  end if  
+
+  call get_prz_indices(p, ri1, zi1, pi1)
+  !if (pi1 < -1) then
+    !write (*,*) 'bad pi1:',p, pi1
+  !end if
+
+  ! handle low or high values of the indices by setting 
+  ! temporary values which later get shifted
+  if (ri1 .le. 1) then
+    tri1 = 2
+    rarr = mgrid_r(1:4)
+  else if (ri1 .ge. mgrid_nr - 1) then
+    tri1 = mgrid_nr - 2
+    rarr = mgrid_r(mgrid_nr-3:mgrid_nr)
+  else
+    tri1 = ri1
+    rarr = mgrid_r(ri1-1:ri1+2)
+  endif
+
+  if (zi1 .le. 1) then
+    tzi1 = 2
+    zarr = mgrid_z(1:4)
+  else if (zi1 .ge. mgrid_nz - 1) then
+    tzi1 = mgrid_nz - 2
+    zarr = mgrid_z(mgrid_nz-3:mgrid_nz)
+  else
+    tzi1 = zi1
+    zarr = mgrid_z(zi1-1:zi1+2)
+  endif
+  
+  !now assign all 64 b values
+  !deal with possible wrap-arounds in phi for the first index
+  
+  if (pi1 .eq. 1) then
+    bmat(1,:,:) = bgrid(mgrid_nphi-1, tzi1-1:tzi1+2, tri1-1:tri1+2)
+    !write(*,*) 'at beginning'
+  else
+    bmat(1,:,:) = bgrid(pi1-1, tzi1-1:tzi1+2, tri1-1:tri1+2)
+  end if
+
+  bmat(2:3,:,:) = bgrid(pi1:pi1+1, tzi1-1:tzi1+2, tri1-1:tri1+2)
+  
+  if (pi1 .eq. mgrid_nphi - 1) then
+    bmat(4,:,:) = bgrid(2, tzi1-1:tzi1+2, tri1-1:tri1+2)
+    !write(*,*) 'at end'
+  else
+    bmat(4,:,:) = bgrid(pi1+2, tzi1-1:tzi1+2, tri1-1:tri1+2)
+  end if
+
+  !make the phi array
+  pstep = (mgrid_phi(mgrid_nphi) - mgrid_phi(1))/(mgrid_nphi - 1)
+  if (pi1 .le. 1) then
+    parr(1) = mgrid_phi(1) - pstep
+    parr(2:4) = mgrid_phi(1:3)
+  else if (pi1 .ge. mgrid_nphi - 1) then
+    parr(1:3) = mgrid_phi(mgrid_nphi-2:mgrid_nphi)
+    parr(4) = mgrid_phi(mgrid_nphi) + pstep
+  else
+    parr = mgrid_phi(pi1-1:pi1+2)
+  end if
+  !write(*,*) 'p',p
+  !write(*,*) 'parr',parr
+  !write(*,*) 'pi1',pi1
+  !Finally we handle the situations described above where
+  !we invoked a shifted temporary index for r and z
+  !we give it a dummy value which is a huge hack and I 
+  !hope doesn't come back to bite me....but it probably will
+  if (ri1 .le. 1) then
+    bmat(:,:,2:4) = bmat(:,:,1:3)
+    bmat(:,:,1) = -1e20
+  end if
+  if (ri1 .ge. mgrid_nr - 1) then
+    bmat(:,:,1:3) = bmat(:,:,2:4)
+    bmat(:,:,4) = -1e20
+  end if
+  if (zi1 .le. 1) then
+    bmat(:,2:4,:) = bmat(:,1:3,:)
+    bmat(:,1,:) = -1e20
+  end if
+  if (zi1 .ge. mgrid_nz - 1) then
+    bmat(:,1:3,:) = bmat(:,2:4,:)
+    bmat(:,4,:) = -1e20
+  end if
+  !write(*,*) 'bmat',bmat(:,1,1)
+
+  !ok we're all set, we have our bvectors now we need
+  !to compute some points
+  !phi interpolation
+  call cubic_interp(p(3),s(1,1), parr, bmat(:,1,1))
+  call cubic_interp(p(3),s(1,2), parr, bmat(:,1,2))
+  call cubic_interp(p(3),s(1,3), parr, bmat(:,1,3))
+  call cubic_interp(p(3),s(1,4), parr, bmat(:,1,4))
+  call cubic_interp(p(3),s(2,1), parr, bmat(:,2,1))
+  call cubic_interp(p(3),s(2,2), parr, bmat(:,2,2))
+  call cubic_interp(p(3),s(2,3), parr, bmat(:,2,3))
+  call cubic_interp(p(3),s(2,4), parr, bmat(:,2,4))
+  call cubic_interp(p(3),s(3,1), parr, bmat(:,3,1))
+  call cubic_interp(p(3),s(3,2), parr, bmat(:,3,2))
+  call cubic_interp(p(3),s(3,3), parr, bmat(:,3,3))
+  call cubic_interp(p(3),s(3,4), parr, bmat(:,3,4))
+  call cubic_interp(p(3),s(4,1), parr, bmat(:,4,1))
+  call cubic_interp(p(3),s(4,2), parr, bmat(:,4,2))
+  call cubic_interp(p(3),s(4,3), parr, bmat(:,4,3))
+  call cubic_interp(p(3),s(4,4), parr, bmat(:,4,4))
+  
+  !z interpolation
+  call cubic_interp(p(2), u(1), zarr, s(:,1))
+  call cubic_interp(p(2), u(2), zarr, s(:,2))
+  call cubic_interp(p(2), u(3), zarr, s(:,3))
+  call cubic_interp(p(2), u(4), zarr, s(:,4))
+  
+  !r interpolation
+  
+  call cubic_interp(p(1), b, rarr, u)
+
+end subroutine interp_single_variable_cubic
+
+!Do a cubic interpolation using four points,
+! with the desired point pf, lying between p(2) and p(3)
+!
+! pf is the value of the point you want to find
+! p is the point values for the four points surrounding it,
+! two on each side
+!
+! b is the value of the interpolating quantity at the array
+! values in p.
+! bf is the output.
+! This is not an optimized calculation...
+subroutine cubic_interp(pf, bf, p, b)
+  implicit none
+
+  real :: t, pf, bf, m2, m3
+  real, dimension(4) :: p, b
+  
+  !t is the relative distance between p(2) and p(3)
+  t = (pf - p(2))/(p(3) - p(2))
+
+  !m2 is the slope at point 2
+  !huge hack here, use a large negative value to indicate that we are at the edge
+  !and need a one sided derivative.
+  if (b(1) < -1.E10) then
+    ! In this case we need a one sided derivative
+    m2 = (b(3) - b(2))/(p(3) - p(2))
+  else
+    !m2 = 0.5 * ((b(3) - b(2))/(p(3) - p(2)) + (b(2) - b(1))/(p(2) - p(1)))
+    m2 = (b(3) - b(1))/(p(3) - p(1))
+  end if
+
+  if (b(4) < -1.E11) then
+    m3 = (b(3) - b(2))/(p(3) - p(2))
+  else
+    !m3 is the slope at point 3
+    m3 = (b(4) - b(2))/(p(4) - p(2))
+    !m3 = 0.5 * ((b(4) - b(3))/(p(4) - p(3)) + (b(3) - b(2))/(p(3) - p(2)))
+  end if
+
+  !calculate the value
+  bf = (1 + 2*t)*(1 - t)*(1 - t)*b(2)
+  bf = bf + t*(1-t)*(1-t)*(p(3) - p(2))*m2
+  !bf = bf + t*(1-t)*(1-t)*m2
+  bf = bf + t*t*(3-2*t)*b(3)
+  bf = bf + t*t*(t-1)*(p(3) - p(2))*m3
+  !bf = bf + t*t*(t-1)*m3
+end subroutine cubic_interp
+
 !Calculate the field from a uniform magnetic grid in
-! r z phi space
-subroutine field_from_mgrid(p, b)
+! r z phi space, linear interpolation
+subroutine field_from_mgrid_linear(p, b)
   use mgrid_module
   use coil_module
   implicit none
@@ -56,18 +282,9 @@ subroutine field_from_mgrid(p, b)
       return
   end if
 
-  !The mgrids all have uniform grids, so we can cheat to determine
-  !which indices are the appropriate ones
-  rstep = (mgrid_r(mgrid_nr) - mgrid_r(1))/(mgrid_nr - 1)
-  ri1 = floor((przphi(1) - mgrid_rmin)/rstep) + 1
+  call get_prz_indices(przphi, ri1, zi1, pi1)
   ri2 = ri1 + 1
-
-  zstep = (mgrid_z(mgrid_nz) - mgrid_z(1))/(mgrid_nz - 1)
-  zi1 = floor((przphi(2) - mgrid_zmin)/zstep) + 1
   zi2 = zi1 + 1
-
-  phistep = (mgrid_phi(mgrid_nphi) - mgrid_phi(1))/(mgrid_nphi - 1)
-  pi1 = floor((przphi(3) - mgrid_phimin)/phistep) + 1
   pi2 = pi1 + 1
 
   rd = (przphi(1) - mgrid_r(ri1))/(mgrid_r(ri2) - mgrid_r(ri1))
@@ -109,7 +326,32 @@ subroutine field_from_mgrid(p, b)
     b(3) = -1*b(3)
   end if
 
-end subroutine field_from_mgrid  
+end subroutine field_from_mgrid_linear  
+
+
+!Find the indices in the mgrid that give a point
+! that precedes prz
+subroutine get_prz_indices(przphi, ri1, zi1, pi1)
+  use mgrid_module
+  implicit none
+
+  real,dimension(3) :: przphi
+  integer :: ri1, zi1, pi1
+  real :: rstep, zstep, phistep
+
+  !The mgrids all have uniform grids, so we can cheat to determine
+  !which indices are the appropriate ones
+
+  rstep = (mgrid_r(mgrid_nr) - mgrid_r(1))/(mgrid_nr - 1)
+  ri1 = floor((przphi(1) - mgrid_rmin)/rstep) + 1
+
+  zstep = (mgrid_z(mgrid_nz) - mgrid_z(1))/(mgrid_nz - 1)
+  zi1 = floor((przphi(2) - mgrid_zmin)/zstep) + 1
+
+  phistep = (mgrid_phi(mgrid_nphi) - mgrid_phi(1))/(mgrid_nphi - 1)
+  pi1 = floor((przphi(3) - mgrid_phimin)/phistep) + 1
+  
+end subroutine get_prz_indices
 
 subroutine compute_bs(p, isaux, b)
       
@@ -315,6 +557,9 @@ subroutine field_deriv(neq, t, y, dydx)
   przphi(1) = y(1)
   przphi(2) = y(2)
   przphi(3) = t
+  !write(*,*) 'phi: ',t
+
+
   ! we already hit, so no point in calculating (this is a sanity check)
   if (points_hit(current_point).eq.1) then
      dydx = 0
