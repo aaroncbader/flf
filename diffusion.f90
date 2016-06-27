@@ -11,7 +11,11 @@ subroutine get_perp_vec(p, perp_vec)
   call compute_full_bs(p, b)
   call rand_vector(rand_vec)
   call cross_product(b, rand_vec, perp_vec)
-  
+
+  !write (*,*) 'pxyz', p
+  !write (*,*) 'b', b
+  !write (*,*) 'perp vec', perp_vec
+
   ! Normalize the vector
   vec_size = (perp_vec(1)**2 + perp_vec(2)**2 + perp_vec(3)**2)**0.5
   perp_vec = perp_vec/vec_size
@@ -57,7 +61,7 @@ subroutine diffuse_point(p, newp, Lc, Te, D, species)
 
   !print *,'LC',Lc
 
-  call cart2pol(p, pxyz)
+  call pol2cart(p, pxyz)
 
   call get_perp_vec(pxyz, perp_vec)
   !print *,'perp vec',perp_vec
@@ -69,9 +73,10 @@ subroutine diffuse_point(p, newp, Lc, Te, D, species)
   !print *,'diff dist',dist
 
   newp = pxyz + dist * perp_vec
-
-  call pol2cart(pxyz, newp)
   !print *,'oldp',p
+
+  call cart2pol(newp, p)
+  newp = p
   !print *,'move',dist * perp_vec
   !print *,'newp',newp
   return

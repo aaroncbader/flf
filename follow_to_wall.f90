@@ -84,7 +84,7 @@ program follow_to_wall
 !***********DIFFUSION*****************
         ! Do diffusion=1, random diffusion
         if (use_diffusion.eq.1) then
-           !write (*,'(3(F12.7,2X))'),points_move(j,:)
+           !write (*,'(3(F15.7,2X))'),points_move(j,:)
            call diffuse_point(points_move(j,:), p, dist, dpar2,&
                 dpar1, diffusion_species)
            points_move(j,:) = p
