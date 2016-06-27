@@ -51,22 +51,26 @@ end subroutine get_diff_distance
 !diffuse a point
 subroutine diffuse_point(p, newp, Lc, Te, D, species)
   implicit none
-  real, dimension(3) :: newp, p, perp_vec 
+  real, dimension(3) :: newp, p, perp_vec, pxyz 
   real :: Lc, Te, tau, dist, D 
   integer :: species
 
   !print *,'LC',Lc
 
-  call get_perp_vec(p, perp_vec)
-  print *,'perp vec',perp_vec
+  call cart2pol(p, pxyz)
+
+  call get_perp_vec(pxyz, perp_vec)
+  !print *,'perp vec',perp_vec
   
   call get_diff_time(Lc, Te, species, tau)
-  print *,'diff time',tau
+  !print *,'diff time',tau
 
   call get_diff_distance(tau, D, dist)
-  print *,'diff dist',dist
+  !print *,'diff dist',dist
 
-  newp = p + dist * perp_vec
+  newp = pxyz + dist * perp_vec
+
+  call pol2cart(pxyz, p)
   !print *,'oldp',p
   !print *,'move',dist * perp_vec
   !print *,'newp',newp
