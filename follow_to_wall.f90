@@ -140,13 +140,13 @@ subroutine record_output(filenum)
      else
         write (filenum,*) 'point number',j,' did NOT complete orbit'
      end if
-     write (filenum,'(A,3(F11.6,2X))') 'start: ',points_start(j,:)
+     write (filenum,'(A,3(F15.7,2X))') 'start: ',points_start(j,:)
      if (points_hit(j).eq.1) then
-        write (filenum,'(A,3(F11.6,2X))') 'end:   ',points_end(j,:)
+        write (filenum,'(A,3(F15.7,2X))') 'end:   ',points_end(j,:)
      else
-        write (filenum,'(A,3(F11.6,2X))') 'end:   ',points_move(j,:)
+        write (filenum,'(A,3(F15.7,2X))') 'end:   ',points_move(j,:)
      end if
-     write (filenum,'(A,3(F11.6,2X))') 'connection length:', conn_length(j)
+     write (filenum,'(A,3(F15.7,2X))') 'connection length: ', conn_length(j)
      if (num_vessels.gt.0) then
         write (filenum,*) 'hit wall:',points_hit_vessel(j)
      end if
