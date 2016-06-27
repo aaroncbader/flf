@@ -70,7 +70,7 @@ subroutine diffuse_point(p, newp, Lc, Te, D, species)
 
   newp = pxyz + dist * perp_vec
 
-  call pol2cart(pxyz, p)
+  call pol2cart(pxyz, newp)
   !print *,'oldp',p
   !print *,'move',dist * perp_vec
   !print *,'newp',newp
