@@ -47,7 +47,7 @@ end subroutine load_vessel
   use coil_module
 
   implicit none
-  integer :: tor_size, pol_size, index, i, in_polygon
+  integer :: tor_size, pol_size, ix, i, in_polygon
   real, dimension(vessel_size(1)) :: phi_vessel
   real, dimension(vessel_size(2), 3) :: cut
   real, dimension(vessel_size(2)) :: rvessel, zvessel
@@ -70,23 +70,23 @@ end subroutine load_vessel
        is_mirrored)
 
   ! This is the step size in the toroidal direction
-  phi_step_size = phi_extent/(tor_size - 3)
+  phi_step_size = phi_extent/(tor_size - 1)
   
 
   ! \todo find a quicker assignment for fortran
   do i=1,tor_size
      !phi_vessel(i) = real(i-1)
-     phi_vessel(i) = phi_step_size  * (i-2)
+     phi_vessel(i) = phi_step_size  * (i-1)
   enddo
 
 
   ! ratio for interpolation
   ratio = modulo(phi, phi_step_size) / phi_step_size
   ! Index for first surface
-  index = int(phi/phi_step_size) + 1
+  ix = int(phi/phi_step_size) 
   
   ! Interpolate
-  cut = vessel(index,:,:) * (1 - ratio) + vessel(index + 1,:,:) * ratio
+  cut = vessel(ix,:,:) * (1 - ratio) + vessel(ix + 1,:,:) * ratio
 
   ! convert to R and Z
   rvessel = sqrt(cut(:,1)**2 + cut(:,2)**2)
