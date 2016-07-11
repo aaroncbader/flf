@@ -83,7 +83,7 @@ end subroutine load_vessel
   ! ratio for interpolation
   ratio = modulo(phi, phi_step_size) / phi_step_size
   ! Index for first surface
-  ix = int(phi/phi_step_size) 
+  ix = int(phi/phi_step_size)+1 
   
   ! Interpolate
   cut = vessel(ix,:,:) * (1 - ratio) + vessel(ix + 1,:,:) * ratio
