@@ -63,8 +63,12 @@ program follow_to_wall
            cycle
         end if
        
-        call follow_field(points_move(j,:), points_dphi, dist, &
-             istate)
+        !call follow_field(points_move(j,:), points_dphi, dist, &
+        !     istate)
+        !call pol2cart(points_move(j,:), pxyz)
+        call follow_field_s(pxyz, points_dphi, istate)
+        call cart2pol(pxyz, points_move(j,:))
+         
         !write (*,*) 'istate',istate
         if (istate < 0) then
            

@@ -89,7 +89,7 @@ subroutine interp_single_variable_cubic(p,b,bselect)
 
   call get_prz_indices(p, ri1, zi1, pi1)
   !if (pi1 < -1) then
-    !write (*,*) 'bad pi1:',p, pi1
+  !  write (*,*) 'bad pi1:',p, pi1
   !end if
 
   ! handle low or high values of the indices by setting 
@@ -534,6 +534,32 @@ end do
 
 
 end subroutine compute_bs
+
+
+! Like the field_deriv function but integrates along path length
+! y is a 3 value vector of (x, y, z)
+subroutine field_deriv_s(neq, t, y, dydx)
+  use points_module
+  implicit none
+
+  integer :: neq
+  real, dimension(neq) :: y, dydx
+  real, dimension(3) :: bxyz, pxyz
+  real :: bmag, t
+  ! Probably not necessary, but helpful to reassign for bookkeeping
+  pxyz(1) = y(1)
+  pxyz(2) = y(2)
+  pxyz(3) = y(3)
+
+  call compute_full_bs(pxyz, bxyz)
+  bmag = sqrt(bxyz(1)*bxyz(1) + bxyz(2)*bxyz(2) + bxyz(3)*bxyz(3))
+  dydx(1) = bxyz(1)/bmag
+  dydx(2) = bxyz(2)/bmag
+  dydx(3) = bxyz(3)/bmag
+  return 
+end subroutine field_deriv_s
+  
+  
 
 ! This is a function to be called from dlsode to compute the field derivatives
 ! It takes values of r,z,phi, converts to x,y,z, calculates the field,

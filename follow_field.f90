@@ -85,3 +85,55 @@ subroutine follow_field(p, dphi, dist, istate)
   
   return
 end subroutine follow_field
+
+!like follow field but integrating along field line
+!instead of along r,z,phi
+subroutine follow_field_s(p, ds, istate)
+
+  use coil_module
+
+
+  parameter (lrw=58)
+  parameter (liw=23)
+  parameter (itask=1)
+
+  real, dimension(3) :: y,p
+  ! For now this is unused.
+  real :: ds, t0, t1, tol
+  ! dstuff for dlsode
+  integer :: ifail, istate
+  real, dimension(liw) :: iwork
+  real, dimension(lrw) :: rwork
+
+  external field_deriv_s
+  
+  ! start by resetting dist to zero
+
+  y(1) = p(1)
+  y(2) = p(2)
+  y(3) = p(3)
+
+  ! start and stop phi values
+  t0 = 0
+  t1 = ds
+  
+  tol = 1.e-8
+
+  ifail = 0
+  istate = 1
+
+  call dlsode(field_deriv_s, 3, y, t0, t1, 1, tol, tol, itask, istate, 0, &
+       rwork, lrw, iwork, liw, jacl, 22)
+
+  ! This indicates that dlsode exited improperly
+  if (istate < 0) then
+     dist = 0.
+     return
+  end if
+
+  p(1) = y(1)
+  p(2) = y(2)
+  p(3) = y(3)  
+  
+  return
+end subroutine follow_field_s
