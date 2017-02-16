@@ -22,7 +22,7 @@ program eps_eff
   ! print *, 'number of LCFS:', num_lcfs
 
   ! get the points
-  call get_points()
+  call get_eps_points()
   outfile = 1
  
   call allocate_eps(n_iter)
@@ -34,18 +34,17 @@ program eps_eff
   !write (1,'(3(F9.6,2X))') p(1:3)
 
    
-  points_move(:,:) = points_start(:,:)
 
   do j=1,points_number
      points_complete(j) = 1
      call clear_eps()
      
      !set the psi values here
-     dpsi = (/ 0.465, 0.0, 0.0 /)
+     dpsi = (/ points_start(j,2), 0.0, 0.0 /)
 
      ! set the current point
      current_point = j
-     write(*,*),'point number',j
+     ! write(*,*),'point number',j
 
      call pol2cart(points_move(j,:), pxyz)
      call compute_full_bs(pxyz, b)
@@ -64,10 +63,6 @@ program eps_eff
      epmag(1) = magp
      ekg(1) = kg
 
-
-     write(*,'(4(F12.7,2X))'), points_move(j,:), magb
-     
-     
 
      do i=2,n_iter+1
      	! keep track of number of steps for limiter calculation
@@ -108,13 +103,13 @@ program eps_eff
 
         !for writing B field
         call pol2cart(points_move(j,:), pxyz)       
-        write (*,'(4(F15.7,2X))'),points_move(j,:), magb
+        !write (*,'(4(F15.7,2X))'),points_move(j,:), magb
      
         
         
 
      enddo
-     call calc_eps(500,150)
+     call calc_eps(500,300)
 
   enddo
 
@@ -135,7 +130,7 @@ subroutine calc_eps(numbp, numind)
   implicit none
   integer :: n, numbp, i, j, numind, num_inter
   integer :: licount, ricount
-  real :: B0, ds, I1, I2, Bmin, Bmax, dbp, T1, T2, pi, R0
+  real :: B0, ds, I1, I2, hmin, hmax, dbp, T1, T2, pi, R0
   real :: epseff, epseff32
   real, dimension(n_iter) :: Bhalf, magPhalf
   real, dimension(n_iter+1) :: h
@@ -148,7 +143,7 @@ subroutine calc_eps(numbp, numind)
 
   n = n_iter
   pi = 3.14159265359
-  R0 = 1.445
+  R0 = 1.4354
 
   B0 = sum(ebmag)/(n+1)
   Bhalf = 0.5*(ebmag(2:n+1) + ebmag(1:n))
@@ -157,11 +152,11 @@ subroutine calc_eps(numbp, numind)
 
   I1 = sum(ds/Bhalf)
   I2 = (1./sum(ds*magPhalf/Bhalf))**2
-  Bmin = minval(ebmag)
-  Bmax = maxval(ebmag)
-  dbp = (Bmin - Bmax)/(numbp+1)
-  bp(1) = Bmin
   h = ebmag/B0
+  hmin = minval(h)
+  hmax = maxval(h)
+  dbp = (hmax - hmin)/(numbp+1)
+  bp(1) = hmin
   do i=2,numbp
      bp(i) = bp(i-1) + dbp
   end do
@@ -173,7 +168,6 @@ subroutine calc_eps(numbp, numind)
      ind_right = 0
      licount = 0
      ricount = 0
-     sum_H2_I = 0
      !this is slow...
      do j = 1,n-1
         if (h(j) >= bp(i) .and. h(j+1) < bp(i)) then
@@ -188,21 +182,23 @@ subroutine calc_eps(numbp, numind)
            exit
         end if
      end do
+     
      ! we didn't find any points
      if (licount == 0 .or. ricount == 0) then
         cycle
      end if
      !fix it so the endpoint pairs match
-     if (ind_left(i) > ind_right(i)) then
+     if (ind_left(1) > ind_right(1)) then
         if (licount == 1 .or. ricount == 1) then
            cycle
         end if
-        ind_right = cshift(ind_right, -1)
+        ind_right = cshift(ind_right, 1)
         ricount = ricount - 1
      end if
      if (ind_left(licount) > ind_right(ricount)) then
         licount = licount - 1
      end if
+
      if (licount /= ricount) then
         cycle
      end if
@@ -232,22 +228,21 @@ subroutine calc_eps(numbp, numind)
            nemH(j) = T1*T2
            nemI(j) = sum((ds/bmag_int)*sqrt(1 - (bmag_int/(B0 * bp(i)))))
 
-
            deallocate(bmag_int)
            deallocate(pmag_int)
            deallocate(kg_int)
         end if
      end do
-
+   
      sum_H2_I(i) = sum((nemH**2)/nemI)
      deallocate(nemH)
      deallocate(nemI)
   end do
   
-  epseff = (pi*R0**2/(8*sqrt(2.)))*(I1*I2*sum(dbp*sum_H2_I))
-  epseff32 = epseff**(2./3)
-  write(*,*) 'epseff',epseff,'epseff32',epseff32
-  
+  epseff32 = (pi*R0**2/(8*sqrt(2.)))*(I1*I2*sum(dbp*sum_H2_I))
+  epseff = epseff32**(2./3)
+  !write(*,*) 'epseff',epseff,'epseff32',epseff32
+  write(*,*) epseff, epseff32
 
 
 end subroutine calc_eps
