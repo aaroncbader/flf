@@ -196,4 +196,11 @@ subroutine cross_product(a, b, c)
   c(3) = a(1) * b(2) - a(2) * b(1)
   return
 end subroutine cross_product
+
+real function dot(a, b)
+  implicit none
+  real, dimension(3) :: a, b
+  dot = (a(1) * b(1)) + (a(2) * b(2)) + (a(3)*b(3))
+  return
+end function dot
   

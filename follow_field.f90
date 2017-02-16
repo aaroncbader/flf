@@ -106,8 +106,6 @@ subroutine follow_field_s(p, ds, istate)
   real, dimension(lrw) :: rwork
 
   external field_deriv_s
-  
-  ! start by resetting dist to zero
 
   y(1) = p(1)
   y(2) = p(2)
@@ -137,3 +135,62 @@ subroutine follow_field_s(p, ds, istate)
   
   return
 end subroutine follow_field_s
+
+! a version of arc length field following that includes the
+! psi calculation, it requires an initialized value of psi, not sure
+! how to get that, guess it's getable from vmec?
+subroutine follow_field_s_wpsi(p, psi, ds, istatic)
+
+
+  use coil_module
+
+
+  parameter (lrw=112)
+  parameter (liw=26)
+  parameter (itask=1)
+
+  real, dimension(3) :: p,psi
+  real, dimension(6) :: y
+  ! For now this is unused.
+  real :: ds, t0, t1, tol
+  ! dstuff for dlsode
+  integer :: ifail, istate
+  real, dimension(liw) :: iwork
+  real, dimension(lrw) :: rwork
+
+  external field_deriv_s_wpsi
+
+  y(1) = p(1)
+  y(2) = p(2)
+  y(3) = p(3)
+  y(4) = psi(1)
+  y(5) = psi(2)
+  y(6) = psi(3)
+
+  ! start and stop phi values
+  t0 = 0
+  t1 = ds
+  
+  tol = 1.e-8
+
+  ifail = 0
+  istate = 1
+
+  call dlsode(field_deriv_s_wpsi, 6, y, t0, t1, 1, tol, tol, itask, istate, 0, &
+       rwork, lrw, iwork, liw, jacl, 22)
+
+  ! This indicates that dlsode exited improperly
+  if (istate < 0) then
+     dist = 0.
+     return
+  end if
+
+  p(1) = y(1)
+  p(2) = y(2)
+  p(3) = y(3)
+  psi(1) = y(4)
+  psi(2) = y(5)
+  psi(3) = y(6)
+  
+  return
+end subroutine follow_field_s_wpsi

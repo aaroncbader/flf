@@ -1,6 +1,6 @@
 FC = gfortran
 
-OP = -fdefault-real-8 -fdefault-double-8 -fbacktrace -fbounds-check -O2 
+OP = -fdefault-real-8 -fdefault-double-8 -fbacktrace -fbounds-check -g 
 
 CP = $(FC) $(OP) -c
 
@@ -11,6 +11,14 @@ MO = 	utility.o 	coil_module.o	div_module.o 	read_coils.o\
 	inside_div.o	diffusion.o	randomize.o	lcfs.o\
 	follow_field.o	inside_limiter.o  parser.o 	read_input.o\
 	follow_to_wall.o
+
+EPS = 	utility.o 	coil_module.o	div_module.o 	read_coils.o\
+	points_module.o	mgrid_module.o  get_points.o 	limiter_module.o\
+	options_module.o  compute_bs.o    read_mgrid.o\
+	dlsode.o	vessel_module.o inside_vessel.o	lcfs_module.o\
+	inside_div.o	diffusion.o	randomize.o	lcfs.o\
+	follow_field.o	inside_limiter.o  parser.o 	read_input.o\
+	eps_module.o eps_eff.o
 
 BM =    utility.o 	coil_module.o	div_module.o 	read_coils.o\
 	points_module.o	mgrid_module.o  get_points.o 	limiter_module.o\
@@ -37,12 +45,14 @@ WC =    utility.o       coil_module.o   div_module.o    read_coils.o\
 	write_coils.o
 
 
-PROGRAMS = follow_to_wall Bmag comprehensive_test
+PROGRAMS = follow_to_wall Bmag comprehensive_test eps_eff
 
 #This is the default
 follow_to_wall: $(MO)
 	$(FC) $(OP) -o follow_to_wall $(MO) 
 
+eps_eff: $(EPS)
+	$(FC) $(OP) -o eps_eff $(EPS) 
 
 Bmag: $(BM)
 	$(FC) $(OP) -o Bmag $(BM)
@@ -75,6 +85,8 @@ coil_module.o:	coil_module.f90
 	$(CP)	coil_module.f90
 mgrid_module.o:	mgrid_module.f90
 	$(CP)	mgrid_module.f90
+eps_module.o:	eps_module.f90
+	$(CP)	eps_module.f90
 read_coils.o:	read_coils.f90
 	$(CP)	read_coils.f90
 read_mgrid.o:	read_mgrid.f90
@@ -111,7 +123,8 @@ comprehensive_test.o:	comprehensive_test.f90
 	$(CP)	comprehensive_test.f90
 follow_to_wall.o:	follow_to_wall.f90
 	$(CP)	follow_to_wall.f90
-
+eps_eff.o:	eps_eff.f90
+	$(CP)	eps_eff.f90
 
 
 clean:

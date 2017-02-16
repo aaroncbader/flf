@@ -535,6 +535,45 @@ end do
 
 end subroutine compute_bs
 
+! calculates the gradient at a point, need to figure
+! out an appropriate stepsize, for now use a characteristic
+! value used for mgrid spacing of 2 mm
+! the first index of db is the B component, the second index
+! is the derivative direction
+subroutine gradb(pxyz, db)
+  implicit none
+
+  real, dimension(3) :: pxyz, bxyz1, bxyz2
+  real, dimension(3,3) :: db
+  real :: dx
+  
+  !This is the step size
+  dx = 0.002
+  
+  !x-direction
+  call compute_full_bs(pxyz + (/ dx, 0.0, 0.0 /), bxyz1)
+  call compute_full_bs(pxyz - (/ dx, 0.0, 0.0 /), bxyz2)
+
+  db(:,1) = (bxyz1 - bxyz2)/(2*dx)
+
+
+  !y-direction
+  call compute_full_bs(pxyz + (/ 0.0, dx, 0.0 /), bxyz1)
+  call compute_full_bs(pxyz - (/ 0.0, dx, 0.0 /), bxyz2)
+
+  db(:,2) = (bxyz1 - bxyz2)/(2*dx)
+
+  !z-direction
+  call compute_full_bs(pxyz + (/ 0.0, 0.0, dx /), bxyz1)
+  call compute_full_bs(pxyz - (/ 0.0, 0.0, dx /), bxyz2)
+
+  db(:,3) = (bxyz1 - bxyz2)/(2*dx)
+  
+  
+  return
+end subroutine gradb
+  
+
 
 ! Like the field_deriv function but integrates along path length
 ! y is a 3 value vector of (x, y, z)
@@ -558,7 +597,36 @@ subroutine field_deriv_s(neq, t, y, dydx)
   dydx(3) = bxyz(3)/bmag
   return 
 end subroutine field_deriv_s
+
+!like field_deriv_s, but also calculates the psi values
+subroutine field_deriv_s_wpsi(neq, t, y, dydx)
+  use points_module
+  implicit none
+
+  integer :: neq
+  real, dimension(neq) :: y, dydx
+  real, dimension(3) :: bxyz, pxyz, psixyz
+  real, dimension(3,3) :: db
+  real :: bmag, t
+  ! Probably not necessary, but helpful to reassign for bookkeeping
+  pxyz(1) = y(1)
+  pxyz(2) = y(2)
+  pxyz(3) = y(3)
+
+  call compute_full_bs(pxyz, bxyz)
+  bmag = sqrt(bxyz(1)*bxyz(1) + bxyz(2)*bxyz(2) + bxyz(3)*bxyz(3))
+  dydx(1) = bxyz(1)/bmag
+  dydx(2) = bxyz(2)/bmag
+  dydx(3) = bxyz(3)/bmag
+  !get the derivatives
+  call gradb(pxyz, db)
+  dydx(4) = (-1./bmag)*(db(1,1)*y(4) + db(2,1)*y(5) + db(3,1)*y(6))
+  dydx(5) = (-1./bmag)*(db(1,2)*y(4) + db(2,2)*y(5) + db(3,2)*y(6))
+  dydx(6) = (-1./bmag)*(db(1,3)*y(4) + db(2,3)*y(5) + db(3,3)*y(6))
+  return 
+end subroutine field_deriv_s_wpsi
   
+
   
 
 ! This is a function to be called from dlsode to compute the field derivatives
