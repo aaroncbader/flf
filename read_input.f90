@@ -47,7 +47,7 @@ subroutine read_input
   call read_until_data(filenum, line)
   allocate(dummy_int(2))
   call string_to_ints(line, dummy_int, 2)
-  coil_sections = dummy_int(1)
+  num_periods = dummy_int(1)
   is_mirrored = dummy_int(2)
   deallocate(dummy_int)
 

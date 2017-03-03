@@ -64,9 +64,9 @@ end subroutine load_vessel
   tor_size = vessel_size(1)
   pol_size = vessel_size(2)
   ! for now assume the vessel spans the same as the coil set
-  phi_extent = 2 * pi /coil_sections / (is_mirrored + 1)
+  phi_extent = 2 * pi /num_periods / (is_mirrored + 1)
 
-  call move_to_first_quad(rin, zin, phiin, r, z, phi, coil_sections, &
+  call move_to_first_quad(rin, zin, phiin, r, z, phi, num_periods, &
        is_mirrored)
 
   ! This is the step size in the toroidal direction

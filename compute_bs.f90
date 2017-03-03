@@ -34,7 +34,7 @@ subroutine field_from_mgrid_cubic(p,b)
 
   call cart2pol(p, temp)
   call move_to_first_quad(temp(1), temp(2), temp(3), przphi(1), &
-        przphi(2), przphi(3), coil_sections, is_mirrored)
+        przphi(2), przphi(3), num_periods, is_mirrored)
    
   !HACK, if the grid is slightly off you might be able to sneak
   !in between phi values, causing an error
@@ -268,7 +268,7 @@ subroutine field_from_mgrid_linear(p, b)
   ! convert to rzphi
   call cart2pol(p, temp)
   call move_to_first_quad(temp(1), temp(2), temp(3), przphi(1), &
-        przphi(2), przphi(3), coil_sections, is_mirrored)
+        przphi(2), przphi(3), num_periods, is_mirrored)
    
   !HACK, if the grid is slightly off you might be able to sneak
   !in between phi values, causing an error

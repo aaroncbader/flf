@@ -3,6 +3,7 @@ module vessel_module
   implicit none
 
   integer :: num_vessels
+  integer :: use_vessel=0
   integer, dimension(2) :: vessel_size
   
   real, allocatable, dimension(:, :, :) :: vessel

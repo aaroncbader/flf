@@ -2,7 +2,8 @@ module div_module
 
   implicit none
   
-  integer :: num_divertors, axis_points
+  integer :: num_divertors=0
+  integer :: axis_points
 
   integer, allocatable, dimension(:) :: div_tor_num, div_seg_num, div_repeat
   ! index for divertor is
@@ -14,6 +15,6 @@ module div_module
   real, allocatable, dimension(:,:) :: div_tor_vals
   real, allocatable, dimension(:,:) :: mag_axis
   character*72, dimension(:), allocatable :: div_files
-  character*72 :: axis_file
+  character*72 :: axis_file, div_file
 
 end module

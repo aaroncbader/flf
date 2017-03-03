@@ -8,7 +8,7 @@ subroutine allocate_main()
   integer :: filenum, temp_size
   character*72 :: filename, format_string
 
-  mult_factor = coil_sections * (is_mirrored + 1)
+  mult_factor = num_periods * (is_mirrored + 1)
   ! set values for the coil module
   main_count = num_main_coils * mult_factor
   main_size = 0
@@ -57,7 +57,7 @@ subroutine allocate_aux()
      return
   end if
 
-  mult_factor = coil_sections * (is_mirrored + 1)
+  mult_factor = num_periods * (is_mirrored + 1)
 
   filenum = 41
 
@@ -119,7 +119,7 @@ subroutine read_coil_files()
 
 
 
-  mult_factor = coil_sections * (is_mirrored + 1)
+  mult_factor = num_periods * (is_mirrored + 1)
 
 
   ! generalize the coil loading for multiple coils
@@ -191,17 +191,17 @@ subroutine read_coil_files()
 
 
   !Right now we only have moving for the HSX configuration
-  if (is_mirrored == 1 .and. coil_sections == 4) then
+  if (is_mirrored == 1 .and. num_periods == 4) then
      call move_coils(coil_main, main_points, &
           num_main_coils, main_size)
      call move_coils(coil_aux, aux_points, num_aux_coils, &
           aux_size)
-  else if (coil_sections > 1 .and. is_mirrored == 0) then
+  else if (num_periods > 1 .and. is_mirrored == 0) then
      call move_coils_gen(coil_main, main_points, &
-          num_main_coils, main_size, coil_sections)
+          num_main_coils, main_size, num_periods)
      if (num_aux_coils > 0) then
         call move_coils_gen(coil_aux, aux_points, num_aux_coils, &
-             aux_size, coil_sections)
+             aux_size, num_periods)
      end if
   end if
   !Input the currents into the main coils

@@ -99,7 +99,7 @@ subroutine diffuse_boozer(p, newp, step)
   z = p(2)
 
   call move_to_first_quad(r, z, phi, r, z, phi, &
-        coil_sections, is_mirrored)
+        num_periods, is_mirrored)
 
   !We move stuff into the first quadrant to do the magnetic axis
   !calculation. But we need to save whether we're in a mirrored

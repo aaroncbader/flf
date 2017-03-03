@@ -60,9 +60,9 @@ real function distance_to_lcfs(rin, zin, phiin)
   end if
 
   pi = 3.1415927
-  phi_extent = 2*pi / coil_sections / (is_mirrored + 1)
+  phi_extent = 2*pi / num_periods / (is_mirrored + 1)
 
-  call move_to_first_quad(rin, zin, phiin, r, z, phi, coil_sections, &
+  call move_to_first_quad(rin, zin, phiin, r, z, phi, num_periods, &
        is_mirrored)
 
   phi_step_size = phi_extent / (lcfs_size(1) - 1)

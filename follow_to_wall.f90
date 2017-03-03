@@ -17,8 +17,10 @@ program follow_to_wall
   real :: dphi, totcur, dist, magb
   real :: distance_to_lcfs, dist_lcfs
 
+  call read_namelist()
   call read_input()
   ! print *, 'number of LCFS:', num_lcfs
+
 
   ! get the points
   call get_points()

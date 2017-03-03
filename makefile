@@ -1,6 +1,6 @@
 FC = gfortran
 
-OP = -fdefault-real-8 -fdefault-double-8 -fbacktrace -fbounds-check -g 
+OP = -fdefault-real-8 -fdefault-double-8 -fbacktrace -fbounds-check -O2
 
 CP = $(FC) $(OP) -c
 
@@ -10,7 +10,7 @@ MO = 	utility.o 	coil_module.o	div_module.o 	read_coils.o\
 	dlsode.o	vessel_module.o inside_vessel.o	lcfs_module.o\
 	inside_div.o	diffusion.o	randomize.o	lcfs.o\
 	follow_field.o	inside_limiter.o  parser.o 	read_input.o\
-	follow_to_wall.o
+	read_namelist.o follow_to_wall.o
 
 EPS = 	utility.o 	coil_module.o	div_module.o 	read_coils.o\
 	points_module.o	mgrid_module.o  get_points.o 	limiter_module.o\
@@ -113,6 +113,8 @@ parser.o:	parser.f90
 	$(CP)	parser.f90
 read_input.o:	read_input.f90
 	$(CP)	read_input.f90
+read_namelist.o:	read_namelist.f90
+	$(CP)	read_namelist.f90
 write_coils.o:	write_coils.f90
 	$(CP)	write_coils.f90
 lcfs.o:		lcfs.f90

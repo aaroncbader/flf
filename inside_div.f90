@@ -134,7 +134,7 @@ subroutine load_axis()
   do i = 1,axis_points
      read(filenum, *) mag_axis(i,1:2)
      ! We calculate te phi value since it's not explicit
-     mag_axis(i,3) = (i-1)* (2*pi)/(coil_sections * (1 + is_mirrored))/(axis_points - 1)
+     mag_axis(i,3) = (i-1)* (2*pi)/(num_periods * (1 + is_mirrored))/(axis_points - 1)
   end do
 
   close(filenum)  
@@ -180,7 +180,7 @@ integer function inside_div(rin, zin, phiin)
      ! if you do, just make multiple divertors.
      if (div_repeat(i).gt.1) then
         call move_to_first_quad(rin, zin, phiin, r, z, phi, &
-             coil_sections, is_mirrored)
+             num_periods, is_mirrored)
      else
         phi = modulo(phiin, 2 * pi)
         r = rin
