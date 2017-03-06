@@ -1,6 +1,6 @@
 ! program to follow one point until it hits the wall
 
-program follow_to_wall
+subroutine follow_to_wall
 
   use points_module
   use options_module
@@ -22,6 +22,9 @@ program follow_to_wall
      call allocate_main()
      call allocate_aux()
      call read_coil_files()
+  else
+     call allocate_mgrid()
+     call load_mgrid()
   end if
   write(*,*) main_current
   !call write_coils()
@@ -134,7 +137,7 @@ program follow_to_wall
   call deallocate_coils()
 
 
-end program follow_to_wall
+end subroutine follow_to_wall
 
 subroutine record_output(filenum)
   use points_module

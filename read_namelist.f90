@@ -42,6 +42,10 @@ subroutine read_namelist
         aux_percent(:) = 0.0
      end if
      call coil_namelist(filenum)
+  else !this is the mgrid setting
+     coil_type = 2
+     num_main_coils = 0
+     num_aux_coils = 0
   end if
 
   

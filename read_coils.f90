@@ -8,6 +8,8 @@ subroutine allocate_main()
   integer :: filenum, temp_size
   character*72 :: filename, format_string
 
+  if (num_main_coils <= 0) return
+
   mult_factor = num_periods * (is_mirrored + 1)
   ! set values for the coil module
   main_count = num_main_coils * mult_factor
@@ -117,7 +119,7 @@ subroutine read_coil_files()
   real :: current,x,y,z
   character*72 :: filename, format_string
 
-
+  if (num_main_coils <= 0) return
 
   mult_factor = num_periods * (is_mirrored + 1)
 
