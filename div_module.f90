@@ -15,6 +15,6 @@ module div_module
   real, allocatable, dimension(:,:) :: div_tor_vals
   real, allocatable, dimension(:,:) :: mag_axis
   character*72, dimension(:), allocatable :: div_files
-  character*72 :: axis_file, div_file
+  character*72 :: axis_file=''
 
 end module

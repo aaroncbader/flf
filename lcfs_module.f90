@@ -6,6 +6,6 @@ module lcfs_module
   integer, dimension(2) :: lcfs_size
 
   real, allocatable, dimension(:, :, :) :: lcfs
-  character*144 :: lcfs_file
+  character*144 :: lcfs_file=''
 
 end module lcfs_module

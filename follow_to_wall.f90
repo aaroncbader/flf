@@ -17,16 +17,9 @@ subroutine follow_to_wall
   real :: dphi, totcur, dist, magb
   real :: distance_to_lcfs, dist_lcfs
 
-  call read_namelist()
-  if (num_main_coils >= 1) then
-     call allocate_main()
-     call allocate_aux()
-     call read_coil_files()
-  else
-     call allocate_mgrid()
-     call load_mgrid()
-  end if
-  write(*,*) main_current
+  
+  
+  
   !call write_coils()
   !call read_input()
   ! print *, 'number of LCFS:', num_lcfs

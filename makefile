@@ -10,7 +10,7 @@ MO = 	utility.o 	coil_module.o	div_module.o 	read_coils.o\
 	dlsode.o	vessel_module.o inside_vessel.o	lcfs_module.o\
 	inside_div.o	diffusion.o	randomize.o	lcfs.o\
 	follow_field.o	inside_limiter.o  parser.o 	read_input.o\
-	read_namelist.o write_coils.o	follow_to_wall.o  flf.o
+	read_namelist.o write_coils.o	follow_to_wall.o  init_all.o  flf.o
 
 EPS = 	utility.o 	coil_module.o	div_module.o 	read_coils.o\
 	points_module.o	mgrid_module.o  get_points.o 	limiter_module.o\
@@ -118,6 +118,8 @@ follow_to_wall.o:	follow_to_wall.f90
 	$(CP)	follow_to_wall.f90
 eps_eff.o:	eps_eff.f90
 	$(CP)	eps_eff.f90
+init_all.o:	init_all.f90
+	$(CP)	init_all.f90
 flf.o:	flf.f90
 	$(CP)	flf.f90
 

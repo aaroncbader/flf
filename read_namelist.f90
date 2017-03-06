@@ -19,8 +19,8 @@ subroutine read_namelist
        num_periods, num_main_coils, is_mirrored, coil_file_input, &
        skip_value, num_aux_coils, aux_file, aux_percent, aux_flag, mgrid_file, &
        use_diffusion, diffusion_species, d_perp, temperature, boozer_step,&
-       boozer_phi, axis_file, use_vessel, vessel_file, num_limiters,&
-       lim_file, num_divertors, div_file, num_lcfs, lcfs_file 
+       boozer_phi, axis_file, vessel_file, num_limiters,&
+       num_divertors, lcfs_file, general_option 
 
   filenum = 10
   input_file = 'flf.namelist'
@@ -48,6 +48,22 @@ subroutine read_namelist
      num_aux_coils = 0
   end if
 
+  !divertor initialization
+  if (num_divertors >= 1) then
+     allocate(div_files(num_divertors))
+     if (axis_file == '') write (*,*) 'Error: Divertors need an axis file'
+     div_files(:) = ''
+     call div_namelist(filenum)     
+  end if
+
+  !limiter initialization
+  if (num_limiters >= 1) then
+     allocate(div_files(num_limiters))
+     if (axis_file == '') write (*,*) 'Error: Divertors need an axis file'
+     lim_files(:) = ''
+     call lim_namelist(filenum)     
+  end if  
+
   
 end subroutine read_namelist
 
@@ -68,7 +84,9 @@ subroutine coil_namelist(filenum)
 
   do i = 1,num_main_coils
      main_files(i) = trim(main_files(i))
-     if (main_files(i) == '') write(*,*) 'not all files may have been loaded'
+     if (main_files(i) == '') then 
+        write(*,*) 'Warning: Not all files may have been loaded'
+     end if
   end do
 
   if (main_current_repeat == 1) then
@@ -78,3 +96,37 @@ subroutine coil_namelist(filenum)
   end if
   
 end subroutine coil_namelist
+
+subroutine div_namelist(filenum)
+  use div_module
+  implicit none
+
+  integer :: filenum, iostat, i
+  namelist / div / div_files
+  read(filenum, nml=div, iostat=iostat)
+
+  do i = 1,num_divertors
+     div_files(i) = trim(div_files(i))
+     if (div_files(i) == '') then
+        write(*,*) 'Warning: not all divertor files may have been loaded'
+     end if
+  end do
+
+end subroutine div_namelist
+
+subroutine lim_namelist(filenum)
+  use limiter_module
+  implicit none
+
+  integer :: filenum, iostat, i
+  namelist / lim / lim_files
+  read(filenum, nml=lim, iostat=iostat)
+
+  do i = 1,num_limiters
+     lim_files(i) = trim(lim_files(i))
+     if (lim_files(i) == '') then
+        write(*,*) 'Warning: not all limiter files may have been loaded'
+     end if
+  end do
+
+end subroutine lim_namelist
