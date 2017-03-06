@@ -9,7 +9,7 @@ MO = 	utility.o 	coil_module.o	div_module.o 	read_coils.o\
 	options_module.o  compute_bs.o    read_mgrid.o\
 	dlsode.o	vessel_module.o inside_vessel.o	lcfs_module.o\
 	inside_div.o	diffusion.o	randomize.o	lcfs.o\
-	follow_field.o	inside_limiter.o  parser.o 	read_input.o\
+	follow_field.o	inside_limiter.o  parser.o\
 	read_namelist.o write_coils.o	follow_to_wall.o  init_all.o  flf.o
 
 EPS = 	utility.o 	coil_module.o	div_module.o 	read_coils.o\
@@ -102,8 +102,6 @@ boxport_limiter_check.o: boxport_limiter_check.f90
 	$(CP)	boxport_limiter_check.f90
 parser.o:	parser.f90
 	$(CP)	parser.f90
-read_input.o:	read_input.f90
-	$(CP)	read_input.f90
 read_namelist.o:	read_namelist.f90
 	$(CP)	read_namelist.f90
 write_coils.o:	write_coils.f90
