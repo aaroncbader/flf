@@ -55,10 +55,10 @@ subroutine dealloc_points()
 
   deallocate(points_start)
   deallocate(points_move)
-  deallocate(points_hit)
-  deallocate(points_hit_vessel)
-  deallocate(points_hit_divertor)
-  deallocate(points_hit_limiter)
+  if (allocated(points_hit)) deallocate(points_hit)
+  if (allocated(points_hit_vessel)) deallocate(points_hit_vessel)
+  if (allocated(points_hit_divertor)) deallocate(points_hit_divertor)
+  if (allocated(points_hit_limiter)) deallocate(points_hit_limiter)
 
 end subroutine dealloc_points
   

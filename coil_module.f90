@@ -7,13 +7,16 @@ module coil_module
 
    ! aux_count is equal to num_aux_coils * 8.
    integer :: num_periods, is_mirrored, main_winding
-   integer :: num_main_coils, num_aux_coils, skip_value
+   integer :: num_main_coils, skip_value
    integer :: main_size, aux_size, main_count, aux_count, taper_size, aux_flag
    real, allocatable, dimension(:,:,:) :: coil_main, coil_aux
    real, allocatable, dimension(:) :: main_current, aux_current, taper
-   real, dimension(30) :: aux_percent
+   real, dimension(:), allocatable :: aux_percent
    integer, allocatable, dimension(:) :: main_points, aux_points
-   character*72 :: aux_file, coil_file_input
+   integer :: num_aux_coils = 0
+   integer :: main_current_repeat = 0
+   character*72 :: aux_file = ''
+   character*72 :: coil_file_input
    character*72, dimension(:), allocatable :: main_files
 
 

@@ -10,7 +10,7 @@ MO = 	utility.o 	coil_module.o	div_module.o 	read_coils.o\
 	dlsode.o	vessel_module.o inside_vessel.o	lcfs_module.o\
 	inside_div.o	diffusion.o	randomize.o	lcfs.o\
 	follow_field.o	inside_limiter.o  parser.o 	read_input.o\
-	read_namelist.o follow_to_wall.o
+	read_namelist.o write_coils.o	follow_to_wall.o
 
 EPS = 	utility.o 	coil_module.o	div_module.o 	read_coils.o\
 	points_module.o	mgrid_module.o  get_points.o 	limiter_module.o\
@@ -36,13 +36,7 @@ CT = 	utility.o 	coil_module.o	div_module.o 	read_coils.o\
 	follow_field.o	inside_limiter.o  parser.o 	read_input.o\
 	comprehensive_test.o
 
-WC =    utility.o       coil_module.o   div_module.o    read_coils.o\
-        points_module.o get_points.o    limiter_module.o options_module.o\
-        mgrid_module.o  read_mgrid.o    compute_bs.o 	lcfs_module.o	lcfs.o\
-        dlsode.o        vessel_module.o inside_vessel.o\
-        inside_div.o\
-        follow_field.o  inside_limiter.o  parser.o      read_input.o\
-	write_coils.o
+
 
 
 PROGRAMS = follow_to_wall Bmag comprehensive_test eps_eff
@@ -60,9 +54,6 @@ Bmag: $(BM)
 
 comp_test: $(CT)
 	$(FC) $(OP) -o comprehensive_test $(CT)
-
-write_coils: $(WC)
-	$(FC) $(OP) -o write_coils $(WC)
 
 
 utility.o:	utility.f90

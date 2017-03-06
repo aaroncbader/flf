@@ -38,7 +38,7 @@ subroutine allocate_main()
 
   !Allocate the array to be the size of the largest one
   allocate(coil_main(main_count, main_size, 3))
-  allocate(main_current(main_count))
+  !allocate(main_current(main_count))
   allocate(main_points(main_count))
 
 end subroutine allocate_main

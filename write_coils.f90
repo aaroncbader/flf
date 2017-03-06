@@ -1,10 +1,10 @@
-program write_coils
+subroutine write_coils
   use coil_module
   implicit none
 
   integer :: i,j
 
-  call read_input()
+  
 
   open(40,file='coils.out',status='unknown')
   
@@ -28,5 +28,5 @@ program write_coils
 
   call deallocate_coils()
 
-end program write_coils
+end subroutine write_coils
   

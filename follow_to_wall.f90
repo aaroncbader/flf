@@ -18,7 +18,14 @@ program follow_to_wall
   real :: distance_to_lcfs, dist_lcfs
 
   call read_namelist()
-  call read_input()
+  if (num_main_coils >= 1) then
+     call allocate_main()
+     call allocate_aux()
+     call read_coil_files()
+  end if
+  write(*,*) main_current
+  !call write_coils()
+  !call read_input()
   ! print *, 'number of LCFS:', num_lcfs
 
 
