@@ -6,48 +6,20 @@ CP = $(FC) $(OP) -c
 
 MO = 	utility.o 	coil_module.o	div_module.o 	read_coils.o\
 	points_module.o	mgrid_module.o  get_points.o 	limiter_module.o\
-	options_module.o  compute_bs.o    read_mgrid.o\
+	eps_module.o  options_module.o  compute_bs.o    read_mgrid.o\
 	dlsode.o	vessel_module.o inside_vessel.o	lcfs_module.o\
 	inside_div.o	diffusion.o	randomize.o	lcfs.o\
 	follow_field.o	inside_limiter.o  parser.o\
 	read_namelist.o write_coils.o	follow_to_wall.o  init_all.o\
-  Bmag.o comprehensive_test.o flf.o
-
-EPS = 	utility.o 	coil_module.o	div_module.o 	read_coils.o\
-	points_module.o	mgrid_module.o  get_points.o 	limiter_module.o\
-	options_module.o  compute_bs.o    read_mgrid.o\
-	dlsode.o	vessel_module.o inside_vessel.o	lcfs_module.o\
-	inside_div.o	diffusion.o	randomize.o	lcfs.o\
-	follow_field.o	inside_limiter.o  parser.o 	read_input.o\
-	eps_module.o eps_eff.o
-
-
-CT = 	utility.o 	coil_module.o	div_module.o 	read_coils.o\
-	points_module.o	get_points.o 	limiter_module.o options_module.o\
-	compute_bs.o	lcfs_module.o\
-	dlsode.o	vessel_module.o inside_vessel.o randomize.o\
-	inside_div.o	diffusion.o	lcfs.o\
-	follow_field.o	inside_limiter.o  parser.o 	read_input.o\
-	comprehensive_test.o
+  Bmag.o comprehensive_test.o eps_eff.o flf.o
 
 
 
-
-PROGRAMS = follow_to_wall Bmag comprehensive_test eps_eff
+PROGRAMS = flf
 
 #This is the default
-follow_to_wall: $(MO)
+flf: $(MO)
 	$(FC) $(OP) -o flf $(MO) 
-
-eps_eff: $(EPS)
-	$(FC) $(OP) -o eps_eff $(EPS) 
-
-Bmag: $(BM)
-	$(FC) $(OP) -o Bmag $(BM)
-
-
-comp_test: $(CT)
-	$(FC) $(OP) -o comprehensive_test $(CT)
 
 
 utility.o:	utility.f90

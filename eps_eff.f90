@@ -1,6 +1,6 @@
 ! program to follow one point until it hits the wall
 
-program eps_eff
+subroutine eps_eff
 
   use points_module
   use options_module
@@ -18,7 +18,6 @@ program eps_eff
   real :: dphi, totcur, dist, magb, magp
   real :: distance_to_lcfs, dist_lcfs
 
-  call read_input()
   ! print *, 'number of LCFS:', num_lcfs
 
   ! get the points
@@ -121,7 +120,7 @@ program eps_eff
   call deallocate_eps()
 
 
-end program eps_eff
+end subroutine eps_eff
 
 subroutine calc_eps(numbp, numind)
   use eps_module
