@@ -1,6 +1,6 @@
 ! program to write magnetic field magnitude
 
-program Bmag
+subroutine Bmag
 
   use points_module
   use options_module
@@ -10,8 +10,6 @@ program Bmag
   real :: magb
   real, dimension(3) :: b, pxyz
 
-
-  call read_input()
   call get_points()
   
   outfile = 1
@@ -25,4 +23,4 @@ program Bmag
      write(outfile, '(F11.6)') magb
   end do
 
-end program Bmag
+end subroutine Bmag

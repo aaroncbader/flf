@@ -8,6 +8,5 @@ module limiter_module
   real, allocatable, dimension(:,:,:) :: limiter
   real, allocatable, dimension(:,:) :: lim_bvector, lim_baxis
   character*72, dimension(:), allocatable :: lim_files
-  character*72 :: lim_file
 
 end module limiter_module

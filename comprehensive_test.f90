@@ -1,4 +1,4 @@
-program comprehensive_test
+subroutine comprehensive_test
   use points_module
   use coil_module
   use div_module
@@ -13,8 +13,40 @@ program comprehensive_test
   !with loading and other stuff
   
   !Make sure the loaded file is the sample input file
-  call read_input()
   call get_points()
+  !need to reload the proper coil files, do it manually
+  deallocate(coil_main)
+  if (allocated(coil_aux)) deallocate(coil_aux)
+  if (allocated(aux_percent)) deallocate(aux_percent)
+  deallocate(main_points)
+  if (allocated(aux_points)) deallocate(aux_points)
+  deallocate(main_files)
+  deallocate(main_current)
+
+  allocate(main_files(6))
+  allocate(main_current(48))
+  allocate(aux_percent(6))
+  main_files(1) = 'c1.dat'
+  main_files(2) = 'c2.dat'
+  main_files(3) = 'c3.dat'
+  main_files(4) = 'c4.dat'
+  main_files(5) = 'c5.dat'
+  main_files(6) = 'c6.dat'
+  skip_value = 14
+  num_main_coils = 6
+  aux_file = 'aux_icdiv.dat'
+  num_aux_coils = 6
+  num_periods = 4
+  is_mirrored = 1
+  num_vessels=0
+  
+  main_current(:) = -150105.0
+  call allocate_main()
+  
+  call allocate_aux()
+  call read_coil_files()
+  taper(:) = 0.0
+  aux_current(:) = 0.0
   
   !Turn off the limiter for now
   num_limiters = 0
@@ -34,9 +66,11 @@ program comprehensive_test
   if ((points_move(1,1).gt.1.09181).and.(points_move(1,1).lt.(1.09183)).and.&
       (points_move(1,2).gt.(-0.10317)).and.(points_move(1,2).lt.(-0.10316)))&
       then
-     print *,'test with no auxiliary current PASS'
+     write(*,*) 'test with no auxiliary current PASS'
+     write(*,*) points_move(1,:)
   else
      print *,'test with no auxiliary current FAIL'
+     write(*,*) points_move(1,:)
   end if
   
   !add some aux currents to the mix, assumes we loaded 6 coils
@@ -109,18 +143,19 @@ program comprehensive_test
   end if
 
   vessel_file = 'vessel.txt'
+  if (allocated(vessel)) deallocate(vessel)
   call allocate_vessel()
   call load_vessel()
   num_vessels = 1
   isok = 1
-  
+  write (*,*) 'vessel size', vessel_size
   do i=0,10
      z = real(i)/100 + 0.2
      !print *,'z',z
      answer = inside_vessel(1.3, z, 0.39269, vessel, vessel_size)
      !isin = inside_vessel(1.3, z, 1.0, vessel, vessel_size)
-     if ((z.gt.0.245).and.(answer.eq.1)) isok = 0
-     if ((z.lt.0.245).and.(answer.eq.0)) isok = 0
+     if ((z.gt.0.235).and.(answer.eq.1)) isok = 0
+     if ((z.lt.0.235).and.(answer.eq.0)) isok = 0
   enddo
   if (isok.eq.0) then
      print *,'Vessel test 1 FAIL'
@@ -135,8 +170,8 @@ program comprehensive_test
      !print *,'z',z
      answer = inside_vessel(1.3, z, 1.17809, vessel, vessel_size)
      !isin = inside_vessel(1.3, z, 1.0, vessel, vessel_size)
-     if ((z.lt.-0.245).and.(answer.eq.1)) isok = 0
-     if ((z.gt.-0.245).and.(answer.eq.0)) isok = 0
+     if ((z.lt.-0.235).and.(answer.eq.1)) isok = 0
+     if ((z.gt.-0.235).and.(answer.eq.0)) isok = 0
   enddo
   if (isok.eq.0) then
      print *,'Vessel test 2 FAIL'
@@ -169,4 +204,4 @@ program comprehensive_test
   
   
 
-end program comprehensive_test
+end subroutine comprehensive_test

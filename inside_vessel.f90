@@ -2,7 +2,7 @@ subroutine allocate_vessel()
 
   use vessel_module
   implicit none
-integer :: filenum = 21
+  integer :: filenum = 21
 
   open(filenum, file=vessel_file, status='old', form = 'formatted')
   read(filenum,*) vessel_size(1:2)

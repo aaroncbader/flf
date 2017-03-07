@@ -1,4 +1,4 @@
-subroutine read_namelist
+subroutine read_namelist()
 
   use points_module
   use coil_module
@@ -20,7 +20,7 @@ subroutine read_namelist
        skip_value, num_aux_coils, aux_file, aux_percent, aux_flag, mgrid_file, &
        use_diffusion, diffusion_species, d_perp, temperature, boozer_step,&
        boozer_phi, axis_file, vessel_file, num_limiters,&
-       num_divertors, lcfs_file, general_option 
+       num_divertors, lcfs_file, general_option, output_coils 
 
   filenum = 10
   input_file = 'flf.namelist'
@@ -30,7 +30,6 @@ subroutine read_namelist
   !Initialize coils
   if (num_main_coils >= 1) then
      coil_type = 1
-     write(*,*) 'num_main_coils', num_main_coils
      allocate(main_files(num_main_coils))
      main_files(:) = ''
      !main count includes all coils not just for one period

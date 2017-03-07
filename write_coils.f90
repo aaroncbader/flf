@@ -26,7 +26,5 @@ subroutine write_coils
      enddo
   enddo
 
-  call deallocate_coils()
-
 end subroutine write_coils
   
