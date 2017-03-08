@@ -8,7 +8,7 @@ module points_module
   integer, dimension(:), allocatable :: points_hit_vessel, points_hit_limiter
   integer, dimension(:), allocatable :: points_hit_divertor, points_hit, points_complete
   real :: points_dphi
-  integer :: n_iter, points_number
+  integer :: n_iter=1, points_number=1
   integer :: current_point, current_step
   character*72 :: points_file='points.in', results_file='results.out'
 
