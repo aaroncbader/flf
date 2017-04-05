@@ -66,7 +66,7 @@ subroutine get_diff_distance(tau, D, pxyz, dist)
   else
      Dnew = D
   end if
-  dist = 2 * (D * tau)**0.5
+  dist = 2 * (Dnew * tau)**0.5
   return
 end subroutine get_diff_distance
 
