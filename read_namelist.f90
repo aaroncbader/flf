@@ -20,6 +20,7 @@ subroutine read_namelist()
        skip_value, main_winding, num_aux_coils, aux_file, aux_flag,& 
        mgrid_file, &
        use_diffusion, diffusion_species, d_perp, temperature, boozer_step,&
+       varD, varDgamma, varDB0, & 
        boozer_phi, axis_file, vessel_file, num_limiters, axis_file, &
        num_divertors, lcfs_file, general_option, output_coils 
 
@@ -63,7 +64,7 @@ subroutine read_namelist()
      lim_files(:) = ''
      call lim_namelist(filenum)     
   end if  
-
+  
   
 end subroutine read_namelist
 

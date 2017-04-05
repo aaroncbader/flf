@@ -41,13 +41,31 @@ subroutine get_diff_time(Lc, Te, species, tau)
   
   return
 end subroutine get_diff_time
+
+subroutine get_varD(pxyz, D, Dnew)
+  use options_module, only: varDgamma, varDB0
+  implicit none
+  real, dimension(3) :: pxyz, b
+  real :: D, Dnew, magb
+
+  call compute_full_bs(pxyz, b)
+  magb = (b(1)**2 + b(2)**2 + b(3)**2)**0.5
+  Dnew = D*(1.0 + varDgamma*(magb/varDB0 - 1.0))
+  
+end subroutine get_varD
   
 ! get the distance to diffuse a point
-subroutine get_diff_distance(tau, D, dist)
+subroutine get_diff_distance(tau, D, pxyz, dist)
+  use options_module, only: varD
   implicit none
-  real, dimension(3) :: p
-  real :: tau, D, dist
+  real, dimension(3) :: pxyz
+  real :: tau, D, dist, Dnew
 
+  if (varD == 1) then
+     call get_varD(pxyz, D, Dnew)
+  else
+     Dnew = D
+  end if
   dist = 2 * (D * tau)**0.5
   return
 end subroutine get_diff_distance
@@ -69,7 +87,7 @@ subroutine diffuse_point(p, newp, Lc, Te, D, species)
   call get_diff_time(Lc, Te, species, tau)
   !print *,'diff time',tau
 
-  call get_diff_distance(tau, D, dist)
+  call get_diff_distance(tau, D, pxyz, dist)
   !print *,'diff dist',dist
 
   newp = pxyz + dist * perp_vec

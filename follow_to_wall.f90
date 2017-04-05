@@ -29,7 +29,7 @@ subroutine follow_to_wall
   call get_points()
   outfile = 1
  
-
+  
   !file to write output
   open (unit=outfile,file=trim(adjustl(results_file)),status='unknown')
   !write (1,'(3(F9.6,2X))') p(1:3)
@@ -92,16 +92,16 @@ subroutine follow_to_wall
         ! Do diffusion=1, random diffusion
         if (use_diffusion.eq.1) then
            !write (*,'(3(F15.7,2X))'),points_move(j,:)
-           call diffuse_point(points_move(j,:), p, dist, dpar2,&
-                dpar1, diffusion_species)
+           call diffuse_point(points_move(j,:), p, dist, temperature,&
+                d_perp, diffusion_species)
            points_move(j,:) = p
            !write (*,*) 'after diffusion'
         end if
 
         ! Do diffusion = 2: boozer diffusion
-        if ((use_diffusion.eq.2).and.(modulo(i, int(dpar2)) == 0)) then
+        if ((use_diffusion.eq.2).and.(modulo(i, int(boozer_phi)) == 0)) then
            write (*,'(4(F15.7,2X))'),points_move(j,:), magb
-           call diffuse_boozer(points_move(j,:), p, dpar1)
+           call diffuse_boozer(points_move(j,:), p, boozer_step)
            points_move(j,:) = p
         end if
 !***********END DIFFUSION****************
