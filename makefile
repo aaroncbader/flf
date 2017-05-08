@@ -1,4 +1,4 @@
-FC = gfortran
+FC = mpif90
 
 OP = -fdefault-real-8 -fdefault-double-8 -fbacktrace -fbounds-check -O2
 

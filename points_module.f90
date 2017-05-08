@@ -11,5 +11,11 @@ module points_module
   integer :: n_iter=1, points_number=1
   integer :: current_point, current_step
   character*72 :: points_file='points.in', results_file='results.out'
+  character*72 :: log_file
+  integer :: lf
+
+  !mpi stuff
+  integer :: my_pn, num_procs
+  
 
 end module points_module
