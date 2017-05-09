@@ -31,7 +31,8 @@ subroutine follow_to_wall
  
   
   !file to write output
-  open (unit=outfile,file=trim(adjustl(results_file)),status='unknown')
+  if (my_pn == 0) &
+       open (unit=outfile,file=trim(adjustl(results_file)),status='unknown')
   !write (1,'(3(F9.6,2X))') p(1:3)
   
   ! start by setting connection length to zero for each point
@@ -41,21 +42,21 @@ subroutine follow_to_wall
    
   points_move(:,:) = points_start(:,:)
 
-  do j=1,points_number
+  do j=points_ind_begin,points_ind_end
      points_complete(j) = 1
      
 
 
      ! set the current point
      current_point = j
-     write(*,*),'point number',j
+     write(lf,*),'point number',j
 
      call pol2cart(points_move(j,:), pxyz)
      call compute_full_bs(pxyz, b)
      magb = (b(1)**2 + b(2)**2 + b(3)**2)**0.5
 
 
-     write(*,'(4(F12.7,2X))'), points_move(j,:), magb
+     write(lf,'(4(F12.7,2X))'), points_move(j,:), magb
      
 
 
@@ -100,7 +101,7 @@ subroutine follow_to_wall
 
         ! Do diffusion = 2: boozer diffusion
         if ((use_diffusion.eq.2).and.(modulo(i, int(boozer_phi)) == 0)) then
-           write (*,'(4(F15.7,2X))'),points_move(j,:), magb
+           write (log_file,'(4(F15.7,2X))'),points_move(j,:), magb
            call diffuse_boozer(points_move(j,:), p, boozer_step)
            points_move(j,:) = p
         end if
@@ -110,9 +111,10 @@ subroutine follow_to_wall
            ! print *, 'number of LCFS:', num_lcfs
            dist_lcfs = distance_to_lcfs(points_move(j,1), points_move(j,2), &
                 points_move(j,3))
-           write (*,'(5(F15.7,2X))'),points_move(j,:), conn_length(j), dist_lcfs
+           write (lf,'(5(F15.7,2X))'), &
+                points_move(j,:), conn_length(j), dist_lcfs
         else
-           write (*,'(4(F15.7,2X))'),points_move(j,:), magb
+           write (lf,'(4(F15.7,2X))'),points_move(j,:), magb
         end if
         
         
@@ -121,8 +123,7 @@ subroutine follow_to_wall
         !write (1,'(3(F9.6,2X))') p(1:3)
      enddo
   enddo
-
-  call record_output(outfile)
+  if (my_pn == 0) call record_output(outfile)
 
 
 

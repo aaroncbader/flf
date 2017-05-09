@@ -4,6 +4,8 @@ subroutine get_points()
   use points_module
   implicit none
   integer :: i
+  integer, dimension(num_procs) :: startinds, endinds
+  integer :: minperproc, overflow, prevend
 
   !character, dimension(:) :: filename
   open (unit=3,file=trim(adjustl(points_file)),action='read')
@@ -20,6 +22,23 @@ subroutine get_points()
      read (3,*) points_start(i,:)
      points_move(i,:) = points_start(i,:)
   enddo
+
+  minperproc = points_number/num_procs
+  overflow = points_number - (num_procs * minperproc)
+  prevend = 0
+  !for now read everything in to all of them
+  do i = 1,num_procs
+     startinds(i) = prevend + 1
+     if (overflow > 0) then
+        endinds(i) = startinds(i) + minperproc
+        overflow = overflow - 1
+     else
+        endinds(i) = startinds(i) + minperproc - 1
+     end if
+     prevend = endinds(i)
+  end do
+  points_ind_begin = startinds(my_pn+1)
+  points_ind_end = endinds(my_pn+1)
 
 end subroutine get_points
 
