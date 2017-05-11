@@ -6,7 +6,7 @@ program read_sample_input
   integer :: filenum, fcount,ncount,i
   character*72 :: file1
   character*72, dimension(:), allocatable :: filearray
-  real, dimension(:,:), allocatable :: numbers
+  double precision, dimension(:,:), allocatable :: numbers
   
   
   filenum = 10

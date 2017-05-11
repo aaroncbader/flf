@@ -21,7 +21,7 @@ subroutine load_lcfs()
 
   character*72 :: dummy
   integer :: i,j
-  real :: x,y,z
+  double precision :: x,y,z
   integer :: filenum = 22
 
   if (num_lcfs <= 0) return
@@ -40,7 +40,7 @@ subroutine load_lcfs()
 
 end subroutine load_lcfs
 
-real function distance_to_lcfs(rin, zin, phiin)
+double precision function distance_to_lcfs(rin, zin, phiin)
 
   use lcfs_module
   use coil_module
@@ -48,11 +48,11 @@ real function distance_to_lcfs(rin, zin, phiin)
   implicit none
 
   integer :: i, mindex, index
-  real, dimension(lcfs_size(2), 3) :: cut
-  real, dimension(lcfs_size(2)) :: rlcfs, zlcfs, dist
-  real :: pi, phi_extent, ratio, phi_step_size
-  real :: rin, zin, phiin, r, z, phi
-  real :: x1, x2, y1, y2, m, b
+  double precision, dimension(lcfs_size(2), 3) :: cut
+  double precision, dimension(lcfs_size(2)) :: rlcfs, zlcfs, dist
+  double precision :: pi, phi_extent, ratio, phi_step_size
+  double precision :: rin, zin, phiin, r, z, phi
+  double precision :: x1, x2, y1, y2, m, b
 
   if (num_lcfs <=0) then
      distance_to_lcfs = 0

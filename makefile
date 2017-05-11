@@ -1,15 +1,17 @@
 FC = mpif90
 
 OP = -fdefault-real-8 -fdefault-double-8 -fbacktrace -fbounds-check -O2
+#OP = -fbacktrace -fbounds-check -O2
+#OP = -g
 
 CP = $(FC) $(OP) -c
 
 MO = 	utility.o 	coil_module.o	div_module.o 	read_coils.o\
-	points_module.o	mgrid_module.o  get_points.o 	limiter_module.o\
+	points_module.o	mgrid_module.o  limiter_module.o  \
 	eps_module.o  options_module.o  compute_bs.o    read_mgrid.o\
 	dlsode.o	vessel_module.o inside_vessel.o	lcfs_module.o\
 	inside_div.o	diffusion.o	randomize.o	lcfs.o\
-	follow_field.o	inside_limiter.o  parser.o\
+	follow_field.o	inside_limiter.o  parser.o  get_points.o\
 	read_namelist.o write_coils.o	follow_to_wall.o  init_all.o\
   Bmag.o comprehensive_test.o eps_eff.o flf.o
 

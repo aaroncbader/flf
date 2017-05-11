@@ -2,10 +2,10 @@ program test_limiter
 
 implicit none
 
-	real, dimension(3) :: point
+	double precision, dimension(3) :: point
 	integer :: near, hit, delta
 	integer :: is_near_helical_plane, hit_limiter, poly_size
-	real, dimension(5) :: xlimiter, ylimiter ! don't forget to change this when the dimension of the limiter polygon changes
+	double precision, dimension(5) :: xlimiter, ylimiter ! don't forget to change this when the dimension of the limiter polygon changes
 
 	point=(/1.39,-0.09715,0.1759/) ! in 3d cartesian, units (m)
 	

@@ -53,7 +53,7 @@ subroutine string_to_reals(line, array, array_size)
   implicit none
   integer :: array_size
   character(72) :: line
-  real, dimension(array_size) :: array
+  double precision, dimension(array_size) :: array
 
   read (line,*) array(1:array_size)
 
@@ -63,7 +63,7 @@ end subroutine string_to_reals
 subroutine string_to_real(line, answer)
 
   implicit none
-  real :: answer
+  double precision :: answer
   character(len=*) :: line
 
 

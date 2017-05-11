@@ -11,15 +11,15 @@ subroutine follow_field(p, dphi, dist, istate)
   parameter (liw=22)
   parameter (itask=1)
 
-  real, dimension(3) :: p, pold, pnew, poldc, pnewc
-  real, dimension(2) :: y
+  double precision, dimension(3) :: p, pold, pnew, poldc, pnewc
+  double precision, dimension(2) :: y
   ! For now this is unused.
-  real :: dphi, t0, t1, tol
+  double precision :: dphi, t0, t1, tol
   ! dstuff for dlsode
   integer :: ifail, istate
-  real, dimension(liw) :: iwork
-  real, dimension(lrw) :: rwork
-  real, dimension(1) :: dist, r1, z1, phi1, r2, z2, phi2, x1, x2, y1, y2
+  double precision, dimension(liw) :: iwork
+  double precision, dimension(lrw) :: rwork
+  double precision, dimension(1) :: dist, r1, z1, phi1, r2, z2, phi2, x1, x2, y1, y2
 
   external field_deriv
   
@@ -97,13 +97,13 @@ subroutine follow_field_s(p, ds, istate)
   parameter (liw=23)
   parameter (itask=1)
 
-  real, dimension(3) :: y,p
+  double precision, dimension(3) :: y,p
   ! For now this is unused.
-  real :: ds, t0, t1, tol
+  double precision :: ds, t0, t1, tol
   ! dstuff for dlsode
   integer :: ifail, istate
-  real, dimension(liw) :: iwork
-  real, dimension(lrw) :: rwork
+  double precision, dimension(liw) :: iwork
+  double precision, dimension(lrw) :: rwork
 
   external field_deriv_s
 
@@ -149,14 +149,14 @@ subroutine follow_field_s_wpsi(p, psi, ds, istatic)
   parameter (liw=26)
   parameter (itask=1)
 
-  real, dimension(3) :: p,psi
-  real, dimension(6) :: y
+  double precision, dimension(3) :: p,psi
+  double precision, dimension(6) :: y
   ! For now this is unused.
-  real :: ds, t0, t1, tol
+  double precision :: ds, t0, t1, tol
   ! dstuff for dlsode
   integer :: ifail, istate
-  real, dimension(liw) :: iwork
-  real, dimension(lrw) :: rwork
+  double precision, dimension(liw) :: iwork
+  double precision, dimension(lrw) :: rwork
 
   external field_deriv_s_wpsi
 

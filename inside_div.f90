@@ -76,7 +76,7 @@ subroutine load_div()
   character*72 :: dummy
 
   integer :: i,j,k,filenum,d1,d2,d3
-  real :: t,r,z, d4, d5,pi
+  double precision :: t,r,z, d4, d5,pi
   
 
   pi = 3.1415927
@@ -118,7 +118,7 @@ subroutine load_axis()
   use coil_module
   
   integer :: filenum, i
-  real :: pi
+  double precision :: pi
 
   filenum = 21
   pi = 3.14159
@@ -157,13 +157,13 @@ integer function inside_div(rin, zin, phiin)
   use coil_module !needed to know whether it's mirrored
   implicit none
 
-  real :: pi
-  real :: rin,zin,phiin,r,z,phi,axis_phi
-  real :: rmag, zmag, linear_interpolate
-  real :: rseg1, rseg2, zseg1, zseg2, dum1, dum2
+  double precision :: pi
+  double precision :: rin,zin,phiin,r,z,phi,axis_phi
+  double precision :: rmag, zmag, linear_interpolate
+  double precision :: rseg1, rseg2, zseg1, zseg2, dum1, dum2
   integer :: intersection, i, j, axis_index, div_index, interp_index
   integer :: does_intersect, slice_size, axis_flip
-  real, dimension(:), allocatable :: tor_slice, div_slice
+  double precision, dimension(:), allocatable :: tor_slice, div_slice
 
   if (num_divertors.le.0) then
      inside_div = 0

@@ -3,12 +3,12 @@
 integer function is_near_helical_plane(point)
 implicit none
 
-real, dimension(3) :: bvector
-real, dimension(3) :: baxis
-real, dimension(3) :: dist_axis
-real :: dist_plane
-real :: delta
-real, dimension(3) :: point
+double precision, dimension(3) :: bvector
+double precision, dimension(3) :: baxis
+double precision, dimension(3) :: dist_axis
+double precision :: dist_plane
+double precision :: delta
+double precision, dimension(3) :: point
 
 ! use pre-calculated values of the location of the magnetic axis in QHS and the B field vector at this location
 
@@ -33,11 +33,11 @@ end function is_near_helical_plane
 integer function hit_limiter(point,xlimiter,ylimiter,poly_size)
 implicit none
 
-real :: Xpoint, Ypoint
+double precision :: Xpoint, Ypoint
 integer :: in_polygon, poly_size
-real, dimension(3) :: bvector, baxis
-real, dimension(poly_size) :: Xpoly, Ypoly, xlimiter, ylimiter
-real, dimension(3) :: point, HC_out, HC_up, HC_up_norm
+double precision, dimension(3) :: bvector, baxis
+double precision, dimension(poly_size) :: Xpoly, Ypoly, xlimiter, ylimiter
+double precision, dimension(3) :: point, HC_out, HC_up, HC_up_norm
 
 ! use the same pre-calculated values for the normal vector
 bvector=(/0.0,0.43765823,0.24171643/)

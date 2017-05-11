@@ -46,7 +46,7 @@ subroutine load_limiter()
 
   integer :: i,j, dum1
   integer :: filenum = 22
-  real, dimension(2) :: dummy
+  double precision, dimension(2) :: dummy
 
   do i=1,num_limiters
 
@@ -81,11 +81,11 @@ integer function inside_limiter(r, z, phi)
 
   implicit none
 
-  real :: Xpoint, Ypoint, dist_plane, delta, r, z, phi, phi_mod, phi_mod2, pi
+  double precision :: Xpoint, Ypoint, dist_plane, delta, r, z, phi, phi_mod, phi_mod2, pi
   integer :: in_polygon, poly_size, is_near_helical_plane, i
-  real, dimension(3) :: dist_axis, lim_rzp
-  real, dimension(:), allocatable :: Xpoly, Ypoly
-  real, dimension(3) :: point, pointc, HC_out, HC_up, HC_up_mag, HC_up_norm
+  double precision, dimension(3) :: dist_axis, lim_rzp
+  double precision, dimension(:), allocatable :: Xpoly, Ypoly
+  double precision, dimension(3) :: point, pointc, HC_out, HC_up, HC_up_mag, HC_up_norm
 
 
   if (num_limiters.le.0) then

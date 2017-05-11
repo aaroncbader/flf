@@ -5,8 +5,8 @@
 ! p is the point in space
 subroutine get_perp_vec(p, perp_vec)
   implicit none
-  real, dimension(3) :: p, b, perp_vec, rand_vec
-  real :: vec_size
+  double precision, dimension(3) :: p, b, perp_vec, rand_vec
+  double precision :: vec_size
 
   call compute_full_bs(p, b)
   call rand_vector(rand_vec)
@@ -26,7 +26,7 @@ end subroutine get_perp_vec
 ! LC is the connection length
 subroutine get_diff_time(Lc, Te, species, tau)
   implicit none
-  real :: Lc, Te, mass, q, tau
+  double precision :: Lc, Te, mass, q, tau
   integer :: species
 
   if (species .eq. 1) then
@@ -45,8 +45,8 @@ end subroutine get_diff_time
 subroutine get_varD(pxyz, D, Dnew)
   use options_module, only: varDgamma, varDB0
   implicit none
-  real, dimension(3) :: pxyz, b
-  real :: D, Dnew, magb
+  double precision, dimension(3) :: pxyz, b
+  double precision :: D, Dnew, magb
 
   call compute_full_bs(pxyz, b)
   magb = (b(1)**2 + b(2)**2 + b(3)**2)**0.5
@@ -58,8 +58,8 @@ end subroutine get_varD
 subroutine get_diff_distance(tau, D, pxyz, dist)
   use options_module, only: varD
   implicit none
-  real, dimension(3) :: pxyz
-  real :: tau, D, dist, Dnew
+  double precision, dimension(3) :: pxyz
+  double precision :: tau, D, dist, Dnew
 
   if (varD == 1) then
      call get_varD(pxyz, D, Dnew)
@@ -73,8 +73,8 @@ end subroutine get_diff_distance
 !diffuse a point
 subroutine diffuse_point(p, newp, Lc, Te, D, species)
   implicit none
-  real, dimension(3) :: newp, p, perp_vec, pxyz 
-  real :: Lc, Te, tau, dist, D 
+  double precision, dimension(3) :: newp, p, perp_vec, pxyz 
+  double precision :: Lc, Te, tau, dist, D 
   integer :: species
 
   !print *,'LC',Lc
@@ -105,10 +105,10 @@ subroutine diffuse_boozer(p, newp, step)
   use div_module
   implicit none
 
-  real, dimension(3) :: p, newp
-  real :: phi, r, z, axis_phi, pi, step
-  real :: rmag, zmag, rline, zline, magline
-  real :: linear_interpolate
+  double precision, dimension(3) :: p, newp
+  double precision :: phi, r, z, axis_phi, pi, step
+  double precision :: rmag, zmag, rline, zline, magline
+  double precision :: linear_interpolate
   integer :: axis_flip, axis_index, interp_index
 
 

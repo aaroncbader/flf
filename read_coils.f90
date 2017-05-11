@@ -53,7 +53,7 @@ subroutine allocate_aux()
   integer :: i,j,k
 
   integer :: temp_size, dummy, filenum
-  real :: x,y,z !dummy variables
+  double precision :: x,y,z !dummy variables
 
   if (num_aux_coils == 0) then
      return
@@ -116,7 +116,7 @@ subroutine read_coil_files()
   integer:: mult_factor
   integer :: i,j,k
   integer :: piece, filenum, total_points, dummy
-  real :: current,x,y,z
+  double precision :: current,x,y,z
   character*72 :: filename, format_string
 
   if (num_main_coils <= 0) return
@@ -236,7 +236,7 @@ subroutine move_coils(coils, coil_counts, coil_number, piece_count)
 
   integer :: i,j,revj
   integer :: piece_count, coil_number, coil_index
-  real :: coils(coil_number * mult_factor, piece_count, 3)
+  double precision :: coils(coil_number * mult_factor, piece_count, 3)
   integer :: coil_counts(coil_number * mult_factor)
 
 
@@ -302,11 +302,11 @@ subroutine move_coils_gen(coils, coil_counts, coil_number, piece_count, period)
 
   integer :: i,j,k,revj,count
   integer :: piece_count, coil_number, coil_index, period
-  real :: coils(coil_number * period, piece_count, 3)
+  double precision :: coils(coil_number * period, piece_count, 3)
   integer :: coil_counts(coil_number * period)  
-  !real, dimension (:,:), allocatable :: coilrzp
-  real, dimension (3) :: xyz, rzp
-  real :: pi
+  !double precision, dimension (:,:), allocatable :: coilrzp
+  double precision, dimension (3) :: xyz, rzp
+  double precision :: pi
 
   pi = 3.141592653
   do i = 1,coil_number

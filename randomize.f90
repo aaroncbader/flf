@@ -65,7 +65,7 @@ end subroutine init_random_seed
 function rand_normal(mu, sigma)
 
   implicit none
-  real :: theta, r, rand_normal, pi, mu, sigma, num(2)
+  double precision :: theta, r, rand_normal, pi, mu, sigma, num(2)
   
   pi = 3.14159265358
   
@@ -82,12 +82,12 @@ end function rand_normal
 ! Get an isotropic random vector  
 subroutine rand_vector(answer)
   implicit none
-  real, dimension(3) :: answer
-  real :: rand_normal, vector_size
+  double precision, dimension(3) :: answer
+  double precision :: rand_normal, vector_size
   integer :: i
 
   do i=1,3
-     answer(i) = rand_normal(0., 1.)
+     answer(i) = rand_normal(dble(0.), dble(1.))
   end do
   
   vector_size = answer(1)**2 + answer(2)**2 + answer(3)**2

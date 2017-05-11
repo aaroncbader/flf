@@ -1,7 +1,7 @@
 program test_bs
   use coil_module
   implicit none
-  real, dimension(3) :: b
+  double precision, dimension(3) :: b
   integer :: i
 
 
@@ -40,7 +40,7 @@ subroutine make_simple_coil()
   implicit none
 
   integer :: i, coil_points
-  real :: theta, pi, center, radius, mu0
+  double precision :: theta, pi, center, radius, mu0
 
   mu0 = 1.25663706E-6
   pi = 3.14159

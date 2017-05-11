@@ -19,7 +19,7 @@ subroutine load_vessel()
 
   character*72 :: dummy
   integer :: i,j
-  real :: x,y,z
+  double precision :: x,y,z
   integer :: filenum = 21
 
   open(filenum,file=vessel_file,status='old',form='formatted')
@@ -48,11 +48,11 @@ end subroutine load_vessel
 
   implicit none
   integer :: tor_size, pol_size, ix, i, in_polygon
-  real, dimension(vessel_size(1)) :: phi_vessel
-  real, dimension(vessel_size(2), 3) :: cut
-  real, dimension(vessel_size(2)) :: rvessel, zvessel
-  real :: rin, zin, phiin, phi_step_size, phi_extent
-  real :: ratio, pi, r, z, phi
+  double precision, dimension(vessel_size(1)) :: phi_vessel
+  double precision, dimension(vessel_size(2), 3) :: cut
+  double precision, dimension(vessel_size(2)) :: rvessel, zvessel
+  double precision :: rin, zin, phiin, phi_step_size, phi_extent
+  double precision :: ratio, pi, r, z, phi
 
   ! Make sure there's even a vessel to check
   if (num_vessels.le.0) then
@@ -114,10 +114,10 @@ integer function in_polygon(Xpoint, Ypoint, Xpoly, Ypoly, poly_size)
 
   implicit none
   integer :: poly_size, i, j
-  real :: px, py, Xpoint, Ypoint, qq
+  double precision :: px, py, Xpoint, Ypoint, qq
   logical :: mx, my, nx, ny
-  real, dimension(poly_size) :: Xpoly, Ypoly
-  real, allocatable, dimension(:) :: xx, yy, x, y
+  double precision, dimension(poly_size) :: Xpoly, Ypoly
+  double precision, allocatable, dimension(:) :: xx, yy, x, y
 
   allocate(xx(poly_size))
   allocate(yy(poly_size))

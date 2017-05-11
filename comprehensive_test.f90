@@ -6,8 +6,8 @@ subroutine comprehensive_test
   use vessel_module
 
   integer :: i,j, inside_div, isok, answer, inside_vessel, istate
-  real :: dist, D, Te, z
-  real, dimension(3) :: newp
+  double precision :: dist, D, Te, z
+  double precision, dimension(3) :: newp
 
   !Run some tests to make sure everything is correct
   !with loading and other stuff
@@ -150,7 +150,7 @@ subroutine comprehensive_test
   isok = 1
   write (*,*) 'vessel size', vessel_size
   do i=0,10
-     z = real(i)/100 + 0.2
+     z = dble(i)/100 + 0.2
      !print *,'z',z
      answer = inside_vessel(1.3, z, 0.39269, vessel, vessel_size)
      !isin = inside_vessel(1.3, z, 1.0, vessel, vessel_size)
@@ -165,7 +165,7 @@ subroutine comprehensive_test
 
   isok = 1
   do i=0,10
-     z = real(i)/100 + 0.2
+     z = dble(i)/100 + 0.2
      z = z*(-1)
      !print *,'z',z
      answer = inside_vessel(1.3, z, 1.17809, vessel, vessel_size)

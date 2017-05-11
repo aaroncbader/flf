@@ -8,9 +8,9 @@ program follow_to_limiter
   use vessel_module
 
 
-  real,dimension(3) :: p
+  double precision,dimension(3) :: p
   integer :: i,j,isin, inside_limiter
-  real :: dphi, totcur, conn_length
+  double precision :: dphi, totcur, conn_length
   character*144, dimension(:), allocatable :: filenames
   character*144 :: axis_file
 

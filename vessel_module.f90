@@ -5,7 +5,7 @@ module vessel_module
   integer :: num_vessels=0
   integer, dimension(2) :: vessel_size
   
-  real, allocatable, dimension(:, :, :) :: vessel
+  double precision, allocatable, dimension(:, :, :) :: vessel
   character*144 :: vessel_file=''
 
 end module vessel_module

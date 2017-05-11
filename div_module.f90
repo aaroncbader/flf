@@ -9,11 +9,11 @@ module div_module
   ! index for divertor is
   !divertor(divertor number, toroidal seg index, segment part index, 
   !   r or z)
-  real, allocatable, dimension(:,:,:,:) :: divertor
+  double precision, allocatable, dimension(:,:,:,:) :: divertor
   ! index for div_tor_vals is
   !div_tor_vals(divertor number, toroidal seg index)
-  real, allocatable, dimension(:,:) :: div_tor_vals
-  real, allocatable, dimension(:,:) :: mag_axis
+  double precision, allocatable, dimension(:,:) :: div_tor_vals
+  double precision, allocatable, dimension(:,:) :: mag_axis
   character*72, dimension(:), allocatable :: div_files
   character*72 :: axis_file=''
 

@@ -4,7 +4,7 @@ subroutine compute_full_bs(p, b)
   use options_module
   implicit none
 
-  real,dimension(3) :: p,b,btemp
+  double precision,dimension(3) :: p,b,btemp
   
   ! Initialize b field
   b =  0
@@ -30,7 +30,7 @@ subroutine field_from_mgrid_cubic(p,b)
   use coil_module
   use mgrid_module
   implicit none
-  real,dimension(3) :: p,b,brzphi,temp,przphi
+  double precision,dimension(3) :: p,b,brzphi,temp,przphi
 
   call cart2pol(p, temp)
   call move_to_first_quad(temp(1), temp(2), temp(3), przphi(1), &
@@ -68,15 +68,15 @@ subroutine interp_single_variable_cubic(p,b,bselect)
   use coil_module
   implicit none
 
-  real,dimension(3) :: p,temp
+  double precision,dimension(3) :: p,temp
   integer :: ri1, zi1, pi1, bselect
   integer :: tri1, tzi1, tpi1
-  !real,pointer,dimension(mgrid_nphi, mgrid_nz, mgrid_nr) :: bgrid
-  real,pointer,dimension(:,:,:) :: bgrid
-  real,dimension(4,4,4) :: bmat
-  real,dimension(4) :: parr, zarr, rarr, u
-  real :: pstep, b
-  real, dimension(4,4) :: s
+  !double precision,pointer,dimension(mgrid_nphi, mgrid_nz, mgrid_nr) :: bgrid
+  double precision,pointer,dimension(:,:,:) :: bgrid
+  double precision,dimension(4,4,4) :: bmat
+  double precision,dimension(4) :: parr, zarr, rarr, u
+  double precision :: pstep, b
+  double precision, dimension(4,4) :: s
 
 
   if (bselect .eq. 3) then
@@ -217,8 +217,8 @@ end subroutine interp_single_variable_cubic
 subroutine cubic_interp(pf, bf, p, b)
   implicit none
 
-  real :: t, pf, bf, m2, m3
-  real, dimension(4) :: p, b
+  double precision :: t, pf, bf, m2, m3
+  double precision, dimension(4) :: p, b
   
   !t is the relative distance between p(2) and p(3)
   t = (pf - p(2))/(p(3) - p(2))
@@ -258,11 +258,11 @@ subroutine field_from_mgrid_linear(p, b)
   use coil_module
   implicit none
 
-  real,dimension(3) :: p, b, przphi, temp
-  real :: br1, br2, br3, br4, br5, br6, br7
-  real :: bz1, bz2, bz3, bz4, bz5, bz6, bz7
-  real :: bp1, bp2, bp3, bp4, bp5, bp6, bp7
-  real :: rstep, zstep, phistep, rd, zd, phid
+  double precision,dimension(3) :: p, b, przphi, temp
+  double precision :: br1, br2, br3, br4, br5, br6, br7
+  double precision :: bz1, bz2, bz3, bz4, bz5, bz6, bz7
+  double precision :: bp1, bp2, bp3, bp4, bp5, bp6, bp7
+  double precision :: rstep, zstep, phistep, rd, zd, phid
   integer :: ri1, ri2, zi1, zi2, pi1, pi2
 
   ! convert to rzphi
@@ -335,9 +335,9 @@ subroutine get_prz_indices(przphi, ri1, zi1, pi1)
   use mgrid_module
   implicit none
 
-  real,dimension(3) :: przphi
+  double precision,dimension(3) :: przphi
   integer :: ri1, zi1, pi1
-  real :: rstep, zstep, phistep
+  double precision :: rstep, zstep, phistep
 
   !The mgrids all have uniform grids, so we can cheat to determine
   !which indices are the appropriate ones
@@ -375,15 +375,15 @@ use coil_module
 implicit none
     
 integer :: i, j, k
-real, dimension(:), allocatable :: xcoil, ycoil, zcoil 
-real, dimension(:), allocatable :: xcoilshift, ycoilshift, zcoilshift
+double precision, dimension(:), allocatable :: xcoil, ycoil, zcoil 
+double precision, dimension(:), allocatable :: xcoilshift, ycoilshift, zcoilshift
 integer :: arggood
-real :: ax, ay, az, bx, by, bz, cx, cy, cz
-real :: cxax, cxay, cxaz, magc, current, magb
-real :: w, adotc, adotb, cross_sq
+double precision :: ax, ay, az, bx, by, bz, cx, cy, cz
+double precision :: cxax, cxay, cxaz, magc, current, magb
+double precision :: w, adotc, adotb, cross_sq
 integer :: coilnumber, numcoilpts, isaux
-real, dimension(3) :: p, b, bseg
-real :: mu0, pi
+double precision, dimension(3) :: p, b, bseg
+double precision :: mu0, pi
 
 !p=(/0.1,0.1,0.1/)
 
@@ -543,29 +543,29 @@ end subroutine compute_bs
 subroutine gradb(pxyz, db)
   implicit none
 
-  real, dimension(3) :: pxyz, bxyz1, bxyz2
-  real, dimension(3,3) :: db
-  real :: dx
+  double precision, dimension(3) :: pxyz, bxyz1, bxyz2
+  double precision, dimension(3,3) :: db
+  double precision :: dx
   
   !This is the step size
   dx = 0.002
   
   !x-direction
-  call compute_full_bs(pxyz + (/ dx, 0.0, 0.0 /), bxyz1)
-  call compute_full_bs(pxyz - (/ dx, 0.0, 0.0 /), bxyz2)
+  call compute_full_bs(pxyz + (/ dx, dble(0.0), dble(0.0) /), bxyz1)
+  call compute_full_bs(pxyz - (/ dx, dble(0.0), dble(0.0) /), bxyz2)
 
   db(:,1) = (bxyz1 - bxyz2)/(2*dx)
 
 
   !y-direction
-  call compute_full_bs(pxyz + (/ 0.0, dx, 0.0 /), bxyz1)
-  call compute_full_bs(pxyz - (/ 0.0, dx, 0.0 /), bxyz2)
+  call compute_full_bs(pxyz + (/ dble(0.0), dx, dble(0.0) /), bxyz1)
+  call compute_full_bs(pxyz - (/ dble(0.0), dx, dble(0.0) /), bxyz2)
 
   db(:,2) = (bxyz1 - bxyz2)/(2*dx)
 
   !z-direction
-  call compute_full_bs(pxyz + (/ 0.0, 0.0, dx /), bxyz1)
-  call compute_full_bs(pxyz - (/ 0.0, 0.0, dx /), bxyz2)
+  call compute_full_bs(pxyz + (/ dble(0.0), dble(0.0), dx /), bxyz1)
+  call compute_full_bs(pxyz - (/ dble(0.0), dble(0.0), dx /), bxyz2)
 
   db(:,3) = (bxyz1 - bxyz2)/(2*dx)
   
@@ -582,9 +582,9 @@ subroutine field_deriv_s(neq, t, y, dydx)
   implicit none
 
   integer :: neq
-  real, dimension(neq) :: y, dydx
-  real, dimension(3) :: bxyz, pxyz
-  real :: bmag, t
+  double precision, dimension(neq) :: y, dydx
+  double precision, dimension(3) :: bxyz, pxyz
+  double precision :: bmag, t
   ! Probably not necessary, but helpful to reassign for bookkeeping
   pxyz(1) = y(1)
   pxyz(2) = y(2)
@@ -604,10 +604,10 @@ subroutine field_deriv_s_wpsi(neq, t, y, dydx)
   implicit none
 
   integer :: neq
-  real, dimension(neq) :: y, dydx
-  real, dimension(3) :: bxyz, pxyz, psixyz
-  real, dimension(3,3) :: db
-  real :: bmag, t
+  double precision, dimension(neq) :: y, dydx
+  double precision, dimension(3) :: bxyz, pxyz, psixyz
+  double precision, dimension(3,3) :: db
+  double precision :: bmag, t
   ! Probably not necessary, but helpful to reassign for bookkeeping
   pxyz(1) = y(1)
   pxyz(2) = y(2)
@@ -644,9 +644,9 @@ subroutine field_deriv(neq, t, y, dydx)
   implicit none
 
   integer :: neq, inside_vessel, inside_div, inside_limiter
-  real, dimension(neq) :: y, dydx, div_hit
-  real, dimension(3) :: bxyz, pxyz, przphi
-  real :: br, bphi, t
+  double precision, dimension(neq) :: y, dydx, div_hit
+  double precision, dimension(3) :: bxyz, pxyz, przphi
+  double precision :: br, bphi, t
 
   przphi(1) = y(1)
   przphi(2) = y(2)

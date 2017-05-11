@@ -8,14 +8,14 @@ subroutine follow_to_wall
   use div_module
   use coil_module
 
-  real,dimension(3) :: p, b, pxyz
+  double precision,dimension(3) :: p, b, pxyz
   integer :: i,j,isin, inside_vessel,outfile, istate
   integer :: axis_index, interp_index
-  real :: phi, phiin, r, z, axis_phi, rmag, zmag, pi
-  real :: linear_interpolate
-  real :: rline, zline, magline
-  real :: dphi, totcur, dist, magb
-  real :: distance_to_lcfs, dist_lcfs
+  double precision :: phi, phiin, r, z, axis_phi, rmag, zmag, pi
+  double precision :: linear_interpolate
+  double precision :: rline, zline, magline
+  double precision :: dphi, totcur, dist, magb
+  double precision :: distance_to_lcfs, dist_lcfs
 
   
   
@@ -123,9 +123,11 @@ subroutine follow_to_wall
         !write (1,'(3(F9.6,2X))') p(1:3)
      enddo
   enddo
+
+  if (num_procs > 1) call gather_results
   if (my_pn == 0) call record_output(outfile)
 
-
+  
 
   call dealloc_points()
   call deallocate_coils()

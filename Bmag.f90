@@ -7,8 +7,8 @@ subroutine Bmag
 
   implicit none
   integer :: outfile, j
-  real :: magb
-  real, dimension(3) :: b, pxyz
+  double precision :: magb
+  double precision, dimension(3) :: b, pxyz
 
   call get_points()
   

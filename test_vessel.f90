@@ -4,7 +4,7 @@ program test_vessel
   implicit none
   
   integer :: i,j,isin, inside_vessel
-  real :: z
+  double precision :: z
 
  
   !Block of code to get the vessel information
@@ -22,7 +22,7 @@ program test_vessel
 
   
   do i=0,10
-     z = real(i)/100 + 0.2
+     z = dble(i)/100 + 0.2
      print *,'z',z
      isin = inside_vessel(1.1, z, 0.6, vessel, vessel_size)
      print *,isin

@@ -9,14 +9,14 @@ subroutine eps_eff
   use coil_module
   use eps_module
 
-  real,dimension(3) :: p, b, dpsi, pxyz
+  double precision,dimension(3) :: p, b, dpsi, pxyz
   integer :: i,j,isin, inside_vessel,outfile, istate
   integer :: axis_index, interp_index
-  real :: phi, phiin, r, z, axis_phi, rmag, zmag, pi
-  real :: linear_interpolate
-  real :: rline, zline, magline, kg, get_kg
-  real :: dphi, totcur, dist, magb, magp
-  real :: distance_to_lcfs, dist_lcfs
+  double precision :: phi, phiin, r, z, axis_phi, rmag, zmag, pi
+  double precision :: linear_interpolate
+  double precision :: rline, zline, magline, kg, get_kg
+  double precision :: dphi, totcur, dist, magb, magp
+  double precision :: distance_to_lcfs, dist_lcfs
 
   ! print *, 'number of LCFS:', num_lcfs
 
@@ -39,7 +39,7 @@ subroutine eps_eff
      call clear_eps()
      
      !set the psi values here
-     dpsi = (/ points_start(j,2), 0.0, 0.0 /)
+     dpsi = (/ points_start(j,2), dble(0.0), dble(0.0) /)
 
      ! set the current point
      current_point = j
@@ -129,16 +129,16 @@ subroutine calc_eps(numbp, numind)
   implicit none
   integer :: n, numbp, i, j, numind, num_inter
   integer :: licount, ricount
-  real :: B0, ds, I1, I2, hmin, hmax, dbp, T1, T2, pi, R0
-  real :: epseff, epseff32
-  real, dimension(n_iter) :: Bhalf, magPhalf
-  real, dimension(n_iter+1) :: h
-  real, dimension(numbp) :: bp
-  real, dimension(numbp-1) :: sum_H2_I
+  double precision :: B0, ds, I1, I2, hmin, hmax, dbp, T1, T2, pi, R0
+  double precision :: epseff, epseff32
+  double precision, dimension(n_iter) :: Bhalf, magPhalf
+  double precision, dimension(n_iter+1) :: h
+  double precision, dimension(numbp) :: bp
+  double precision, dimension(numbp-1) :: sum_H2_I
   integer, dimension(numind) :: ind_left, ind_right
   ! the nemov H and I functions
-  real, dimension(:), allocatable :: nemH, nemI
-  real, dimension(:), allocatable :: bmag_int, pmag_int, kg_int
+  double precision, dimension(:), allocatable :: nemH, nemI
+  double precision, dimension(:), allocatable :: bmag_int, pmag_int, kg_int
 
   n = n_iter
   pi = 3.14159265359
@@ -208,7 +208,7 @@ subroutine calc_eps(numbp, numind)
         if (ind_right(j) <= ind_left(j) + 1) then
            !the points are too close together to do anything
            nemH(j) = 0
-           nemI(j) = 0.00001
+           nemI(j) = dble(0.00001)
            !these are the dummy values that Canik used
         else
            num_inter = ind_right(j) - ind_left(j) + 1
@@ -294,14 +294,14 @@ subroutine deallocate_eps()
   deallocate(ekg)
 end subroutine deallocate_eps
   
-real function get_kg(pxyz, dpsi, b, magb, magp)
+double precision function get_kg(pxyz, dpsi, b, magb, magp)
 
   implicit none
-  real, dimension(3) :: dmagb !derivatives of magb with respect to xyz
-  real, dimension(3,3) :: dh !derivatives of components of h with respect to xyz
-  real, dimension(3,3) :: db
-  real, dimension(3) :: pxyz, dpsi, b, hdotdelh, hcross, h
-  real :: magb, magp, dot
+  double precision, dimension(3) :: dmagb !derivatives of magb with respect to xyz
+  double precision, dimension(3,3) :: dh !derivatives of components of h with respect to xyz
+  double precision, dimension(3,3) :: db
+  double precision, dimension(3) :: pxyz, dpsi, b, hdotdelh, hcross, h
+  double precision :: magb, magp, dot
 
   call gradb(pxyz, db)
 

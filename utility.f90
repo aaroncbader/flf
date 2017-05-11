@@ -1,7 +1,7 @@
 !convert xyz to rzphi
 subroutine cart2pol(cart, pol)
   implicit none
-  real, dimension(3) :: pol, cart
+  double precision, dimension(3) :: pol, cart
 
   pol(1) = sqrt(cart(1)**2 + cart(2)**2)
   pol(2) = cart(3)
@@ -13,7 +13,7 @@ end subroutine cart2pol
 subroutine pol2cart(pol, cart)
 
   implicit none
-  real,dimension(3) :: pol, cart
+  double precision,dimension(3) :: pol, cart
 
   cart(1) = pol(1)*cos(pol(3))
   cart(2) = pol(1)*sin(pol(3))
@@ -30,7 +30,7 @@ end subroutine pol2cart
 subroutine move_to_first_quad(r,z,phi,newr,newz,newphi, period, mirrored)
   implicit none
   
-  real :: r,z,phi,newr,newz,newphi, pi, period_size
+  double precision :: r,z,phi,newr,newz,newphi, pi, period_size
   integer :: phi8th, period, mirrored, phi_period
 
   pi = 3.1415927
@@ -66,8 +66,8 @@ end subroutine move_to_first_quad
 integer function interp_index(x0, x, numpoints)
 
   integer :: numpoints, i
-  real :: x0
-  real, dimension(numpoints) :: x
+  double precision :: x0
+  double precision, dimension(numpoints) :: x
 
   if (x0 .le. x(1)) then
      interp_index = 1
@@ -94,12 +94,12 @@ end function interp_index
 ! this function interpolates given the slope between x and y at the 
 ! values of ind and ind+1.  It does not check that the value is actually
 ! between the two indices, so be careful.
-real function linear_interpolate(x0, y, x, ind)
+double precision function linear_interpolate(x0, y, x, ind)
 
   implicit none
   integer :: ind
-  real, dimension(*) :: y, x
-  real :: x0, x1, y1, x2, y2
+  double precision, dimension(*) :: y, x
+  double precision :: x0, x1, y1, x2, y2
 
   x1 = x(ind)
   y1 = y(ind)
@@ -116,12 +116,12 @@ end function linear_interpolate
 ! x must be in increasing order, but need not be evenly spaced
 
 ! numpoints is the size of the array
-real function linear_interpolate_full(x0, y, x, numpoints) 
+double precision function linear_interpolate_full(x0, y, x, numpoints) 
 
   implicit none
   integer :: numpoints,interp_index, ind
-  real, dimension(numpoints) :: y, x
-  real :: x0, linear_interpolate
+  double precision, dimension(numpoints) :: y, x
+  double precision :: x0, linear_interpolate
 
   ind = interp_index(x0, x, numpoints)
 
@@ -138,8 +138,8 @@ end function linear_interpolate_full
 
 integer function intersection(x1, y1, x2, y2, x3, y3, x4, y4, xint, yint)
 
-  real :: x1, x2, x3, x4, y1, y2, y3, y4
-  real :: xint, yint, m1, m3, b1, b3
+  double precision :: x1, x2, x3, x4, y1, y2, y3, y4
+  double precision :: xint, yint, m1, m3, b1, b3
 
   ! Before doing any calculations we check if any of the intersections are
   ! even possible.
@@ -189,7 +189,7 @@ end function intersection
 ! Compute cross product of 2 three dimensional vectors
 subroutine cross_product(a, b, c)
   implicit none
-  real, dimension(3) :: a, b, c
+  double precision, dimension(3) :: a, b, c
 
   c(1) = a(2) * b(3) - a(3) * b(2)
   c(2) = a(3) * b(1) - a(1) * b(3)
@@ -197,9 +197,9 @@ subroutine cross_product(a, b, c)
   return
 end subroutine cross_product
 
-real function dot(a, b)
+double precision function dot(a, b)
   implicit none
-  real, dimension(3) :: a, b
+  double precision, dimension(3) :: a, b
   dot = (a(1) * b(1)) + (a(2) * b(2)) + (a(3)*b(3))
   return
 end function dot
