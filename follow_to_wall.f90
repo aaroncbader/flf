@@ -101,7 +101,7 @@ subroutine follow_to_wall
 
         ! Do diffusion = 2: boozer diffusion
         if ((use_diffusion.eq.2).and.(modulo(i, int(boozer_phi)) == 0)) then
-           write (log_file,'(4(F15.7,2X))'),points_move(j,:), magb
+           write (lf,'(4(F15.7,2X))'),points_move(j,:), magb
            call diffuse_boozer(points_move(j,:), p, boozer_step)
            points_move(j,:) = p
         end if
@@ -126,7 +126,6 @@ subroutine follow_to_wall
 
   if (num_procs > 1) call gather_results
   if (my_pn == 0) call record_output(outfile)
-
   
 
   call dealloc_points()

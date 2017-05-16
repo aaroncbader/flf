@@ -15,9 +15,9 @@ program flf
   call MPI_COMM_SIZE(MPI_COMM_WORLD, num_procs, ierr)
   !create a custom log file for each processor
   write (fn, '(I5.5)') my_pn
-  lf = 100 + my_pn
+  lf = 1000 + my_pn
   log_file = 'output' // fn // '.log'
-  open (unit=lf,file=trim(log_file),status='unknown')
+  open (unit=lf,file=trim(log_file),status='replace')
   
 
   call read_namelist('')
@@ -26,6 +26,7 @@ program flf
   if (general_option == 1) call follow_to_wall()
   if (general_option == 2) call Bmag()
   if (general_option == 3) call eps_eff()
+  close(lf)
 
   call MPI_FINALIZE(ierr)
 end program flf
