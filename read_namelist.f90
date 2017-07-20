@@ -16,9 +16,10 @@ subroutine read_namelist()
   character*72 :: input_file
   
   namelist / flf / points_file, points_number, points_dphi, n_iter, &
+       log_freq, &
        num_periods, num_main_coils, is_mirrored, coil_file_input, &
-       skip_value, main_winding, num_aux_coils, aux_file, aux_flag,& 
-       mgrid_file, &
+       skip_value, main_winding, results_file, &
+       num_aux_coils, aux_file, mgrid_file, &
        use_diffusion, diffusion_species, d_perp, temperature, boozer_step,&
        varD, varDgamma, varDB0, & 
        boozer_phi, axis_file, vessel_file, num_limiters, axis_file, &
@@ -59,8 +60,7 @@ subroutine read_namelist()
 
   !limiter initialization
   if (num_limiters >= 1) then
-     allocate(div_files(num_limiters))
-     if (axis_file == '') write (*,*) 'Error: Divertors need an axis file'
+     allocate(lim_files(num_limiters))
      lim_files(:) = ''
      call lim_namelist(filenum)     
   end if  
@@ -120,7 +120,7 @@ subroutine lim_namelist(filenum)
   implicit none
 
   integer :: filenum, iostat, i
-  namelist / lim / lim_files
+  namelist / lim / lim_files, lim_halfwidth, lim_minstep
   read(filenum, nml=lim, iostat=iostat)
 
   do i = 1,num_limiters

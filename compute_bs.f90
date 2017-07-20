@@ -660,7 +660,7 @@ subroutine field_deriv(neq, t, y, dydx)
      return
   end if
   
-  ! print *, 'points_end=', points_end
+  ! write (lf, *)  'points_end=', points_end
 
   ! For all these checks, if there is no object loaded,
   ! then it immediately leaves the function without
@@ -673,10 +673,10 @@ subroutine field_deriv(neq, t, y, dydx)
      points_hit(current_point) = 1
      points_end(current_point,1:2) = y
      points_end(current_point,3) = t
-     print *,'-------------------------------'
-     print *,'current point at wall:',current_point
-     print *,points_end(current_point,:)
-     print *,'-------------------------------'
+     write (lf, *) '-------------------------------'
+     write (lf, *) 'current point at wall:',current_point
+     write (lf, *) points_end(current_point,:)
+     write (lf, *) '-------------------------------'
      dydx = 0
    ! check if we've hit the divertor
   else if (inside_div(y(1), y(2), t).ge.1) then
@@ -685,10 +685,10 @@ subroutine field_deriv(neq, t, y, dydx)
     points_hit(current_point) = 1
     points_end(current_point,1:2) = y
     points_end(current_point,3) = t
-    print *,'-------------------------------'
-    print *,'current point at divertor:',current_point
-    print *,points_end(current_point,:)
-    print *,'-------------------------------'
+    write (lf, *) '-------------------------------'
+    write (lf, *) 'current point at divertor:',current_point
+    write (lf, *) points_end(current_point,:)
+    write (lf, *) '-------------------------------'
     dydx = 0
    ! check if we're near the helical plane in the boxport (where the limiter is)  
    ! if we start them at the limiter
@@ -697,10 +697,10 @@ subroutine field_deriv(neq, t, y, dydx)
      points_hit(current_point) = 1
      points_end(current_point,1:2)=y
      points_end(current_point,3)=t
-     print *,'-------------------------------'
-     print *,'current point at limiter:',current_point
-     print *,points_end(current_point,:)
-     print *,'-------------------------------'
+     write (lf, *) '-------------------------------'
+     write (lf, *) 'current point at limiter:',current_point
+     write (lf, *) points_end(current_point,:)
+     write (lf, *) '-------------------------------'
      dydx = 0
    	  
      return
