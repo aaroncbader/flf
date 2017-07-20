@@ -16,6 +16,7 @@ subroutine read_namelist()
   character*72 :: input_file
   
   namelist / flf / points_file, points_number, points_dphi, n_iter, &
+       log_freq, &
        num_periods, num_main_coils, is_mirrored, coil_file_input, &
        skip_value, main_winding, results_file, &
        num_aux_coils, aux_file, mgrid_file, &
