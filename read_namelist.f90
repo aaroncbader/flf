@@ -119,7 +119,7 @@ subroutine lim_namelist(filenum)
   implicit none
 
   integer :: filenum, iostat, i
-  namelist / lim / lim_files
+  namelist / lim / lim_files, lim_halfwidth, lim_minstep
   read(filenum, nml=lim, iostat=iostat)
 
   do i = 1,num_limiters

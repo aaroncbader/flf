@@ -15,12 +15,11 @@ subroutine allocate_limiter()
   allocate(limiter_size(num_limiters))
   allocate(lim_bvector(num_limiters, 3))
   allocate(lim_baxis(num_limiters, 3))
-  allocate(lim_minstep(num_limiters)) 
 
   do i=1,num_limiters
 
      open(filenum, file=trim(lim_files(i)), status='old', form = 'formatted')
-     read(filenum,*) limiter_size(i), lim_minstep(i)
+     read(filenum,*) limiter_size(i)
      if (limiter_size(i) > max_size) max_size = limiter_size(i)
      close(filenum)
   end do
@@ -93,24 +92,23 @@ integer function inside_limiter(r, z, phi)
   end if
 
   pi = 3.1415927
-  delta=0.01!1 cm away from helical plane, try +/- this value
   point=(/r,z,phi/)
 
   ! print *, 'point in limiter=', point
 
   call pol2cart(point,pointc)
 
-  ! print *, "pointc=", pointc
-
+  ! Only do the calculation if you are less than the step number
+  if (lim_minstep .gt. current_step) then
+     is_near_helical_plane = 0
+     inside_limiter = 0
+     return
+  end if
+  
 
   do i=1,num_limiters
      
      ! Only do the calculation if you are less than the step number
-     if (lim_minstep(i) .gt. current_step) then
-        is_near_helical_plane = 0
-        inside_limiter = 0
-        cycle
-     end if
      
      allocate(Xpoly(limiter_size(i)))
      allocate(Ypoly(limiter_size(i)))
@@ -157,7 +155,7 @@ integer function inside_limiter(r, z, phi)
 
 
      ! Check if we're too far away
-     if (abs(dist_plane) > delta) then
+     if (abs(dist_plane) > lim_halfwidth) then
         is_near_helical_plane=0
         inside_limiter=0
         deallocate(Xpoly)
