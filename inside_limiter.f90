@@ -16,12 +16,12 @@ subroutine allocate_limiter()
   allocate(lim_bvector(num_limiters, 3))
   allocate(lim_baxis(num_limiters, 3))
   allocate(lim_inside(num_limiters))
-  
+  allocate(lim_minstep(num_limiters)) 
 
   do i=1,num_limiters
 
      open(filenum, file=trim(lim_files(i)), status='old', form = 'formatted')
-     read(filenum,*) limiter_size(i), lim_inside(i)
+     read(filenum,*) limiter_size(i), lim_inside(i), lim_minstep(i)
      if (limiter_size(i) > max_size) max_size = limiter_size(i)
      close(filenum)
   end do
@@ -166,7 +166,7 @@ integer function inside_limiter(r, z, phi)
         cycle
      endif
 
-     print *, 'performing limiter check'
+     !print *, 'performing limiter check'
 
      poly_size=limiter_size(i)
 
@@ -200,10 +200,10 @@ integer function inside_limiter(r, z, phi)
 
      Ypoint= dot_product(pointc,HC_up_norm) 
 	 
-	 print *, "Xpoint=", Xpoint
-	 print *, "Ypoint=", Ypoint
-	 print *, "Xpoly=", Xpoly
-	 print *, "Ypoly=", Ypoly
+	 !print *, "Xpoint=", Xpoint
+	 !print *, "Ypoint=", Ypoint
+	 !print *, "Xpoly=", Xpoly
+	 !print *, "Ypoly=", Ypoly
 
 
      ! now we can work within the 2d helical plane
@@ -212,7 +212,7 @@ integer function inside_limiter(r, z, phi)
 
      inside_limiter=in_polygon(Xpoint, Ypoint, Xpoly, Ypoly, poly_size) + &
           lim_inside(i)
-	 print *, "first inside_limiter= ", inside_limiter	  
+	 !print *, "first inside_limiter= ", inside_limiter	  
      inside_limiter = modulo(inside_limiter, 2)
 
      deallocate(Xpoly)
@@ -221,7 +221,7 @@ integer function inside_limiter(r, z, phi)
 
      if (inside_limiter == 1) exit
 
-     print *, 'inside_limiter=', inside_limiter
+     !print *, 'inside_limiter=', inside_limiter
      
 
   end do

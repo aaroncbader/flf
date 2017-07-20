@@ -59,8 +59,7 @@ subroutine read_namelist()
 
   !limiter initialization
   if (num_limiters >= 1) then
-     allocate(div_files(num_limiters))
-     if (axis_file == '') write (*,*) 'Error: Divertors need an axis file'
+     allocate(lim_files(num_limiters))
      lim_files(:) = ''
      call lim_namelist(filenum)     
   end if  
