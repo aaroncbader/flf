@@ -15,13 +15,12 @@ subroutine allocate_limiter()
   allocate(limiter_size(num_limiters))
   allocate(lim_bvector(num_limiters, 3))
   allocate(lim_baxis(num_limiters, 3))
-  allocate(lim_inside(num_limiters))
   allocate(lim_minstep(num_limiters)) 
 
   do i=1,num_limiters
 
      open(filenum, file=trim(lim_files(i)), status='old', form = 'formatted')
-     read(filenum,*) limiter_size(i), lim_inside(i), lim_minstep(i)
+     read(filenum,*) limiter_size(i), lim_minstep(i)
      if (limiter_size(i) > max_size) max_size = limiter_size(i)
      close(filenum)
   end do
@@ -149,7 +148,7 @@ integer function inside_limiter(r, z, phi)
      ! the distance to this plane by using the dot product.
 
      !dist_axis = pointc - lim_baxis(i,:)
-	 dist_axis = abs(pointc - lim_baxis(i,:))
+	   dist_axis = abs(pointc - lim_baxis(i,:))
      dist_plane = dot_product(dist_axis, lim_bvector(i,:))
      !print *,'phi',point(3)
      !print *,'pointc',pointc(:)
@@ -210,10 +209,8 @@ integer function inside_limiter(r, z, phi)
      ! use in_polygon to see if the point hits the limiter	
      !print *,Xpoint, Ypoint
 
-     inside_limiter=in_polygon(Xpoint, Ypoint, Xpoly, Ypoly, poly_size) + &
-          lim_inside(i)
+     inside_limiter=in_polygon(Xpoint, Ypoint, Xpoly, Ypoly, poly_size)
 	 !print *, "first inside_limiter= ", inside_limiter	  
-     inside_limiter = modulo(inside_limiter, 2)
 
      deallocate(Xpoly)
      deallocate(Ypoly)
