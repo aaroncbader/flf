@@ -166,17 +166,17 @@ subroutine gather_results
           MPI_COMM_WORLD, ierr)
      if (num_vessels > 0) then
         temp_hits = points_hit_vessel(startinds(i):endinds(i))
-        call mpi_send(temp_points, s1, MPI_INTEGER, 0, 14+100*my_pn, &
+        call mpi_send(temp_hits, s1, MPI_INTEGER, 0, 14+100*my_pn, &
              MPI_COMM_WORLD, ierr)
      end if
      if (num_limiters > 0) then
         temp_hits = points_hit_limiter(startinds(i):endinds(i))
-        call mpi_send(temp_points, s1, MPI_INTEGER, 0, 15+100*my_pn, &
+        call mpi_send(temp_hits, s1, MPI_INTEGER, 0, 15+100*my_pn, &
              MPI_COMM_WORLD, ierr)
      end if
      if (num_divertors > 0) then
         temp_hits = points_hit_divertor(startinds(i):endinds(i))
-        call mpi_send(temp_points, s1, MPI_INTEGER, 0, 16+100*my_pn, &
+        call mpi_send(temp_hits, s1, MPI_INTEGER, 0, 16+100*my_pn, &
              MPI_COMM_WORLD, ierr)
      end if
      
