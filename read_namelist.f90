@@ -22,7 +22,7 @@ subroutine read_namelist()
        num_aux_coils, aux_file, mgrid_file, &
        use_diffusion, diffusion_species, d_perp, temperature, boozer_step,&
        varD, varDgamma, varDB0, & 
-       boozer_phi, axis_file, vessel_file, num_limiters, axis_file, &
+       boozer_phi, vessel_file, num_limiters, axis_file, &
        num_divertors, lcfs_file, general_option, output_coils 
 
   filenum = 10
