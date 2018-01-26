@@ -32,7 +32,7 @@ subroutine get_diff_time(Lc, Te, species, tau)
   if (species .eq. 1) then
      mass = 9.10928E-31
   else
-     mass = 1.67262E-28
+     mass = 1.67262E-27
   end if
 
   q = 1.60218E-19
