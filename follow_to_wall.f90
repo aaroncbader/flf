@@ -48,14 +48,14 @@ subroutine follow_to_wall
 
      ! set the current point
      current_point = j
-     write(*,*),'point number',j
+     write(*,*) 'point number',j
 
      call pol2cart(points_move(j,:), pxyz)
      call compute_full_bs(pxyz, b)
      magb = (b(1)**2 + b(2)**2 + b(3)**2)**0.5
 
 
-     write(*,'(4(F12.7,2X))'), points_move(j,:), magb
+     write(*,'(4(F12.7,2X))') points_move(j,:), magb
      
 
 
@@ -111,7 +111,7 @@ subroutine follow_to_wall
 
         ! Do diffusion = 2: boozer diffusion
         if ((use_diffusion.eq.2).and.(modulo(i, int(boozer_phi)) == 0)) then
-           write (*,'(4(F15.7,2X))'),points_move(j,:), magb
+           write (*,'(4(F15.7,2X))') points_move(j,:), magb
            call diffuse_boozer(points_move(j,:), p, boozer_step)
            points_move(j,:) = p
         end if
@@ -121,9 +121,9 @@ subroutine follow_to_wall
             ! print *, 'number of LCFS:', num_lcfs
             dist_lcfs = distance_to_lcfs(points_move(j,1), points_move(j,2), &
                 points_move(j,3))
-            write (*,'(5(F15.7,2X))'),points_move(j,:), conn_length(j), dist_lcfs
+            write (*,'(5(F15.7,2X))') points_move(j,:), conn_length(j), dist_lcfs
           else
-            write (*,'(4(F15.7,2X))'),points_move(j,:), magb
+            write (*,'(4(F15.7,2X))') points_move(j,:), magb
           end if
         end if
         
