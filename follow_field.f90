@@ -194,3 +194,60 @@ subroutine follow_field_s_wpsi(p, psi, ds, istatic)
   
   return
 end subroutine follow_field_s_wpsi
+
+!Integration using chi as the integrating parameter
+!input point is in r,z,phi
+subroutine follow_field_chi(p, ds, istate)
+
+  use coil_module
+
+
+  parameter (lrw=58)
+  parameter (liw=23)
+  parameter (itask=1)
+
+  real, dimension(3) :: y,p,pxyz0,pxyz1
+  ! For now this is unused.
+  real :: ds, t0, t1, tol
+  ! dstuff for dlsode
+  integer :: ifail, istate
+  real, dimension(liw) :: iwork
+  real, dimension(lrw) :: rwork
+
+  external field_deriv_chi
+
+  y(1) = p(1)
+  y(2) = p(2)
+  y(3) = p(3)
+
+  call cart2pol(p,pxyz0)
+
+  ! start and stop phi values
+  t0 = 0
+  t1 = ds
+  
+  tol = 1.e-8
+
+  ifail = 0
+  istate = 1
+
+  call dlsode(field_deriv_chi, 3, y, t0, t1, 1, tol, tol, itask, istate, 0, &
+       rwork, lrw, iwork, liw, jacl, 22)
+
+  ! This indicates that dlsode exited improperly
+  if (istate < 0) then
+     dist = 0.
+     return
+  end if
+
+  p(1) = y(1)
+  p(2) = y(2)
+  p(3) = y(3)
+
+  call cart2pol(p,pxyz1)
+  dist=sqrt((pxyz1(1)-pxyz0(1))**2+ &
+       (pxyz1(2)-pxyz0(2))**2+ &
+       (pxyz1(3)-pxyz0(3))**2)
+  
+  return
+end subroutine follow_field_chi

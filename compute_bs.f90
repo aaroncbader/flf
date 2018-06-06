@@ -626,7 +626,35 @@ subroutine field_deriv_s_wpsi(neq, t, y, dydx)
   return 
 end subroutine field_deriv_s_wpsi
   
+! Like the field_deriv function but integrates along path length
+! y is a 3 value vector of (r, z, phi)
+subroutine field_deriv_chi(neq, t, y, dydx)
+  use points_module
+  implicit none
 
+  integer :: neq
+  real, dimension(neq) :: y, dydx
+  real, dimension(3) :: brzp, przp, pxyz, bxyz
+  real :: bmag, t
+  ! Probably not necessary, but helpful to reassign for bookkeeping
+  przp(1) = y(1)
+  przp(2) = y(2)
+  przp(3) = y(3)
+
+  call pol2cart(przp, pxyz)
+
+  call compute_full_bs(pxyz, bxyz)
+  bmag = sqrt(bxyz(1)*bxyz(1) + bxyz(2)*bxyz(2) + bxyz(3)*bxyz(3))
+
+  brzp(1) = bxyz(1)*cos(t) + bxyz(2)*sin(t)
+  brzp(3) = -bxyz(1)*sin(t) + bxyz(2)*cos(t)
+  brzp(2) = bxyz(3)
+  
+  dydx(1) = bxyz(1)/brzp(1)/bmag**2
+  dydx(2) = bxyz(2)/brzp(2)/bmag**2
+  dydx(3) = bxyz(3)/brzp(3)/przp(1)/bmag**2
+  return 
+end subroutine field_deriv_chi
   
 
 ! This is a function to be called from dlsode to compute the field derivatives
