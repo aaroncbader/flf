@@ -11,7 +11,7 @@ subroutine follow_to_wall
   real,dimension(3) :: p, b, pxyz
   integer :: i,j,isin, inside_vessel,outfile, istate
   integer :: axis_index, interp_index
-  real :: phi, phiin, r, z, axis_phi, rmag, zmag, pi
+  real :: phi, phiin, r, z, axis_phi, rmag, zmag
   real :: linear_interpolate
   real :: rline, zline, magline
   real :: dphi, totcur, dist, magb
@@ -67,10 +67,21 @@ subroutine follow_to_wall
         if (points_hit(j) == 1) then
            cycle
         end if
-       
-        call follow_field(points_move(j,:), points_dphi, dist, &
+
+        ! figure out what type to use
+        if (follow_type == 1) then
+           call follow_field(points_move(j,:), points_dphi, dist, &
              istate)
-        
+        else if (follow_type == 2) then
+           call follow_field_s(points_move(j,:), points_dphi, dist, &
+                istate)
+        else if (follow_type == 3) then
+           call follow_field(points_move(j,:), points_dphi, dist, &
+             istate)
+        else
+           write (*,*) 'illegal choice for follow_type parameter'
+           exit
+        end if
                  
         !write (*,*) 'istate',istate
         if (istate < 0) then
