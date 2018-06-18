@@ -650,9 +650,9 @@ subroutine field_deriv_chi(neq, t, y, dydx)
   brzp(3) = -bxyz(1)*sin(t) + bxyz(2)*cos(t)
   brzp(2) = bxyz(3)
   
-  dydx(1) = bxyz(1)/brzp(1)/bmag**2
-  dydx(2) = bxyz(2)/brzp(2)/bmag**2
-  dydx(3) = bxyz(3)/brzp(3)/przp(1)/bmag**2
+  dydx(1) = brzp(1)/bmag**2
+  dydx(2) = brzp(2)/bmag**2
+  dydx(3) = brzp(3)/przp(1)/bmag**2
   return 
 end subroutine field_deriv_chi
   

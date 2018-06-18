@@ -77,7 +77,7 @@ subroutine follow_to_wall
                 istate)
            call cart2pol(pxyz, points_move(j,:))
         else if (follow_type == 3) then
-           call follow_field(points_move(j,:), points_dphi, dist, &
+           call follow_field_chi(points_move(j,:), points_dphi, dist, &
              istate)
         else
            write (*,*) 'illegal choice for follow_type parameter'
