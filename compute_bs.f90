@@ -640,14 +640,13 @@ subroutine field_deriv_chi(neq, t, y, dydx)
   przp(1) = y(1)
   przp(2) = y(2)
   przp(3) = y(3)
-  t = y(3)
   call pol2cart(przp, pxyz)
 
   call compute_full_bs(pxyz, bxyz)
   bmag = sqrt(bxyz(1)*bxyz(1) + bxyz(2)*bxyz(2) + bxyz(3)*bxyz(3))
 
-  brzp(1) = bxyz(1)*cos(t) + bxyz(2)*sin(t)
-  brzp(3) = -bxyz(1)*sin(t) + bxyz(2)*cos(t)
+  brzp(1) = bxyz(1)*cos(y(3)) + bxyz(2)*sin(y(3))
+  brzp(3) = -bxyz(1)*sin(y(3)) + bxyz(2)*cos(y(3))
   brzp(2) = bxyz(3)
   
   dydx(1) = brzp(1)/bmag**2
