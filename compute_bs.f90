@@ -640,7 +640,7 @@ subroutine field_deriv_chi(neq, t, y, dydx)
   przp(1) = y(1)
   przp(2) = y(2)
   przp(3) = y(3)
-
+  t = y(3)
   call pol2cart(przp, pxyz)
 
   call compute_full_bs(pxyz, bxyz)
@@ -650,12 +650,39 @@ subroutine field_deriv_chi(neq, t, y, dydx)
   brzp(3) = -bxyz(1)*sin(t) + bxyz(2)*cos(t)
   brzp(2) = bxyz(3)
   
-  dydx(1) = bxyz(1)/brzp(1)/bmag**2
-  dydx(2) = bxyz(2)/brzp(2)/bmag**2
-  dydx(3) = bxyz(3)/brzp(3)/przp(1)/bmag**2
+  dydx(1) = brzp(1)/bmag**2
+  dydx(2) = brzp(2)/bmag**2
+  dydx(3) = (brzp(3)/przp(1))/bmag**2
   return 
 end subroutine field_deriv_chi
   
+subroutine field_deriv_gboozer(neq, t, y, dydx)
+  use points_module
+  implicit none
+
+  integer :: neq
+  real, dimension(neq) :: y, dydx
+  real, dimension(3) :: brzp, przp, pxyz, bxyz
+  real :: bmag, t
+  ! Probably not necessary, but helpful to reassign for bookkeeping
+  przp(1) = y(1)
+  przp(2) = y(2)
+  przp(3) = y(3)
+
+  call pol2cart(przp, pxyz) 
+
+  call compute_full_bs(pxyz, bxyz)
+  bmag = sqrt(bxyz(1)*bxyz(1) + bxyz(2)*bxyz(2) + bxyz(3)*bxyz(3))
+
+  brzp(1) = bxyz(1)*cos(t) + bxyz(2)*sin(t)
+  brzp(3) = (-bxyz(1)*sin(t) + bxyz(2)*cos(t))/przp(1) !bphi/r
+  brzp(2) = bxyz(3)
+
+  dydx(1) = brzp(1)/brzp(3)
+  dydx(2) = brzp(2)/brzp(3)
+  dydx(3) = bmag/brzp(3)
+  return
+end subroutine field_deriv_gboozer
 
 ! This is a function to be called from dlsode to compute the field derivatives
 ! It takes values of r,z,phi, converts to x,y,z, calculates the field,
