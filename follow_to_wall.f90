@@ -49,14 +49,14 @@ subroutine follow_to_wall
 
      ! set the current point
      current_point = j
-     write(lf,*),'point number',j
+     write(lf,*) 'point number',j
 
      call pol2cart(points_move(j,:), pxyz)
      call compute_full_bs(pxyz, b)
      magb = (b(1)**2 + b(2)**2 + b(3)**2)**0.5
 
 
-     write(lf,'(4(F12.7,2X))'), points_move(j,:), magb
+     write(lf,'(4(F12.7,2X))') points_move(j,:), magb
      
 
 
@@ -68,10 +68,25 @@ subroutine follow_to_wall
         if (points_hit(j) == 1) then
            cycle
         end if
-       
-        call follow_field(points_move(j,:), points_dphi, dist, &
+
+        ! figure out what type to use
+        if (follow_type == 1) then
+           call follow_field(points_move(j,:), points_dphi, dist, &
              istate)
-        
+        else if (follow_type == 2) then
+           call follow_field_s(pxyz, points_dphi, &
+                istate)
+           call cart2pol(pxyz, points_move(j,:))
+        else if (follow_type == 3) then
+           call follow_field_chi(points_move(j,:), points_dphi, dist, &
+             istate,current_step)
+        else if (follow_type == 4) then
+           call follow_field_gboozer(points_move(j,:), points_dphi, dist, &
+             istate,current_step)
+        else
+           write (*,*) 'illegal choice for follow_type parameter'
+           exit
+        end if
                  
         !write (*,*) 'istate',istate
         if (istate < 0) then
@@ -101,7 +116,7 @@ subroutine follow_to_wall
 
         ! Do diffusion = 2: boozer diffusion
         if ((use_diffusion.eq.2).and.(modulo(i, int(boozer_phi)) == 0)) then
-           write (lf,'(4(F15.7,2X))'),points_move(j,:), magb
+           write (lf,'(4(F15.7,2X))') points_move(j,:), magb
            call diffuse_boozer(points_move(j,:), p, boozer_step)
            points_move(j,:) = p
         end if
@@ -111,9 +126,9 @@ subroutine follow_to_wall
             ! print *, 'number of LCFS:', num_lcfs
             dist_lcfs = distance_to_lcfs(points_move(j,1), points_move(j,2), &
                 points_move(j,3))
-            write (lf,'(5(F15.7,2X))'),points_move(j,:), conn_length(j), dist_lcfs
+            write (lf,'(5(F15.7,2X))') points_move(j,:), conn_length(j), dist_lcfs
           else
-            write (lf,'(4(F15.7,2X))'),points_move(j,:), magb
+            write (lf,'(4(F15.7,2X))') points_move(j,:), magb
           end if
         end if
         

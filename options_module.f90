@@ -5,6 +5,7 @@ module options_module
   integer :: coil_type
   integer :: general_option = 1
   integer :: use_diffusion=0
+  integer :: follow_type = 1
   integer :: diffusion_species=0
   integer :: output_coils=0, varD=0
   integer :: log_freq=1
