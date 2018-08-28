@@ -2,6 +2,7 @@ module options_module
 
   implicit none
 
+  character*200 :: namelist_file='flf.namelist'
   integer :: coil_type
   integer :: general_option = 1
   integer :: use_diffusion=0

@@ -13,7 +13,6 @@ subroutine read_namelist()
 
   integer :: numargs, iostat
   integer :: filenum, i
-  character*72 :: input_file
   
   namelist / flf / points_file, points_number, points_dphi, n_iter, &
        log_freq, follow_type, &
@@ -26,8 +25,10 @@ subroutine read_namelist()
        num_divertors, lcfs_file, general_option, output_coils 
 
   filenum = 10
-  input_file = 'flf.namelist'
-  open(filenum, file=trim(input_file), status='old')
+  numargs = command_argument_count()
+  if (numargs>=1) call get_command_argument(1, namelist_file)
+  
+  open(filenum, file=trim(namelist_file), status='old')
   read(filenum, nml=flf, iostat=iostat)
 
   !Initialize coils
