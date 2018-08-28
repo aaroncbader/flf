@@ -69,10 +69,14 @@ subroutine load_mgrid_ascii
 end subroutine load_mgrid_ascii
 
 subroutine allocate_mgrid_netcdf
+  implicit none
+  include 'netcdf.inc'
   write (*,*) 'not yet enabled'
 end subroutine allocate_mgrid_netcdf
 
 subroutine load_mgrid_netcdf
+  implicit none
+  include 'netcdf.inc'
   write (*,*) 'not yet enabled'
 end subroutine load_mgrid_netcdf
 

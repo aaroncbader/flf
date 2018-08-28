@@ -7,8 +7,8 @@ FC = mpif90
 TARGET = flf
 FC = mpif90 
 EXTRA_COMPILE_FLAGS = -fopenmp -O2 -I/usr/local/lib -I/usr/include -ffree-line-length-none -fdefault-real-8 -fdefault-double-8 
-EXTRA_LINK_FLAGS = -fopenmp
-#EXTRA_LINK_FLAGS =  -fopenmp -L/usr/local/lib -lnetcdff  -lnetcdf -lblas -llapack
+#EXTRA_LINK_FLAGS = -fopenmp
+EXTRA_LINK_FLAGS =  -fopenmp -L/usr/local/lib -lnetcdff  -lnetcdf 
 
 export
 
