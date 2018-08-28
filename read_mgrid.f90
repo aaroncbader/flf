@@ -1,4 +1,4 @@
-subroutine allocate_mgrid
+subroutine allocate_mgrid_ascii
 
    use mgrid_module
    implicit none
@@ -22,9 +22,9 @@ subroutine allocate_mgrid
    allocate(mgrid_bphi(mgrid_nphi, mgrid_nz, mgrid_nr))
 
 
-end subroutine allocate_mgrid
+end subroutine allocate_mgrid_ascii
 
-subroutine load_mgrid
+subroutine load_mgrid_ascii
     use mgrid_module
     implicit none
 
@@ -66,7 +66,16 @@ subroutine load_mgrid
     close(filenum)
 
 
-end subroutine load_mgrid
+end subroutine load_mgrid_ascii
+
+subroutine allocate_mgrid_netcdf
+  write (*,*) 'not yet enabled'
+end subroutine allocate_mgrid_netcdf
+
+subroutine load_mgrid_netcdf
+  write (*,*) 'not yet enabled'
+end subroutine load_mgrid_netcdf
+
 
 subroutine deallocate_mgrid
   use mgrid_module

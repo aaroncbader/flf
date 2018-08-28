@@ -15,7 +15,7 @@ subroutine read_namelist()
   integer :: filenum, i
   
   namelist / flf / points_file, points_number, points_dphi, n_iter, &
-       log_freq, follow_type, &
+       log_freq, follow_type, field_type, &
        num_periods, num_main_coils, is_mirrored, coil_file_input, &
        skip_value, main_winding, results_file, &
        num_aux_coils, aux_file, mgrid_file, &
@@ -30,7 +30,7 @@ subroutine read_namelist()
   
   open(filenum, file=trim(namelist_file), status='old')
   read(filenum, nml=flf, iostat=iostat)
-
+  
   !Initialize coils
   if (num_main_coils >= 1) then
      coil_type = 1

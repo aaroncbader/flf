@@ -11,14 +11,20 @@ subroutine init_all
 
 
   ! initialize coils
-  if (num_main_coils >= 1) then
+  if ((num_main_coils >= 1) .and. (trim(field_type) == 'coils')) then
      call allocate_main()
      call allocate_aux()
      call read_coil_files()
      if (output_coils == 1) call write_coils()
+  elseif (trim(field_type) == 'ascii') then
+     call allocate_mgrid_ascii()
+     call load_mgrid_ascii()
+  elseif (trim(field_type) == 'netcdf') then
+     call allocate_mgrid_netcdf()
+     call load_mgrid_netcdf()
   else
-     call allocate_mgrid()
-     call load_mgrid()
+     write (*,*) 'unknown coil type, aborting'
+     return
   end if
 
   ! initialize divertors
