@@ -108,7 +108,7 @@ subroutine load_mgrid_netcdf
   character(8) :: fmt
   character(3) :: var_index 
 
-  namelist / coils / mgrid_currents
+  namelist / mgrid / mgrid_currents
 
   status = nf_open(mgrid_file, nf_write, ncid)
   
@@ -131,7 +131,7 @@ subroutine load_mgrid_netcdf
   !read the coil namelist
   filenum = 10
   open(filenum, file=trim(namelist_file), status='old')
-  read(filenum, nml=coils, iostat=iostat)
+  read(filenum, nml=mgrid, iostat=iostat)
   close(filenum)
   
   !write(*,*) 'ext coils', mgrid_numcoils
