@@ -68,6 +68,30 @@ subroutine load_mgrid_ascii
 
 end subroutine load_mgrid_ascii
 
+
+! There might be some nice canned routines to shuffle around
+! indicies, but I couldn't find them, so we'll do this the
+! manual way. Speed shouldn't be an issue since this only
+! needs to be done once on file load
+subroutine mgrid_add_bfield(mgrid_btemp, mgrid_bload, current)
+  use mgrid_module, only: mgrid_nz, mgrid_nphi, mgrid_nr
+  implicit none
+
+  real, dimension(mgrid_nphi, mgrid_nz, mgrid_nr) :: mgrid_bload
+  real, dimension(mgrid_nr, mgrid_nz, mgrid_nphi) :: mgrid_btemp
+  real :: current
+  integer :: np, nz, nr
+  
+  do np = 1,mgrid_nphi
+     do nz = 1, mgrid_nz
+        do nr = 1, mgrid_nr
+           mgrid_bload(np, nz, nr) = &
+                mgrid_bload(np, nz, nr) + current * mgrid_btemp(nr, nz, np)
+        end do
+     end do
+  end do
+end subroutine mgrid_add_bfield  
+
 subroutine load_mgrid_netcdf
   use mgrid_module
   use options_module, only: namelist_file
@@ -76,7 +100,11 @@ subroutine load_mgrid_netcdf
 
   integer :: status, ncid, varid, filenum, iostat
   integer :: mgrid_numcoils
-  character*200 :: dummy
+  integer :: i, ri, zi, pi
+  real, dimension(:,:,:), allocatable :: mgrid_btemp
+  character*200 :: dummy, varname
+  character(8) :: fmt
+  character(3) :: var_index 
 
   namelist / coils / mgrid_currents
 
@@ -107,6 +135,52 @@ subroutine load_mgrid_netcdf
   !write(*,*) 'ext coils', mgrid_numcoils
   !write(*,*) 'coil currents', mgrid_currents
   !write(*,*) 'mgrid nr, nz, nphi', mgrid_nr, mgrid_nz, mgrid_nphi
+
+  allocate(mgrid_br(mgrid_nphi, mgrid_nz, mgrid_nr))
+  mgrid_br = 0
+  allocate(mgrid_bz(mgrid_nphi, mgrid_nz, mgrid_nr))
+  mgrid_bz = 0
+  allocate(mgrid_bphi(mgrid_nphi, mgrid_nz, mgrid_nr))
+  mgrid_bphi = 0
+  
+  !unfortunately the mgrid reads in backwards order
+  allocate(mgrid_btemp(mgrid_nr, mgrid_nz, mgrid_nphi)) 
+  
+  !start loading data
+  fmt = '(I3.3)'
+  do i = 1,mgrid_numcoils
+     !ignore zero current coils
+     if (abs(mgrid_currents(i)) <= 0.00000001) cycle
+     
+     write (*,*) 'reading current i'
+
+     !need to create the variable name 
+     write (var_index, fmt) i !convert i to a size 3 string
+     varname = 'bp_'//trim(var_index) !assemble the bphi variable
+     
+     status = nf_inq_varid(ncid, varname, varid)  
+     status = nf_get_var_double(ncid, varid, mgrid_btemp)
+     !convert the data
+     call mgrid_add_bfield(mgrid_btemp, mgrid_bphi, mgrid_currents(i))
+
+     !now do the same for br
+     varname = 'br_'//trim(var_index) !assemble the bphi variable
+     
+     status = nf_inq_varid(ncid, varname, varid)  
+     status = nf_get_var_double(ncid, varid, mgrid_btemp)
+     !convert the data
+     call mgrid_add_bfield(mgrid_btemp, mgrid_br, mgrid_currents(i))
+
+     !and finally bz
+     varname = 'bz_'//trim(var_index) !assemble the bphi variable
+     
+     status = nf_inq_varid(ncid, varname, varid)  
+     status = nf_get_var_double(ncid, varid, mgrid_btemp)
+     !convert the data
+     call mgrid_add_bfield(mgrid_btemp, mgrid_bz, mgrid_currents(i))
+     
+     
+  end do
   
 end subroutine load_mgrid_netcdf
 
