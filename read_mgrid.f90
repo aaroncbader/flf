@@ -103,7 +103,7 @@ subroutine load_mgrid_netcdf
   integer :: mgrid_numcoils
   integer :: i, nfp
   real, dimension(:,:,:), allocatable :: mgrid_btemp
-  real :: rmin, rmax, zmin, zmax, phimin, phimax, dr, dz, dphi
+  real :: dr, dz, dphi
   character*200 :: dummy, varname
   character(8) :: fmt
   character(3) :: var_index 
@@ -153,8 +153,6 @@ subroutine load_mgrid_netcdf
   do i = 1,mgrid_numcoils
      !ignore zero current coils
      if (abs(mgrid_currents(i)) <= 0.00000001) cycle
-     
-     write (*,*) 'reading current i'
 
      !need to create the variable name 
      write (var_index, fmt) i !convert i to a size 3 string
@@ -189,29 +187,29 @@ subroutine load_mgrid_netcdf
 
   !grab the min and max r values
   status = nf_inq_varid(ncid, 'rmin', varid)
-  status = nf_get_var_double(ncid, varid, rmin)
+  status = nf_get_var_double(ncid, varid, mgrid_rmin)
   status = nf_inq_varid(ncid, 'rmax', varid)
-  status = nf_get_var_double(ncid, varid, rmax)
+  status = nf_get_var_double(ncid, varid, mgrid_rmax)
   !assemble the r array
-  dr = (rmax - rmin)/(mgrid_nr-1)
-  mgrid_r(1) = rmin
+  dr = (mgrid_rmax - mgrid_rmin)/(mgrid_nr-1)
+  mgrid_r(1) = mgrid_rmin
   do i = 1,mgrid_nr-2
      mgrid_r(i+1) = mgrid_r(i) + dr
   end do
-  mgrid_r(mgrid_nr) = rmax !set the max to avoid rounding errors
+  mgrid_r(mgrid_nr) = mgrid_rmax !set the max to avoid rounding errors
 
   !do the same for z
   status = nf_inq_varid(ncid, 'zmin', varid)
-  status = nf_get_var_double(ncid, varid, zmin)
+  status = nf_get_var_double(ncid, varid, mgrid_zmin)
   status = nf_inq_varid(ncid, 'zmax', varid)
-  status = nf_get_var_double(ncid, varid, zmax)
+  status = nf_get_var_double(ncid, varid, mgrid_zmax)
   !assemble the r array
-  dz = (zmax - zmin)/(mgrid_nz-1)
-  mgrid_z(1) = zmin
+  dz = (mgrid_zmax - mgrid_zmin)/(mgrid_nz-1)
+  mgrid_z(1) = mgrid_zmin
   do i = 1,mgrid_nz-2
      mgrid_z(i+1) = mgrid_z(i) + dz
   end do
-  mgrid_z(mgrid_nz) = zmax
+  mgrid_z(mgrid_nz) = mgrid_zmax
   
 
   !run a check for the mgrid number of periods
@@ -225,14 +223,14 @@ subroutine load_mgrid_netcdf
   
   
   !and for phi
-  phimin = 0.0
-  phimax = 3.14159265358979323*2/num_periods
-  dphi = (phimax - phimin)/(mgrid_nphi - 1)
-  mgrid_phi(1) = phimin
+  mgrid_phimin = 0.0
+  mgrid_phimax = 3.14159265358979323*2/num_periods
+  dphi = (mgrid_phimax - mgrid_phimin)/(mgrid_nphi - 1)
+  mgrid_phi(1) = mgrid_phimin
   do i = 1,mgrid_nphi-2
      mgrid_phi(i+1) = mgrid_phi(i) + dphi
   end do
-  mgrid_phi(mgrid_nphi) = phimax
+  mgrid_phi(mgrid_nphi) = mgrid_phimax
   
 end subroutine load_mgrid_netcdf
 
