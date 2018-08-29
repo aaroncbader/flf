@@ -42,9 +42,22 @@ n_iter: (default 1) for options 1 (field line following) and 3 (epsilon
 effective) this is the number of iterations to call. This is unused for
 magnetic field output.
 
-points_dphi: distance in phi to travel for each iteration. (soon, will include
-available to instead measure by arclength. The code is there, but the option
-is not yet.)
+points_dphi: distance in phi to travel for each iteration.
+
+follow_type: there are different options for following the field
+follow_type=1: use phi as the independent variable
+follow_type=2: use arclength as the independent variable
+follow_type=3: use chi = dl dot B as the independent variable
+follow_type=4: use gboozer (?) as the independent variable
+
+in all cases points_dphi represents the follow distance in the appropriate variable. dphi is a legacy name and it will be changed at some point
+
+field_type: This specifies the input type for the field, there are three options:
+field_type='coils' is coil files (see below for format), 
+field_type='ascii' is an ASCII magnetic grid file (see below for format)
+field_type='netcdf' is a .nc file created by xgrid 
+
+in the case of 'ascii' or 'netcdf' files num_main_coils should be set to 0
 
 num_main_coils: (necessary) This is the number of coil files. If 1 or greater
 a &coils section must be included with the names of the coil files in the
