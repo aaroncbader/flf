@@ -66,6 +66,7 @@ subroutine read_namelist()
      call lim_namelist(filenum)     
   end if  
   
+  close(filenum)
   
 end subroutine read_namelist
 

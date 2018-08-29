@@ -70,11 +70,15 @@ end subroutine load_mgrid_ascii
 
 subroutine load_mgrid_netcdf
   use mgrid_module
+  use options_module, only: namelist_file
   implicit none
   include 'netcdf.inc'
 
-  integer :: status, ncid, varid
+  integer :: status, ncid, varid, filenum, iostat
+  integer :: mgrid_numcoils
   character*200 :: dummy
+
+  namelist / coils / mgrid_currents
 
   status = nf_open(mgrid_file, nf_write, ncid)
   
@@ -87,8 +91,21 @@ subroutine load_mgrid_netcdf
   status = nf_inq_dimid(ncid, 'zee', varid) 
   status = nf_inq_dim(ncid, varid, dummy, mgrid_nz) 
   
-  
+  status = nf_inq_dimid(ncid, 'external_coils', varid) 
+  status = nf_inq_dim(ncid, varid, dummy, mgrid_numcoils)
 
+  !allocate the currents
+  allocate(mgrid_currents(mgrid_numcoils))
+  !set all currents to zero
+  mgrid_currents = 0
+  !read the coil namelist
+  filenum = 10
+  open(filenum, file=trim(namelist_file), status='old')
+  read(filenum, nml=coils, iostat=iostat)
+  close(filenum)
+  
+  !write(*,*) 'ext coils', mgrid_numcoils
+  !write(*,*) 'coil currents', mgrid_currents
   !write(*,*) 'mgrid nr, nz, nphi', mgrid_nr, mgrid_nz, mgrid_nphi
   
 end subroutine load_mgrid_netcdf
