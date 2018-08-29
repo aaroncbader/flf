@@ -20,7 +20,6 @@ subroutine init_all
      call allocate_mgrid_ascii()
      call load_mgrid_ascii()
   elseif (trim(field_type) == 'netcdf') then
-     call allocate_mgrid_netcdf()
      call load_mgrid_netcdf()
   else
      write (*,*) 'unknown coil type, aborting'

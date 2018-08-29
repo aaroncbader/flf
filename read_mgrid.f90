@@ -68,16 +68,29 @@ subroutine load_mgrid_ascii
 
 end subroutine load_mgrid_ascii
 
-subroutine allocate_mgrid_netcdf
-  implicit none
-  include 'netcdf.inc'
-  write (*,*) 'not yet enabled'
-end subroutine allocate_mgrid_netcdf
-
 subroutine load_mgrid_netcdf
+  use mgrid_module
   implicit none
   include 'netcdf.inc'
-  write (*,*) 'not yet enabled'
+
+  integer :: status, ncid, varid
+  character*200 :: dummy
+
+  status = nf_open(mgrid_file, nf_write, ncid)
+  
+  status = nf_inq_dimid(ncid, 'phi', varid) 
+  status = nf_inq_dim(ncid, varid, dummy, mgrid_nphi)
+
+  status = nf_inq_dimid(ncid, 'rad', varid) 
+  status = nf_inq_dim(ncid, varid, dummy, mgrid_nr)
+
+  status = nf_inq_dimid(ncid, 'zee', varid) 
+  status = nf_inq_dim(ncid, varid, dummy, mgrid_nz) 
+  
+  
+
+  !write(*,*) 'mgrid nr, nz, nphi', mgrid_nr, mgrid_nz, mgrid_nphi
+  
 end subroutine load_mgrid_netcdf
 
 
