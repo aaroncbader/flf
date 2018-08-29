@@ -1,0 +1,62 @@
+# -*- mode: makefile -*-
+
+OBJ_FILES = \
+	flf.o \
+	eps_eff.o \
+	comprehensive_test.o \
+	Bmag.o \
+	init_all.o \
+	follow_to_wall.o \
+	write_coils.o \
+	read_namelist.o \
+	inside_limiter.o \
+	follow_field.o \
+	lcfs.o \
+	randomize.o \
+	diffusion.o \
+	inside_div.o \
+	lcfs_module.o \
+	inside_vessel.o \
+	vessel_module.o \
+	dlsode.o \
+	read_mgrid.o \
+	compute_bs.o \
+	options_module.o \
+	eps_module.o \
+	limiter_module.o \
+	get_points.o \
+	mgrid_module.o \
+	points_module.o \
+	read_coils.o \
+	div_module.o \
+	coil_module.o \
+	utility.o \
+
+#Dependencies:
+flf.o: options_module.o points_module.o
+eps_eff.o: points_module.o options_module.o lcfs_module.o div_module.o coil_module.o eps_module.o
+comprehensive_test.o: points_module.o coil_module.o div_module.o options_module.o vessel_module.o
+Bmag.o: points_module.o options_module.o
+init_all.o: div_module.o vessel_module.o coil_module.o points_module.o limiter_module.o lcfs_module.o options_module.o
+follow_to_wall.o: points_module.o options_module.o lcfs_module.o div_module.o coil_module.o points_module.o limiter_module.o div_module.o vessel_module.o
+write_coils.o: coil_module.o
+read_namelist.o: points_module.o coil_module.o limiter_module.o vessel_module.o div_module.o options_module.o lcfs_module.o mgrid_module.o
+inside_limiter.o: limiter_module.o points_module.o
+follow_file.o: coil_module.o
+lcfs.o: lcfs_module.o coil_module.o
+diffusion.o: options_module.o coil_module.o div_module.o
+inside_div.o: div_module.o coil_module.o
+vessel_module.o:
+dlsode.o:
+read_mgrid.o: mgrid_module.o
+compute_bs.o: options_module.o coil_module.o mgrid_module.o points_module.o
+options_module.o:
+eps_module.o:
+limiter_module.o:
+get_points.o: points_module.o
+mgrid_module.o:
+points_module.o:
+read_coils.o: coil_module.o
+div_module.o:
+coil_module.o:
+utility.o:
