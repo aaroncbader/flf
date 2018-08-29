@@ -95,13 +95,15 @@ end subroutine mgrid_add_bfield
 subroutine load_mgrid_netcdf
   use mgrid_module
   use options_module, only: namelist_file
+  use coil_module, only: num_periods
   implicit none
   include 'netcdf.inc'
 
   integer :: status, ncid, varid, filenum, iostat
   integer :: mgrid_numcoils
-  integer :: i, ri, zi, pi
+  integer :: i, nfp
   real, dimension(:,:,:), allocatable :: mgrid_btemp
+  real :: rmin, rmax, zmin, zmax, phimin, phimax, dr, dz, dphi
   character*200 :: dummy, varname
   character(8) :: fmt
   character(3) :: var_index 
@@ -177,10 +179,60 @@ subroutine load_mgrid_netcdf
      status = nf_inq_varid(ncid, varname, varid)  
      status = nf_get_var_double(ncid, varid, mgrid_btemp)
      !convert the data
-     call mgrid_add_bfield(mgrid_btemp, mgrid_bz, mgrid_currents(i))
-     
-     
+     call mgrid_add_bfield(mgrid_btemp, mgrid_bz, mgrid_currents(i))    
   end do
+
+  !last step is to assemble the r, z, and phi arrays
+  allocate(mgrid_r(mgrid_nr))
+  allocate(mgrid_z(mgrid_nz))
+  allocate(mgrid_phi(mgrid_nphi))
+
+  !grab the min and max r values
+  status = nf_inq_varid(ncid, 'rmin', varid)
+  status = nf_get_var_double(ncid, varid, rmin)
+  status = nf_inq_varid(ncid, 'rmax', varid)
+  status = nf_get_var_double(ncid, varid, rmax)
+  !assemble the r array
+  dr = (rmax - rmin)/(mgrid_nr-1)
+  mgrid_r(1) = rmin
+  do i = 1,mgrid_nr-2
+     mgrid_r(i+1) = mgrid_r(i) + dr
+  end do
+  mgrid_r(mgrid_nr) = rmax !set the max to avoid rounding errors
+
+  !do the same for z
+  status = nf_inq_varid(ncid, 'zmin', varid)
+  status = nf_get_var_double(ncid, varid, zmin)
+  status = nf_inq_varid(ncid, 'zmax', varid)
+  status = nf_get_var_double(ncid, varid, zmax)
+  !assemble the r array
+  dz = (zmax - zmin)/(mgrid_nz-1)
+  mgrid_z(1) = zmin
+  do i = 1,mgrid_nz-2
+     mgrid_z(i+1) = mgrid_z(i) + dz
+  end do
+  mgrid_z(mgrid_nz) = zmax
+  
+
+  !run a check for the mgrid number of periods
+  status = nf_inq_varid(ncid, 'nfp', varid)
+  status = nf_get_var_int(ncid, varid, nfp)
+  if (nfp .ne. num_periods) then
+     write(*,*) 'WARNING: input number of periods ', num_periods, 'does not match mgrid: ',nfp
+     write(*,*) 'Using mgrid number of periods'
+     num_periods = nfp
+  end if
+  
+  
+  !and for phi
+  phimin = 0.0
+  phimax = 3.14159265358979323*2/num_periods
+  dphi = (phimax - phimin)/(mgrid_nphi - 1)
+  mgrid_phi(1) = phimin
+  do i = 1,mgrid_nphi-2
+     mgrid_phi(i+1) = mgrid_phi(i) + dphi
+  end do
+  mgrid_phi(mgrid_nphi) = phimax
   
 end subroutine load_mgrid_netcdf
 
