@@ -82,11 +82,16 @@ subroutine mgrid_add_bfield(mgrid_btemp, mgrid_bload, current)
   real :: current
   integer :: np, nz, nr
   
-  do np = 1,mgrid_nphi
+  do np = 1,mgrid_nphi-1
      do nz = 1, mgrid_nz
         do nr = 1, mgrid_nr
            mgrid_bload(np, nz, nr) = &
                 mgrid_bload(np, nz, nr) + current * mgrid_btemp(nr, nz, np)
+           ! handle wraparound
+           if (np == 1) then
+              mgrid_bload(mgrid_nphi, nz, nr) = &
+                   mgrid_bload(mgrid_nphi, nz, nr) + current * mgrid_btemp(nr, nz, np)
+           end if
         end do
      end do
   end do
@@ -114,6 +119,8 @@ subroutine load_mgrid_netcdf
   
   status = nf_inq_dimid(ncid, 'phi', varid) 
   status = nf_inq_dim(ncid, varid, dummy, mgrid_nphi)
+  !need to increase mgrid_nphi by 1 to handle wraparound
+  mgrid_nphi = mgrid_nphi + 1
 
   status = nf_inq_dimid(ncid, 'rad', varid) 
   status = nf_inq_dim(ncid, varid, dummy, mgrid_nr)
@@ -146,7 +153,7 @@ subroutine load_mgrid_netcdf
   mgrid_bphi = 0
   
   !unfortunately the mgrid reads in backwards order
-  allocate(mgrid_btemp(mgrid_nr, mgrid_nz, mgrid_nphi)) 
+  allocate(mgrid_btemp(mgrid_nr, mgrid_nz, mgrid_nphi-1)) 
   
   !start loading data
   fmt = '(I3.3)'
@@ -179,6 +186,7 @@ subroutine load_mgrid_netcdf
      !convert the data
      call mgrid_add_bfield(mgrid_btemp, mgrid_bz, mgrid_currents(i))    
   end do
+
 
   !last step is to assemble the r, z, and phi arrays
   allocate(mgrid_r(mgrid_nr))
@@ -225,7 +233,7 @@ subroutine load_mgrid_netcdf
   !and for phi
   mgrid_phimin = 0.0
   mgrid_phimax = 3.14159265358979323*2/num_periods
-  dphi = (mgrid_phimax - mgrid_phimin)/(mgrid_nphi - 1)
+  dphi = (mgrid_phimax - mgrid_phimin)/(mgrid_nphi-1)
   mgrid_phi(1) = mgrid_phimin
   do i = 1,mgrid_nphi-2
      mgrid_phi(i+1) = mgrid_phi(i) + dphi
