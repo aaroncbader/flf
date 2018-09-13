@@ -5,10 +5,17 @@ FC = mpif90
 # End of system-dependent variable assignments
 
 TARGET = flf
-FC = mpif90 
-EXTRA_COMPILE_FLAGS = -fopenmp -O2 -I/usr/local/lib -I/usr/include -ffree-line-length-none -fdefault-real-8 -fdefault-double-8 
+FC = mpif90
+
+LNETCDF=T
+EXTRA_COMPILE_FLAGS = -fopenmp -O2 -I/usr/local/lib -I/usr/include -ffree-line-length-none -fdefault-real-8 -fdefault-double-8 -cpp 
 #EXTRA_LINK_FLAGS = -fopenmp
-EXTRA_LINK_FLAGS =  -fopenmp -L/usr/local/lib -lnetcdff  -lnetcdf 
+ifeq ($(LNETCDF),T)
+
+  EXTRA_LINK_FLAGS =  -DNETCDF -fopenmp -L/usr/local/lib -lnetcdff  -lnetcdf
+else
+  EXTRA_LINK_FLAGS = -fopenmp
+endif
 
 export
 

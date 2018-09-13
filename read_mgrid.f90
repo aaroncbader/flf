@@ -97,6 +97,9 @@ subroutine mgrid_add_bfield(mgrid_btemp, mgrid_bload, current)
   end do
 end subroutine mgrid_add_bfield  
 
+!only compile this function if netcdf is installed
+#ifdef NETCDF
+
 subroutine load_mgrid_netcdf
   use mgrid_module
   use options_module, only: namelist_file
@@ -241,7 +244,7 @@ subroutine load_mgrid_netcdf
   mgrid_phi(mgrid_nphi) = mgrid_phimax
   
 end subroutine load_mgrid_netcdf
-
+#endif
 
 subroutine deallocate_mgrid
   use mgrid_module
