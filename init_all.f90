@@ -20,7 +20,11 @@ subroutine init_all
      call allocate_mgrid_ascii()
      call load_mgrid_ascii()
   elseif (trim(field_type) == 'netcdf') then
+#ifdef NETCDF
      call load_mgrid_netcdf()
+#else
+     write (*,*) 'netcdf not installed on this build, aborting'
+#endif
   else
      write (*,*) 'unknown coil type, aborting'
      return
