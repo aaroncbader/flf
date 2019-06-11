@@ -24,6 +24,7 @@ OBJ_FILES = \
 	options_module.o \
 	eps_module.o \
 	limiter_module.o \
+	gyro_module.o \
 	get_points.o \
 	mgrid_module.o \
 	points_module.o \
@@ -40,7 +41,7 @@ Bmag.o: points_module.o options_module.o
 init_all.o: div_module.o vessel_module.o coil_module.o points_module.o limiter_module.o lcfs_module.o options_module.o
 follow_to_wall.o: points_module.o options_module.o lcfs_module.o div_module.o coil_module.o points_module.o limiter_module.o div_module.o vessel_module.o
 write_coils.o: coil_module.o
-read_namelist.o: points_module.o coil_module.o limiter_module.o vessel_module.o div_module.o options_module.o lcfs_module.o mgrid_module.o
+read_namelist.o: points_module.o coil_module.o limiter_module.o vessel_module.o div_module.o options_module.o lcfs_module.o mgrid_module.o gyro_module.o
 inside_limiter.o: limiter_module.o points_module.o
 follow_file.o: coil_module.o
 lcfs.o: lcfs_module.o coil_module.o

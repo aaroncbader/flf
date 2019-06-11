@@ -8,6 +8,7 @@ subroutine read_namelist()
   use options_module
   use lcfs_module
   use mgrid_module
+  use gyro_module
 
   implicit none
 
@@ -22,7 +23,8 @@ subroutine read_namelist()
        use_diffusion, diffusion_species, d_perp, temperature, boozer_step,&
        varD, varDgamma, varDB0, & 
        boozer_phi, vessel_file, num_limiters, axis_file, &
-       num_divertors, lcfs_file, general_option, output_coils 
+       num_divertors, lcfs_file, general_option, output_coils, &
+       use_gyro
 
   filenum = 10
   numargs = command_argument_count()
@@ -64,7 +66,12 @@ subroutine read_namelist()
      allocate(lim_files(num_limiters))
      lim_files(:) = ''
      call lim_namelist(filenum)     
-  end if  
+  end if
+
+  !use gyro
+  if (use_gyro >= 1) then
+     call gyro_namelist(filenum)
+  end if
   
   close(filenum)
   
@@ -133,3 +140,13 @@ subroutine lim_namelist(filenum)
   end do
 
 end subroutine lim_namelist
+
+subroutine gyro_namelist(filenum)
+  use gyro_module
+  implicit none
+
+  integer :: filenum, iostat
+  namelist / gyro / gyro_x, gyro_y, gyro_z, gyro_rad, gyro_I
+  read(filenum, nml=gyro, iostat=iostat)
+
+end subroutine gyro_namelist
