@@ -142,7 +142,7 @@ subroutine calc_eps(numbp, numind)
 
   n = n_iter
   pi = 3.14159265359
-  R0 = 1.2
+  R0 = 1.2!XXX this is problematic
 
   B0 = sum(ebmag)/(n+1)
   Bhalf = 0.5*(ebmag(2:n+1) + ebmag(1:n))
