@@ -217,7 +217,8 @@ subroutine read_coil_files()
   do i=1,taper_size
      do j=0,mult_factor-1
  
-        aux_current(i + (j*taper_size)) = main_current(1)*taper(i)*main_winding
+        aux_current(i + (j*taper_size)) = &
+                    main_current(1)*aux_percent(i)*main_winding
      enddo
   enddo
 
