@@ -2,6 +2,7 @@
 subroutine compute_full_bs(p, b)
 
   use options_module
+  use gyro_module
   implicit none
 
   real,dimension(3) :: p,b,btemp
@@ -15,15 +16,23 @@ subroutine compute_full_bs(p, b)
     ! main fields
     call compute_bs(p, 0, btemp)
     b = b + btemp
+    !write (*,*) 'b main',b,btemp
     ! aux fields
     call compute_bs(p, 1, btemp)
     b = b + btemp
-
+    !write (*,*) 'b aux',b,btemp
   !*** Magnetic grid field calculation ***  
   else if (coil_type.eq.2) then
     call field_from_mgrid_cubic(p, b)
     !call field_from_mgrid_linear(p, b)
   end if
+
+  !*** Add a gyrotron magnet
+  if (use_gyro .eq. 1) then
+     call gyro_field(p, btemp)
+     b = b + btemp
+  end if
+   !write (*,*) 'b gyro',b,btemp
 end subroutine compute_full_bs
 
 subroutine field_from_mgrid_cubic(p,b)
@@ -534,6 +543,106 @@ end do
 
 
 end subroutine compute_bs
+
+
+!add a current loop specified by the gyro module
+subroutine gyro_field(p, b)
+
+  use gyro_module
+  implicit none
+
+  real, dimension(3) :: p,b,bseg
+  real :: mu0, pi
+  integer :: j
+  integer :: arggood
+  real :: ax, ay, az, bx, by, bz, cx, cy, cz
+  real :: cxax, cxay, cxaz, magc, current, magb
+  real :: w, adotc, adotb, cross_sq, theta
+  integer, parameter :: numsegs = 101
+  real, dimension(numsegs) :: xcoil, ycoil, zcoil
+  real, dimension(numsegs) :: xcoilshift, ycoilshift, zcoilshift
+  b = 0
+  mu0 = 1.2566E-6
+  pi = 3.1415926
+
+  !construct a coil
+  do j = 1,numsegs-1
+     theta = 2.0*pi*(j-1)/(numsegs-1)
+     xcoil(j) = gyro_rad*cos(theta)+gyro_x
+     ycoil(j) = gyro_rad*sin(theta)+gyro_y
+     zcoil(j) = gyro_z
+  end do
+  xcoil(numsegs) = xcoil(1)
+  ycoil(numsegs) = ycoil(1)
+  zcoil(numsegs) = zcoil(1)
+  
+  xcoilshift=cshift(xcoil,1)
+  ycoilshift=cshift(ycoil,1)
+  zcoilshift=cshift(zcoil,1)
+     
+  do j = 1,numsegs-1   
+       ! subtract point of interest r vector from coil points           
+        bx=xcoil(j)-p(1)
+        by=ycoil(j)-p(2)
+        bz=zcoil(j)-p(3)        
+
+        ! subtract point of interest r vector from shifted coil points
+        cx=xcoilshift(j)-p(1)
+        cy=ycoilshift(j)-p(2)
+        cz=zcoilshift(j)-p(3)
+
+        ! now, subtract the unshifted difference from the shifted difference
+        ax=cx-bx
+        ay=cy-by
+        az=cz-bz
+
+        ! pull out NaN values, not sure why they're being created right now
+        ! looks like Paul does a version of the same thing
+        ! There shouldn't be any Nan values.  We need to track this down (AB)
+        arggood = 1
+        if (ax/=ax .or. ay/=ay .or. az/=az) then
+           arggood=0
+        end if
+
+        ! use arggood to reset the loop if the current point is a NaN
+        if (arggood==0) then
+           cycle
+        end if
+
+        ! find cross products
+        cxax=cy*az-cz*ay
+        cxay=cz*ax-cx*az
+        cxaz=cx*ay-cy*ax
+        
+
+        ! pick up by aaron
+        ! This is a simple form where you compute dl cross R1 / R1^3
+        ! The other form should be slightly more accurate, but this is
+        ! faster.
+
+        ! magc = ((cx*cx) + (cy*cy) + (cz*cz))**1.5
+       
+        ! bseg(1) = cxax
+        ! bseg(2) = cxay
+        ! bseg(3) = cxaz
+        ! bseg = bseg*mu0*current/(4*pi*magc)
+        ! b = b + bseg
+
+        cross_sq = (cxax*cxax + cxay*cxay + cxaz*cxaz)
+        
+        adotc = ax*cx + ay*cy + az*cz
+        adotb = ax*bx + ay*by + az*bz
+        magc = sqrt(cx*cx + cy*cy + cz*cz)
+        magb = sqrt(bx*bx + by*by + bz*bz)
+        w = adotc/magc - adotb/magb
+        bseg(1) = cxax * w/cross_sq * gyro_I * mu0/4/pi
+        bseg(2) = cxay * w/cross_sq * gyro_I * mu0/4/pi
+        bseg(3) = cxaz * w/cross_sq * gyro_I * mu0/4/pi
+        
+        b = b + bseg
+
+   end do
+end subroutine gyro_field
 
 ! calculates the gradient at a point, need to figure
 ! out an appropriate stepsize, for now use a characteristic
